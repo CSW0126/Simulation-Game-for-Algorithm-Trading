@@ -68,7 +68,7 @@ const SignUp = () => {
                       });
                     navigate('/')
                 }else{
-                    console.log('ererer')
+                    console.log('error')
                     setError(response.data.status)
                 }
             } catch (err) {
