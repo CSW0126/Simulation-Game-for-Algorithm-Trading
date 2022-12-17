@@ -7,7 +7,7 @@ require('dotenv').config();
 
 //mongoDB
 // mongoose.connect('mongodb+srv://csw12345:'+ process.env.MONGO_ATLAS_PW +'@cluster0.sb1ol.mongodb.net/?retryWrites=true&w=majority')
-mongoose.connect("mongodb+srv://comp4342:" + process.env.MONGO_PW + "@cluster0.foul7vr.mongodb.net/?retryWrites=true&w=majority",
+mongoose.connect("mongodb+srv://fyp_admin:" + process.env.MONGO_PW + "@cluster0.foul7vr.mongodb.net/?retryWrites=true&w=majority",
     (error) => {
         if (error == null) {
             console.log("Server is connected");
