@@ -1,17 +1,26 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDom from 'react-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { ContextProvider } from './contexts/ContextProvider';
+import { AuthProvider } from 'react-auth-kit'
+import { Client as Styletron } from 'styletron-engine-atomic';
+import { Provider as StyletronProvider } from 'styletron-react';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const engine = new Styletron();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDom.render(
+    <React.StrictMode>
+        <ContextProvider>
+            <StyletronProvider value={engine}>
+                <AuthProvider authType = {'cookie'}
+                            authName={'_auth'}
+                            cookieDomain={window.location.hostname}
+                            cookieSecure={false}>
+                        <App/>
+                    </AuthProvider>
+            </StyletronProvider>
+        </ContextProvider>
+    </React.StrictMode>,
+    document.getElementById('root'),
+)
