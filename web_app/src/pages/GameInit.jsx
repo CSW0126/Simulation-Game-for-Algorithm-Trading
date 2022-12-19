@@ -11,6 +11,8 @@ import moment from 'moment';
 import APICall from '../apiCall/Stock'
 import Cookies from 'js-cookie'
 import { useRef } from 'react'
+import DCARules from '../components/Form/Steps/DCARules'
+import CusRules from '../components/Form/Steps/CusRules'
 
 const GameInit = () => {
   const scrollRef = useRef(null)
@@ -64,7 +66,15 @@ const GameInit = () => {
       case 2:
         return <AlgoSelect />
       case 3:
-        return <MarRules />
+        if(userData.algoType === 1){
+          return <MarRules />
+        }else if(userData.algoType === 2){
+          return <DCARules />
+        }else if (userData.algoType === 3){
+          return <CusRules />
+        }else{
+          return <></>
+        }
       case 4:
         return <Final />
       default:

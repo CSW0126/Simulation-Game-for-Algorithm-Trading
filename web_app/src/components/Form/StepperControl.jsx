@@ -38,6 +38,12 @@ const StepperControl = ({handleClick, currentStep, steps}) => {
             }else{
                 return btnDisable
             }
+        }else if (currentStep === 2){
+            if (userData.algoType){
+                return btn
+            }else{
+                return btnDisable
+            }
         }
     }
     return (
