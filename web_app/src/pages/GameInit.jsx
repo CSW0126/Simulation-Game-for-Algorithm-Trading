@@ -8,6 +8,8 @@ import MarRules from '../components/Form/Steps/MarRules'
 import PickTrade from '../components/Form/Steps/PickTrade'
 import { StepperContext } from '../contexts/StepperContext'
 import moment from 'moment';
+import APICall from '../apiCall/Stock'
+import Cookies from 'js-cookie'
 
 const GameInit = () => {
   // const initialData = [
@@ -44,10 +46,29 @@ const GameInit = () => {
     "Finish"
   ]
 
-  const handlePreview = () => {
+  const handlePreview = async() => {
+    let today = moment().format("YYYY-MM-DD")
+    let twoYearsAgo = moment().add(-730, 'days').format("YYYY-MM-DD")
+    let apiObject = {
+      type:userData.type,
+      ticker:userData.pair,
+      from: twoYearsAgo,
+      to: today,
+      token: Cookies.get('_auth')
+    }
     console.log(userData)
-    console.log(moment().format("YYYY-MM-DD"))
-    console.log(moment().add(-300, 'days').format("YYYY-MM-DD"))
+    console.log(apiObject)
+
+    const result = await APICall.AsyncGetHistoricalData(apiObject)
+    console.log(result)
+    if (result.status === 'success'){
+      
+    }else{
+      console.log("Fail Request")
+      console.log(result)
+      alert("Error! Check console log!")
+    }
+
   }
 
   const displayStep = (step)=>{

@@ -3,7 +3,6 @@ import axios, { AxiosError } from 'axios';
 import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
 import { useStateContext } from '../contexts/ContextProvider';
-import { HOSTNAME } from '../contexts/Host';
 import { useNavigate  } from "react-router-dom";
 
 const Login = () => {
@@ -23,7 +22,7 @@ const Login = () => {
         setError("");
     
         try {
-            const url = HOSTNAME + '/user/signIn'
+            const url = process.env.REACT_APP_SERVER_HOST + '/user/signIn'
             const body = {
                 username : values.username,
                 password: values.password
