@@ -35,7 +35,6 @@ const AlgoSelect = () => {
   ]
 
   const handleAlgoSelect = (algoType) =>{
-    console.log(algoType)
     setUserData({
       ...userData,
       algoType: algoType

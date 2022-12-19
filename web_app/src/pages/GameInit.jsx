@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import LineChart from '../components/Charts/LineChart'
 import Stepper from '../components/Form/Stepper'
 import StepperControl from '../components/Form/StepperControl'
@@ -16,6 +16,7 @@ import CusRules from '../components/Form/Steps/CusRules'
 
 const GameInit = () => {
   const scrollRef = useRef(null)
+  const topScrollRef = useRef(null)
   const [userData, setUserData] = useState('');
   const [finalData, setFinalData] = useState([])
   const [showChart, setShowChart] = useState(false)
@@ -27,6 +28,8 @@ const GameInit = () => {
     "Rules",
     "Finish"
   ]
+
+  useEffect(() => console.log(userData), [userData]);
 
   const handlePreview = async() => {
     let today = moment().format("YYYY-MM-DD")
@@ -54,7 +57,10 @@ const GameInit = () => {
       console.log(result)
       alert("Error! Check console log!")
     }
+  }
 
+  const scrollToTop = () =>{
+    topScrollRef.current.scrollIntoView()
   }
 
   const displayStep = (step)=>{
@@ -87,54 +93,58 @@ const GameInit = () => {
     let newStep = currentStep
     direction === "next"? newStep++: newStep--
     newStep > 0 && newStep<= steps.length && setCurrentStep(newStep)
+
+    scrollToTop()
   }
   
   return (
-    <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
-      <div className='container horizontal mt-5'>
-        <Stepper 
-          steps = {steps}
-          currentStep = {currentStep}
-        />
-
-        <div className='my-10 p-10'>
-          <StepperContext.Provider value={{
-            userData,
-            setUserData,
-            finalData,
-            setFinalData
-          }}>
-            {displayStep(currentStep)}
-          </StepperContext.Provider>
-        </div>
-
-
-      </div>
-        <StepperContext.Provider value={{
-            userData,
-            setUserData,
-            finalData,
-            setFinalData
-          }}>
-          <StepperControl 
-            handleClick = {handleClick}
-            currentStep={currentStep}
-            steps={steps}
+    <div className='mb-10' ref={topScrollRef}>
+      <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
+        <div className='container horizontal mt-5'>
+          <Stepper 
+            steps = {steps}
+            currentStep = {currentStep}
           />
-        </StepperContext.Provider>
 
-        {showChart ? (         
-            <div>
-                <LineChart
-                  // currentData = {initialData}
-                  candData = {useableData}
-                ></LineChart>
-            </div>
+          <div className='my-10 p-10'>
+            <StepperContext.Provider value={{
+              userData,
+              setUserData,
+              finalData,
+              setFinalData
+            }}>
+              {displayStep(currentStep)}
+            </StepperContext.Provider>
+          </div>
 
 
-            
-        ): (<></>)}
-        <div ref={scrollRef}></div>
+        </div>
+          <StepperContext.Provider value={{
+              userData,
+              setUserData,
+              finalData,
+              setFinalData
+            }}>
+            <StepperControl 
+              handleClick = {handleClick}
+              currentStep={currentStep}
+              steps={steps}
+            />
+          </StepperContext.Provider>
+
+          {showChart ? (         
+              <div>
+                  <LineChart
+                    // currentData = {initialData}
+                    candData = {useableData}
+                  ></LineChart>
+              </div>
+
+
+              
+          ): (<></>)}
+      </div>
+      <div ref={scrollRef}></div>
     </div>
 
   )

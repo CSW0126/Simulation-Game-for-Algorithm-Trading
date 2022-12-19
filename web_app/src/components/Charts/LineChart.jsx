@@ -105,9 +105,6 @@ const LineChart = (props) => {
             volume:vol.toFixed(2)
           })
         }
-        else {
-
-        }
       });
 
 
