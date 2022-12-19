@@ -53,9 +53,11 @@ const CryptoFrom = ({setPair, handlePreview}) => {
                     id="outlined-select-currency"
                     select
                     label="Select"
-                    defaultValue="X:BTCUSD"
+                    defaultValue= "X:BTCUSD"
                     helperText="Please select your trading pair"
-                    onChange={(event)=>handlePairChange(event.target.value)}
+                    onChange={(event)=>handlePairChange(event.target.value)
+                    }
+                    value={userData.pair}
                     >
                     {currencies.map((option) => (
                         <MenuItem key={option.value} value={option.value}>

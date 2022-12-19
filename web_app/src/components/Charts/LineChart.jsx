@@ -13,6 +13,36 @@ const LineChart = (props) => {
   const [name, setName]= useState('')
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
+  const [displayPrice, setDisplayPrice] = useState({
+    open:0,
+    high:0,
+    low:0,
+    close:0,
+    volume:0
+  })
+    //   c*number
+    // The close price for the symbol in the given time period.
+
+    // h*number
+    // The highest price for the symbol in the given time period.
+
+    // l*number
+    // The lowest price for the symbol in the given time period.
+
+    // ninteger
+    // The number of transactions in the aggregate window.
+
+    // o*number
+    // The open price for the symbol in the given time period.
+
+    // t*integer
+    // The Unix Msec timestamp for the start of the aggregate window.
+
+    // v*number
+    // The trading volume of the symbol in the given time period.
+
+    // vwnumber
+    // The volume weighted average price.
 
   useEffect(
 		() => {
@@ -32,15 +62,54 @@ const LineChart = (props) => {
 					textColor,
 				},
 				width: chartContainerRef.current.clientWidth,
-				height: 300,
+				height: 500,
+        priceScale: {
+          scaleMargins: {
+            top: 0.05,
+            bottom: 0.3,
+          },
+          borderVisible: false,
+        },
 			});
 			chart.timeScale().fitContent();
 
+      const volumeSeries = chart.addHistogramSeries({
+        color: '#26a69a',
+        priceFormat: {
+          type: 'volume',
+        },
+        priceScaleId: '',
+        scaleMargins: {
+          top: 0.8,
+          bottom: 0,
+        },
+      })
+
+      volumeSeries.setData(candData.data)
 			// const newSeries = chart.addAreaSeries();
 			// newSeries.setData(currentData);
 
       const candlestickSeries = chart.addCandlestickSeries();
       candlestickSeries.setData(candData.data)
+
+      chart.subscribeCrosshairMove((param) => {
+        if (param.time) {
+          const price = param.seriesPrices.get(candlestickSeries);
+          const vol = param.seriesPrices.get(volumeSeries)
+          // console.log(vol)
+          setDisplayPrice({
+            open:price.open,
+            high: price.high,
+            low:price.low,
+            close:price.close,
+            volume:vol.toFixed(2)
+          })
+        }
+        else {
+
+        }
+      });
+
 
 			window.addEventListener('resize', handleResize);
 
@@ -49,13 +118,32 @@ const LineChart = (props) => {
 
 				chart.remove();
 			};
+
+
 		},
 		[candData, backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor]
 	);
   return (
     <div className='container px-10 py-5'>
-        <p className='flex items-center gap-5 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 m-2'>{name.toString()}</p>
-        <p className='flex items-center gap-5 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 m-2'>From {from.toString()} to {to.toString()}</p>
+        <div className='container flex flex-row flex-wrap'>
+            <div className='flex'>
+              <p className='flex gap-5 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 m-2 text-left'>
+                <span className='font-bold'>{name.toString()}</span> Data From
+                <span className='font-bold'>{from.toString()}</span> to
+                <span className='font-bold'>{to.toString()}</span></p>
+            </div>
+        </div>
+        <div className='container flex flex-row flex-wrap'>
+          <div className='flex'>
+            <p className='gap-5 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 m-2 text-left'>High : 
+              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.high}</span> - Low:&nbsp;
+              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.low}</span> - Open:&nbsp;
+              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.open}</span> - Close:&nbsp;
+              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.close}</span> - Volume:&nbsp;
+              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.volume}</span>
+            </p>
+          </div>
+        </div>
         <div
           ref={chartContainerRef}
         />

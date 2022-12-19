@@ -22,10 +22,10 @@ const PickTrade = ({handlePreview}) => {
     const [pair, setPair] = useState('')
 
 
-    const handleChange = (e) =>{
-        const {name, value} = e.target
-        setUserData({...userData, [name]:value})
-    }
+    // const handleChange = (e) =>{
+    //     const {name, value} = e.target
+    //     setUserData({...userData, [name]:value})
+    // }
 
     const handleTypeClick = (selectType) =>{
         if (selectType === 'Crypto'){
@@ -49,7 +49,7 @@ const PickTrade = ({handlePreview}) => {
             <button 
                 onClick={()=> handleTypeClick('Crypto')}
                 className='flex hover:scale-105 ease-in-out m-auto mt-5'>
-                <Card sx={{ maxWidth: 300, height:320, borderColor:currentColor , borderWidth: type === 1 ?'2px':'0px'  }}>
+                <Card sx={{ maxWidth: 300, height:320, borderColor:currentColor ,  borderWidth: userData.type === 1 ? '2px':'0px'  }}>
                     <CardActionArea>
                         <CardMedia
                             component="img"
@@ -76,7 +76,7 @@ const PickTrade = ({handlePreview}) => {
             <button
                 onClick={()=> handleTypeClick('Stock')} 
                 className='flex hover:scale-105 ease-in-out m-auto mt-5'>
-                <Card sx={{ maxWidth: 300, height:320,borderColor:currentColor , borderWidth: type === 2 ?'2px':'0px'  }}>
+                <Card sx={{ maxWidth: 300, height:320,borderColor:currentColor , borderWidth: userData.type === 2 ?'2px':'0px'  }}>
                     <CardActionArea>
                         <CardMedia
                             component="img"
@@ -108,9 +108,9 @@ const PickTrade = ({handlePreview}) => {
     <div>
         <div>
             {marketType}
-            {type === 0 ? <></> 
+            {userData.type === 0 || userData.type === undefined? <></> 
             // 1(crypto) or 2(stock)?
-            : type === 1? 
+            : userData.type === 1? 
             <CryptoFrom
                 setPair={setPair}
                 handlePreview={handlePreview}
