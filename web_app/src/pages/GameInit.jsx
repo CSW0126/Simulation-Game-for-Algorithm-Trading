@@ -38,7 +38,9 @@ const GameInit = () => {
   // ]
   const [userData, setUserData] = useState('');
   const [finalData, setFinalData] = useState([])
+  const [showChart, setShowChart] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
+  const [useableData, setUseableData] = useState([])
   const steps = [
     "Pick an asset",
     "Strategy",
@@ -62,7 +64,10 @@ const GameInit = () => {
     const result = await APICall.AsyncGetHistoricalData(apiObject)
     console.log(result)
     if (result.status === 'success'){
-      
+      const useableData = APICall.ReturnDataProcessor(result.message)
+      console.log(useableData)
+      setUseableData(useableData)
+      setShowChart(true)
     }else{
       console.log("Fail Request")
       console.log(result)
@@ -128,14 +133,17 @@ const GameInit = () => {
             steps={steps}
           />
         </StepperContext.Provider>
+
+        {showChart ? (
+             <div>
+              <LineChart
+                // currentData = {initialData}
+                candData = {useableData}
+              ></LineChart>
+            </div>
+        ): (<></>)}
     </div>
 
-    // <div>
-    //   <LineChart
-    //     currentData = {initialData}
-    //     candData = {candData}
-    //   ></LineChart>
-    // </div>
   )
 }
 
