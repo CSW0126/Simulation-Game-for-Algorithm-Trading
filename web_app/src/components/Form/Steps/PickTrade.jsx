@@ -33,73 +33,81 @@ const PickTrade = ({handlePreview}) => {
             setUserData({
                 ...userData,
                 type:1,
-                pair: "X:BTCUSD"
+                pair: "X:BTCUSD",
+                investment : 1,
+                take_profit: 0.1
             })
         }else if(selectType === 'Stock'){
             setType(2)
             setUserData({
                 ...userData,
-                type:2
+                type:2,
+                pair: 'not set (PickTrade.jsx)',
+                investment : 1,
+                take_profit: 0.1
             })
         }
     }
 
     const marketType = (
         <div className='flex place-content-center flex-row flex-wrap'>
-            <button 
-                onClick={()=> handleTypeClick('Crypto')}
+            <div 
+                // onClick={()=> handleTypeClick('Crypto')}
                 className='flex hover:scale-105 ease-in-out m-auto mt-5'>
-                <Card sx={{ maxWidth: 300, height:320, borderColor:currentColor ,  borderWidth: userData.type === 1 ? '2px':'0px'  }}>
-                    <CardActionArea>
+                <Card sx={{ maxWidth: 300, borderColor:currentColor ,  borderWidth: userData.type === 1 ? '2px':'0px'  }}>
+                    <CardActionArea onClick={()=> handleTypeClick('Crypto')}>
                         <CardMedia
                             component="img"
                             image={crypto_img}
                             alt=""
-                            sx={{ padding: "1em 1em 0 1em", objectFit: "contain" }}
+                            sx={{ padding: "1em 1em 0 1em", objectFit: "contain", width:345, height:100 }}
                         />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
-                                Crypto Market
+                            Crypto Market
                             </Typography>
                             <Typography variant="body2" color="text.secondary" align='left'>
-                                <ul className='list-disc pl-5'>
-                                    <li>The crypto market is a 24/7 market.</li>
-                                    <li>The price movement are usually large.</li>
-                                    <li>Very High risk.</li>
-                                </ul>
+                            &#x2022; The crypto market is a 24/7 market.
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" align='left'>
+                            &#x2022; The price movement are usually large.
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" align='left'>
+                            &#x2022; Very High risk.
                             </Typography>
                         </CardContent>
                     </CardActionArea>
                 </Card>
-            </button>
+            </div>
 
-            <button
-                onClick={()=> handleTypeClick('Stock')} 
+            <div
+                // onClick={()=> handleTypeClick('Stock')} 
                 className='flex hover:scale-105 ease-in-out m-auto mt-5'>
-                <Card sx={{ maxWidth: 300, height:320,borderColor:currentColor , borderWidth: userData.type === 2 ?'2px':'0px'  }}>
-                    <CardActionArea>
+                <Card sx={{ maxWidth: 300,borderColor:currentColor , borderWidth: userData.type === 2 ?'2px':'0px'  }}>
+                    <CardActionArea onClick={()=> handleTypeClick('Stock')} >
                         <CardMedia
                             component="img"
                             image={stock_img}
                             alt=""
-                            sx={{ padding: "1em 1em 0 1em", objectFit: "contain" }}
+                            sx={{ padding: "1em 1em 0 1em", objectFit: "contain", width:345, height:100 }}
                         />
                         <CardContent>
-                            <div className='pt-12 mt-1'></div>
                         <Typography gutterBottom variant="h5" component="div">
                             Stock Market
                         </Typography>
                         <Typography variant="body2" color="text.secondary" align='left'>
-                            <ul className='list-disc pl-5'>
-                                <li>The stock market operates on a schedule.</li>
-                                <li>Contain Day open/Day Close field</li>
-                                <li>Normal risk.</li>
-                            </ul>
+                        &#x2022; Operates on a schedule.
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" align='left'>
+                        &#x2022; Regulated by government agencies
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" align='left'>
+                        &#x2022; Less risk.(compare with crypto)
                         </Typography>
                         </CardContent>
                     </CardActionArea>
                 </Card>
-            </button>
+            </div>
         </div>
 
 
