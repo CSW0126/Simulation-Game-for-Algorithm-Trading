@@ -44,6 +44,10 @@ const StepperControl = ({handleClick, currentStep, steps}) => {
             }else{
                 return btnDisable
             }
+        }else if (currentStep === 3){
+            return btn
+        }else if (currentStep === 4){
+            return btn
         }
     }
     return (

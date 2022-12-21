@@ -50,10 +50,7 @@ const LineChart = (props) => {
       setFrom(candData.data[0].time)
       setTo(candData.data[candData.data.length -1].time)
 			const handleResize = () => {
-				chart.applyOptions({ width: chartContainerRef.current.clientWidth, localization:{
-          locale: 'en-US',
-          dateFormat: 'YYYY-MMM-DD'
-        }, });
+				chart.applyOptions({ width: chartContainerRef.current.clientWidth});
 			};
 
 			const chart = createChart(chartContainerRef.current, {

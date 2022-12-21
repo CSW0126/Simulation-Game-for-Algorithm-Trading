@@ -12,7 +12,7 @@ import CryptoFrom from './CryptoFrom';
 import StockForm from './StockForm';
 
 
-const PickTrade = ({handlePreview}) => {
+const PickTrade = () => {
     const {userData, setUserData} = useContext(StepperContext)
     const { currentColor } = useStateContext();
 
@@ -35,7 +35,11 @@ const PickTrade = ({handlePreview}) => {
                 type:1,
                 pair: "X:BTCUSD",
                 investment : 1,
-                take_profit: 0.1
+                take_profit: 0.1,
+                stop_earn: 0,
+                stop_loss: 100,
+                price_range_up:0,
+                price_range_bot:0
             })
         }else if(selectType === 'Stock'){
             setType(2)
@@ -44,7 +48,11 @@ const PickTrade = ({handlePreview}) => {
                 type:2,
                 pair: 'not set (PickTrade.jsx)',
                 investment : 1,
-                take_profit: 0.1
+                take_profit: 0.1,
+                stop_earn: 0,
+                stop_loss: 100,
+                price_range_up:0,
+                price_range_bot:0
             })
         }
     }
@@ -121,7 +129,6 @@ const PickTrade = ({handlePreview}) => {
             : userData.type === 1? 
             <CryptoFrom
                 setPair={setPair}
-                handlePreview={handlePreview}
             /> 
             : 
             <StockForm/>}

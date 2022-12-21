@@ -10,12 +10,17 @@ import Delete from 'baseui/icon/delete'
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
+import {DatePicker} from 'baseui/datepicker';
+import {addDays} from 'date-fns';
+import moment from 'moment'
 
 const MarRules = () => {
-  const {userData, setUserData} = useContext(StepperContext)
+  const {userData, setUserData, historicalData, setHistoricalData} = useContext(StepperContext)
   const maxShare = 16383
   const singleShareMax = 2 ** 13
   const maxTakeProfit = 100
+  const maxStopEarn = 100000
+  const maxUp = 999999
   const [calData , setCalData] = useState({
     t_drawback: 1,
     t_shares: 3
@@ -33,6 +38,37 @@ const MarRules = () => {
       share : 2
     },
   ])
+
+  const getDateStringFromHisDate  = (index) =>{
+    try{
+      let result = historicalData.data[index].time.year + '-' + historicalData.data[index].time.month + '-' + historicalData.data[index].time.day
+      return new Date(result)
+    }catch(err){
+      console.log(err)
+      return new Date()
+    }
+  } 
+  const [rangeDate, setRangeDate] = useState(userData.rangeDate ? userData.rangeDate : [
+    getDateStringFromHisDate(0),
+    getDateStringFromHisDate(historicalData.data.length - 1)
+    // new Date(historicalData.data[0].time),
+    // new Date(historicalData.data[historicalData.data.length-1].time)
+  ]);
+
+  useEffect(()=>{
+    const autoInputPriceScaleDataIfAny = () =>{
+      try{
+        if (userData.priceScaleData){
+          setPriceScaleData(userData.priceScaleData)
+        }else{
+          console.log('no priceScaleData')
+        }
+      }catch(err){
+        console.log(err)
+      }
+    }
+    autoInputPriceScaleDataIfAny()
+  },[])
 
   useEffect(()=>{
     console.log(priceScaleData)
@@ -52,7 +88,18 @@ const MarRules = () => {
       t_drawback:totalD,
       t_shares: totalS
     })
+
+    setUserData({...userData,priceScaleData:priceScaleData})
   },[priceScaleData])
+
+  useEffect(()=>{
+    if(rangeDate.length == 2){
+      setUserData({
+        ...userData,
+        rangeDate : rangeDate
+      })
+    }
+  },[rangeDate])
 
   const hasMoreThanTwoDC = (num) =>{
     const parts = num.toString().split('.');
@@ -181,6 +228,82 @@ const MarRules = () => {
     }
   }
 
+  const handleStopLossChange = (value)=>{
+    try{
+      if(!isNaN(value)){
+        value = Number(value)
+        if(value >= 100) value = 100
+        if(value <= 0.1) value = 0.1
+        if(hasMoreThanTwoDC(value)) value = value.toFixed(2)
+        setUserData({
+          ...userData,
+          stop_loss: value
+        })
+      }else{
+        console.log("Not a number!")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleStopEarnChange = (value)=>{
+    try{
+      if(!isNaN(value)){
+        value = Number(value)
+        if(value >= maxStopEarn) value = maxStopEarn
+        if(value < 0) value = 0
+        if(hasMoreThanTwoDC(value)) value = value.toFixed(2)
+        setUserData({
+          ...userData,
+          stop_earn: value
+        })
+      }else{
+        console.log("Not a number!")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleUp = (value) =>{
+    try{
+      if(!isNaN(value)){
+        value = Number(value)
+        if(value >= maxUp) value = maxUp
+        if(value < 0) value = 0
+        if(hasMoreThanTwoDC(value)) value = value.toFixed(5)
+        setUserData({
+          ...userData,
+          price_range_up: value
+        })
+      }else{
+        console.log("Not a number!")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleBottom = (value) =>{
+    try{
+      if(!isNaN(value)){
+        value = Number(value)
+        if(value >= maxUp) value = maxUp
+        if(value < 0) value = 0
+        if(hasMoreThanTwoDC(value)) value = value.toFixed(5)
+        setUserData({
+          ...userData,
+          price_range_bot: value
+        })
+      }else{
+        console.log("Not a number!")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   return (
       <Box
         component="div"
@@ -191,7 +314,27 @@ const MarRules = () => {
         autoComplete="off"
       >
         <div className=' border py-5 border-slate-600 rounded-lg p-5'>
-          <p className=' text-lg ml-5 mb-3'>Setup the rules</p>
+          <span className=' text-lg ml-5 mb-3'>Setup the rules</span>
+          <Tooltip title={
+            <div>Drawback %: Executed Buy order when the price go down with this %.
+              <br/>
+              <br />Share(s): Your investment will be divided in to the Sum of all shares, and only the shares in that row will be use to execute the buy order.
+              <br/>
+              <br/>Example: 
+              <br/>&nbsp;&nbsp;#0 (drawback: 0, shares:1)
+              <br/>&nbsp;&nbsp;#1 (drawback: 1, shares:2)
+              <br/>&nbsp;&nbsp;Total shares: 3
+              <br/>&nbsp;&nbsp;Investment: $100
+              <br/>&nbsp;&nbsp;Current Price: $100
+              <br/>When execute the buy order of #0, it will buy in current price (i.e. 0 drawback), using $33.3. (i.e. 1/3 * Investment)
+              <br/>
+              <br/>When price go down to $99, it will execute the #1 buy order (i.e. 1% drawback), using $66.6 (i.e. 2/3 * Investment)
+
+            </div>} placement="right">
+              <IconButton>
+                <HelpIcon/>
+              </IconButton>
+            </Tooltip>
           {priceScaleData.map((item) =>(
             <div className='flex justify-center' key={item.index}>
                 <p className=' text-gray-700 font-semibold text-center my-auto mr-5'>
@@ -296,6 +439,7 @@ const MarRules = () => {
               <span className=' flex text-sm text-gray-900 my-auto'>P.S. You have total: ${userMoney}</span>
           </div>
         </div>
+        {/* take profit */}
         <div className='flex flex-wrap justify-start '>
           <div className='flex'>
             <TextField
@@ -304,7 +448,7 @@ const MarRules = () => {
                     sx={{ m: 1, width: '25ch' }}
                     type="number"
                     InputProps={{
-                      inputProps: { min: 0.1, max: 100 }
+                      inputProps: { min: 0.1, max: maxTakeProfit }
                     }}
                     value={userData.take_profit}
                     onChange={(e)=>handleTakeProfitChange(e.target.value)}
@@ -318,6 +462,142 @@ const MarRules = () => {
           <div className='flex'>
               <span className=' flex text-sm text-gray-900 my-auto'>Take profit when earn up to this value.</span>            
               <Tooltip title={"e.g. Investment: $100, \nbuy price: $100, take profit %: 1%, when the price hit $101, Your holdings will be sold to take profit."} placement="right">
+              <IconButton>
+                <HelpIcon/>
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+        {/* stop loss */}
+        <div className='flex flex-wrap justify-start '>
+          <div className='flex'>
+            <TextField
+                    label="Stop Loss -%"
+                    id="outlined-start-adornment"
+                    sx={{ m: 1, width: '25ch' }}
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0.1, max: 100 }
+                    }}
+                    value={userData.stop_loss}
+                    onChange={(e)=>handleStopLossChange(e.target.value)}
+                    onBlur={(e)=>{
+                      if(e.target.value > 100){
+                        handleStopLossChange(100)
+                      }
+                    }}
+            />
+          </div>
+          <div className='flex'>
+              <span className=' flex text-sm text-gray-900 my-auto'>Stop loss when hit this value.</span>            
+              <Tooltip title={"e.g. Investment: $100, \nbuy price: $100, Stop Loss %: 10%, when the value of your holding is $90, Your assets will be sold in order to stop loss. (100% will never stop loss)"} placement="right">
+              <IconButton>
+                <HelpIcon/>
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+        {/* stop earning */}
+        <div className='flex flex-wrap justify-start '>
+          <div className='flex'>
+            <TextField
+                    label="Stop Earning %"
+                    id="outlined-start-adornment"
+                    sx={{ m: 1, width: '25ch' }}
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0, max: maxStopEarn }
+                    }}
+                    value={userData.stop_earn}
+                    onChange={(e)=>handleStopEarnChange(e.target.value)}
+                    onBlur={(e)=>{
+                      if(e.target.value > maxStopEarn){
+                        handleStopEarnChange(maxStopEarn)
+                      }
+                    }}
+            />
+          </div>
+          <div className='flex'>
+              <span className=' flex text-sm text-gray-900 my-auto'>Stop algorithm when earning hit this value.</span>            
+              <Tooltip title={"e.g. Investment: $100, \nbuy price: $100, Stop Earning %: 10%, when the value of your holding is $110, Your assets will be sold and game end. (0 will never stop)"} placement="right">
+              <IconButton>
+                <HelpIcon/>
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+        {/* date */}
+        <div className='mx-2 mb-5'>
+          <span className=' text-sm text-gray-900 my-auto'>Date Range:</span>
+          <Tooltip title={"The algorithms use data from the date range "} placement="right">
+              <IconButton>
+                <HelpIcon/>
+              </IconButton>
+            </Tooltip>
+          <div className='mt-2'>
+            <DatePicker
+              range
+              value={rangeDate}
+              onChange={({date}) => setRangeDate(date)}
+              placeholder="YYYY/MM/DD - YYYY/MM/DD"
+              minDate={getDateStringFromHisDate(0)}
+              maxDate={getDateStringFromHisDate(historicalData.data.length - 1)}
+              error={rangeDate.length == 2? false: true}
+            />
+          </div>
+        </div>
+        {/* price range up */}
+        <div className='flex flex-wrap justify-start '>
+          <div className='flex'>
+            <TextField
+                    label="Upper price"
+                    id="outlined-start-adornment"
+                    sx={{ m: 1, width: '25ch' }}
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0, max: maxUp }
+                    }}
+                    value={userData.price_range_up}
+                    onChange={(e)=>handleUp(e.target.value)}
+                    onBlur={(e)=>{
+                      if(e.target.value <= userData.price_range_bot){
+                        handleUp(0)
+                      }
+                    }}
+            />
+          </div>
+          <div className='flex'>
+              <span className=' flex text-sm text-gray-900 my-auto'>Pause the algorithm when the price &nbsp;<span className=' font-bold'>Pass</span>&nbsp; this value.</span>            
+              <Tooltip title={"e.g. Upper value: 100, when current price >= 100, no buy action will be executed (0: ignore option)"} placement="right">
+              <IconButton>
+                <HelpIcon/>
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+        {/* price range bottom */}
+        <div className='flex flex-wrap justify-start '>
+          <div className='flex'>
+            <TextField
+                    label="Lower price"
+                    id="outlined-start-adornment"
+                    sx={{ m: 1, width: '25ch' }}
+                    type="number"
+                    InputProps={{
+                      inputProps: { min: 0, max: maxUp }
+                    }}
+                    value={userData.price_range_bot}
+                    onChange={(e)=>handleBottom(e.target.value)}
+                    onBlur={(e)=>{
+                      if(e.target.value >= userData.price_range_up){
+                        handleBottom(0)
+                      }
+                    }}
+            />
+          </div>
+          <div className='flex'>
+              <span className=' flex text-sm text-gray-900 my-auto'>Pause the algorithm when price &nbsp;<span className=' font-bold'>Below</span>&nbsp; this value.</span>            
+              <Tooltip title={"e.g. Lower value: 20, when current price <= 20, no buy action will be executed (0: ignore option)"} placement="right">
               <IconButton>
                 <HelpIcon/>
               </IconButton>

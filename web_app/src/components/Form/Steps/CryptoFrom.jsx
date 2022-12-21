@@ -6,7 +6,7 @@ import { Button } from "baseui/button";
 import { useStateContext } from '../../../contexts/ContextProvider';
 import { StepperContext } from '../../../contexts/StepperContext';
 
-const CryptoFrom = ({setPair, handlePreview}) => {
+const CryptoFrom = ({setPair}) => {
     const {currentColor} = useStateContext();
     const {userData, setUserData} = useContext(StepperContext)
     const currencies = [
@@ -41,7 +41,7 @@ const CryptoFrom = ({setPair, handlePreview}) => {
     return (
         <div className='mt-10'>
             <Box
-            component="form"
+            // component="form"
             sx={{
                 '& .MuiTextField-root': { m: 1, width: '25ch' },
             }}
@@ -68,10 +68,9 @@ const CryptoFrom = ({setPair, handlePreview}) => {
                 
             </div>
             </Box>
-            <div className='mt-5 m-2'>
+            {/* <div className='mt-5 m-2'>
                 <Button onClick={() => handlePreview()}>Preview Chart</Button>
-            </div>
-
+            </div> */}
         </div>
 
     );

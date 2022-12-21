@@ -13,15 +13,16 @@ import Cookies from 'js-cookie'
 import { useRef } from 'react'
 import DCARules from '../components/Form/Steps/DCARules'
 import CusRules from '../components/Form/Steps/CusRules'
+import { Button } from "baseui/button";
+
 
 const GameInit = () => {
   const scrollRef = useRef(null)
   const topScrollRef = useRef(null)
   const [userData, setUserData] = useState('');
-  const [finalData, setFinalData] = useState([])
   const [showChart, setShowChart] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
-  const [useableData, setUseableData] = useState([])
+  const [historicalData, setHistoricalData] = useState([])
   const steps = [
     "Pick an asset",
     "Strategy",
@@ -29,9 +30,10 @@ const GameInit = () => {
     "Finish"
   ]
 
-  useEffect(() => console.log(userData), [userData]);
-
-  const handlePreview = async() => {
+  useEffect(() =>{
+    console.log(userData)
+  },[userData])
+  const handlePreview = async(scroll) => {
     let today = moment().format("YYYY-MM-DD")
     let twoYearsAgo = moment().add(-730, 'days').format("YYYY-MM-DD")
     let apiObject = {
@@ -47,11 +49,13 @@ const GameInit = () => {
     const result = await APICall.AsyncGetHistoricalData(apiObject)
     console.log(result)
     if (result.status === 'success'){
-      const useableData = APICall.ReturnDataProcessor(result.message)
-      console.log(useableData)
-      setUseableData(useableData)
+      const historicalData = APICall.ReturnDataProcessor(result.message)
+      console.log(historicalData)
+      setHistoricalData(historicalData)
       setShowChart(true)
-      scrollRef.current.scrollIntoView() 
+      if(scroll){
+        scrollRef.current.scrollIntoView() 
+      }
     }else{
       console.log("Fail Request")
       console.log(result)
@@ -66,9 +70,7 @@ const GameInit = () => {
   const displayStep = (step)=>{
     switch(step){
       case 1:
-        return <PickTrade
-            handlePreview={handlePreview} 
-            />
+        return <PickTrade/>
       case 2:
         return <AlgoSelect />
       case 3:
@@ -91,39 +93,56 @@ const GameInit = () => {
 
   const handleClick = (direction) =>{
     let newStep = currentStep
-    direction === "next"? newStep++: newStep--
+    if (direction === "next"){
+        newStep++
+        if(currentStep == 1){
+          handlePreview(true)
+        }else{
+          scrollToTop()
+        }
+    } else{
+      newStep--
+    } 
     newStep > 0 && newStep<= steps.length && setCurrentStep(newStep)
-
-    scrollToTop()
   }
   
   return (
-    <div className='mb-10' ref={topScrollRef}>
+    <div className='mb-10'>
       <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
+          {showChart ? (         
+              <div>
+                  <LineChart
+                    // currentData = {initialData}
+                    candData = {historicalData}
+                  ></LineChart>
+              </div>
+
+
+              
+          ): (<></>)}
         <div className='container horizontal mt-5'>
           <Stepper 
             steps = {steps}
             currentStep = {currentStep}
           />
-
-          <div className='my-10 p-10'>
+          
+          <div className='my-5 p-5' ref={topScrollRef}>
             <StepperContext.Provider value={{
               userData,
               setUserData,
-              finalData,
-              setFinalData
+              historicalData,
+              setHistoricalData
             }}>
               {displayStep(currentStep)}
             </StepperContext.Provider>
           </div>
 
-
         </div>
           <StepperContext.Provider value={{
               userData,
               setUserData,
-              finalData,
-              setFinalData
+              historicalData,
+              setHistoricalData
             }}>
             <StepperControl 
               handleClick = {handleClick}
@@ -132,17 +151,13 @@ const GameInit = () => {
             />
           </StepperContext.Provider>
 
-          {showChart ? (         
-              <div>
-                  <LineChart
-                    // currentData = {initialData}
-                    candData = {useableData}
-                  ></LineChart>
-              </div>
+          {userData.type === 1 && currentStep === 1 ? (          
+            <div className='mt-5 mb-2 ml-10'>
+                  <Button onClick={() => handlePreview(false)}>Preview Chart</Button>
+            </div>
+          ) : (<></>)
 
-
-              
-          ): (<></>)}
+          }
       </div>
       <div ref={scrollRef}></div>
     </div>
