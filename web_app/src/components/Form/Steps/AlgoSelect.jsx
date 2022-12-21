@@ -13,6 +13,18 @@ import indImage from '../../../data/ind.jpg'
 const AlgoSelect = () => {
   const { currentColor } = useStateContext();
   const {userData, setUserData} = useContext(StepperContext)
+  const initPriceScaleData = [
+    {
+      index: 0,
+      priceScale: 0,
+      share : 1
+    },
+    {
+      index: 1,
+      priceScale: 1,
+      share : 2
+    },
+  ]
   const cardData = [
     {
       index: 1,
@@ -35,10 +47,24 @@ const AlgoSelect = () => {
   ]
 
   const handleAlgoSelect = (algoType) =>{
-    setUserData({
-      ...userData,
-      algoType: algoType
-    })
+    if(algoType == 1){
+      setUserData({
+        ...userData,
+        algoType: algoType,
+        priceScaleData: initPriceScaleData
+      })
+    }else if(algoType == 2){
+      setUserData({
+        ...userData,
+        algoType: algoType
+      })
+    }else if (algoType == 3){
+      setUserData({
+        ...userData,
+        algoType: algoType
+      })
+    }
+
   }
   return (
     <div className='flex flex-wrap'>

@@ -11,11 +11,9 @@ import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
 import {DatePicker} from 'baseui/datepicker';
-import {addDays} from 'date-fns';
-import moment from 'moment'
 
 const MarRules = () => {
-  const {userData, setUserData, historicalData, setHistoricalData} = useContext(StepperContext)
+  const {userData, setUserData, historicalData} = useContext(StepperContext)
   const maxShare = 16383
   const singleShareMax = 2 ** 13
   const maxTakeProfit = 100
@@ -26,18 +24,8 @@ const MarRules = () => {
     t_shares: 3
   })
   const [userMoney, setUserMoney] = useState((JSON.parse(Cookies.get('_auth_state'))).user.money)
-  const [priceScaleData, setPriceScaleData] = useState([
-    {
-      index: 0,
-      priceScale: 0,
-      share : 1
-    },
-    {
-      index: 1,
-      priceScale: 1,
-      share : 2
-    },
-  ])
+
+  const [priceScaleData, setPriceScaleData] = useState([])
 
   const getDateStringFromHisDate  = (index) =>{
     try{

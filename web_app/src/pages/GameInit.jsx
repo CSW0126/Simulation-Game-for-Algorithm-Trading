@@ -33,6 +33,7 @@ const GameInit = () => {
   useEffect(() =>{
     console.log(userData)
   },[userData])
+
   const handlePreview = async(scroll) => {
     let today = moment().format("YYYY-MM-DD")
     let twoYearsAgo = moment().add(-730, 'days').format("YYYY-MM-DD")
@@ -90,7 +91,6 @@ const GameInit = () => {
     }
   }
 
-
   const handleClick = (direction) =>{
     let newStep = currentStep
     if (direction === "next"){
@@ -100,9 +100,11 @@ const GameInit = () => {
         }else{
           scrollToTop()
         }
-    } else{
+    } else if(direction === "back"){
       newStep--
-    } 
+    } else if(direction === "confirm"){
+      console.log("confirm")
+    }
     newStep > 0 && newStep<= steps.length && setCurrentStep(newStep)
   }
   
