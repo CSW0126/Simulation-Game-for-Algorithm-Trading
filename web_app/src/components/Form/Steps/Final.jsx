@@ -88,7 +88,7 @@ const Final = () => {
                 <div className='px-2 text-center'><span className='text-gray-600 font-semibold text-sm'>Shares</span></div>
               </div>
                 {userData.priceScaleData.map((item,index)=>(
-                  <div className='grid grid-cols-3 gap-3 border-t-1 border-gray-300'>
+                  <div className='grid grid-cols-3 gap-3 border-t-1 border-gray-300' key={index}>
                     <div className='px-2 text-center'><span className='text-gray-600 text-sm'>#{item.index}</span></div>
                     <div className='px-2 text-center'><span className='text-gray-600 text-sm'>{item.priceScale}%</span></div>
                     <div className='px-2 text-center'><span className='text-gray-600 text-sm'>{item.share}</span></div>

@@ -40,6 +40,8 @@ const userRoutes = require('./routes/user')
 app.use('/user', userRoutes)
 const historicalDataRoute = require('./routes/getHisData')
 app.use('/his',historicalDataRoute)
+const simulationRoute = require('./routes/simulation')
+app.use('/simulation',simulationRoute)
 
 // Error detect
 app.use((req,res,next)=>{

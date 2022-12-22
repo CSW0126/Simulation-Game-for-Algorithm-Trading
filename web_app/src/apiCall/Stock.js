@@ -67,6 +67,18 @@ export const APICall = {
             console.log(err)
             return null
         }
+    },
+    AsyncSendConfirmUserData : async(object) =>{
+        try{
+            let url = `${process.env.REACT_APP_SERVER_HOST}/simulation`
+            const response = await axios.post(
+                url,
+                object
+            );
+            return response.data
+        }catch(err){
+            return {status: 'fail', error: err}
+        }
     }
 }
 

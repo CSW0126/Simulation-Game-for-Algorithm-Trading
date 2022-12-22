@@ -98,7 +98,7 @@ router.post('/getCryptoData',AuthToken, async(req,res)=>{
                     //return old if api error
                     console.log(result)
                     console.log('return old if api error')
-                    return res.status(401).json({
+                    return res.status(200).json({
                         status: "success",
                         message: oldJsonData
                     })
