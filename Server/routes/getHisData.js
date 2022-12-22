@@ -61,6 +61,7 @@ router.post('/getCryptoData',AuthToken, async(req,res)=>{
                     console.log(newFirstDate)
 
                     let indexForReplace = -1
+                    let resultForKeep = []
                     //find exists data index (from start)
                     for (i in oldJsonData.results){
                         let a = moment(oldJsonData.results[i].t).format("YYYY-MM-DD")
@@ -71,20 +72,23 @@ router.post('/getCryptoData',AuthToken, async(req,res)=>{
                             console.log(moment(oldJsonData.results[i].t).format("YYYY-MM-DD"))
                             indexForReplace = i
                             break
+                        }else{
+                            resultForKeep.push(oldJsonData.results[i]) 
                         }
                     }
                     console.log(indexForReplace)
-                    let resultForKeep = []
-                    for (i in indexForReplace){
-                        resultForKeep.push(oldJsonData.results[i])
-                    }
+
+                    // for (i in oldJsonData.results){
+                    //     resultForKeep.push(oldJsonData.results[i])
+                    // }
+                    console.log(resultForKeep)
                     resultForKeep = resultForKeep.reverse()
                     for (item of resultForKeep)
                         newJson.results.unshift(item)
                     
                     newJson = JSON.stringify(newJson,null,4)
 
-                    fs.writeFile(path, newJson, function (err) {
+                    fs.writeFileSync(path, newJson, function (err) {
                         if (err) throw err;
                         console.log('File is overwrite successfully.');
                     });
