@@ -267,4 +267,34 @@ router.post('/edit',AuthToken, (req,res)=>{
     }
 })
 
+router.post('/view', AuthToken, async(req,res) =>{
+    try{
+        console.log(req.body)
+        _id = req._id
+
+        let user = await  User.findById(_id).exec()
+        if(user){
+            user.password = undefined
+            return res.status(200).json({
+                message: 'Auth success',
+                status: 'success',
+                user: user
+            })
+
+        }else{
+            res.status(401).json({
+                status: "fail",
+                message: "Auth fail"
+            })
+        }
+
+    }catch(e){
+        console.log(e)
+        res.status(401).json({
+            status: "fail",
+            message: "Auth fail"
+        })
+    }
+})
+
 module.exports = router

@@ -8,7 +8,7 @@ import MarRules from '../components/Form/Steps/MarRules'
 import PickTrade from '../components/Form/Steps/PickTrade'
 import { StepperContext } from '../contexts/StepperContext'
 import moment from 'moment';
-import APICall from '../apiCall/Stock'
+import APICall from '../apiCall/API'
 import Cookies from 'js-cookie'
 import { useRef } from 'react'
 import DCARules from '../components/Form/Steps/DCARules'

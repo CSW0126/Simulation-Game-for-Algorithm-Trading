@@ -11,6 +11,7 @@ URL:localhost:3000//his/getCryptoData
 Method: POST
 body:
 {
+    saveUser: true,
     type: 1,
     ticker: 'X:DOGEUSD',
     from: '2020-12-19',
@@ -51,24 +52,29 @@ router.post('/',AuthToken, async(req,res)=>{
                     //apply algo
                     result = Martingale(body.data, historicalData)
                     if(!result) throw "Rule error"
-                    let saveUser = await SaveUser(body, _id)
-                    console.log(saveUser)
-                    if (saveUser){
-                        return res.status(200).json({
-                            status: "success",
-                            message: result,
-                            user:saveUser
-                        })
+                    if(body.data.saveUser){
+                        let saveUser = await SaveUser(body, _id)
+                        console.log(saveUser)
+                        if (saveUser){
+                            return res.status(200).json({
+                                status: "success",
+                                message: result,
+                                user:saveUser
+                            })
+                        }else{
+                            return res.status(200).json({
+                                status: "success",
+                                message: result,
+                                user: null
+    
+                            })
+                        }
                     }else{
                         return res.status(200).json({
                             status: "success",
                             message: result,
-                            user: null
-
                         })
                     }
-
-                    
                 case 2:
                     //DCA
                     //apply algo
@@ -157,6 +163,7 @@ const getCryptoData = (ticker, dateRange) =>{
 
 const SaveUser = async(body, _id ) =>{
     try{
+        body.data.recordTime = new Date()
         let request_user = {
                 _id,
                 $push:{record:body.data}

@@ -32,6 +32,7 @@ const PickTrade = () => {
             setType(1)
             setUserData({
                 ...userData,
+                saveUser:true,
                 type:1,
                 pair: "X:BTCUSD",
                 investment : 1,
@@ -45,6 +46,7 @@ const PickTrade = () => {
             setType(2)
             setUserData({
                 ...userData,
+                saveUser:true,
                 type:2,
                 pair: 'not set (PickTrade.jsx)',
                 investment : 1,

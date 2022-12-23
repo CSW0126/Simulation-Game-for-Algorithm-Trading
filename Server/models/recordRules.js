@@ -17,6 +17,7 @@ module.exports = new mongoose.Schema({
     stop_loss:{type:Number, default: 0},
     price_range_up:{type:Number, default: 0},
     price_range_bot:{type:Number, default: 0},
+    recordTime:{type:Date, default:new Date()},
     
     //martingale related
     take_profit: {type:Number, default: 0},
