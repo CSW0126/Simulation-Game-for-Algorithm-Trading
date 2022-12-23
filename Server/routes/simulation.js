@@ -4,7 +4,7 @@ const AuthToken = require('../auth/check-token')
 const axios = require('axios').default;
 const fs = require('fs')
 const moment = require('moment')
-
+const User = require('../models/user')
 
 /* get historical data (crypto)
 URL:localhost:3000//his/getCryptoData
@@ -51,10 +51,23 @@ router.post('/',AuthToken, async(req,res)=>{
                     //apply algo
                     result = Martingale(body.data, historicalData)
                     if(!result) throw "Rule error"
-                    return res.status(200).json({
-                        status: "success",
-                        message: result
-                       })
+                    let saveUser = await SaveUser(body, _id)
+                    console.log(saveUser)
+                    if (saveUser){
+                        return res.status(200).json({
+                            status: "success",
+                            message: result,
+                            user:saveUser
+                        })
+                    }else{
+                        return res.status(200).json({
+                            status: "success",
+                            message: result,
+                            user: null
+
+                        })
+                    }
+
                     
                 case 2:
                     //DCA
@@ -142,8 +155,32 @@ const getCryptoData = (ticker, dateRange) =>{
     }
 }
 
-const SaveUser = async(body) =>{
+const SaveUser = async(body, _id ) =>{
+    try{
+        let request_user = {
+                _id,
+                $push:{record:body.data}
+            }
 
+        //EDIT
+        let user = await User.findById(request_user._id).exec()
+        if(!user){
+            //user not exist
+            console.log("!user")
+            return false
+        }
+
+        let updatedUser = await  User.findByIdAndUpdate(request_user._id, request_user, { new: true }).exec()
+        if(updatedUser){
+            updatedUser.password = undefined
+            return updatedUser
+        }
+
+        return false
+    }catch(err){
+        console.log(err)
+        return false
+    }
 }
 
 const Martingale = (rules, historicalData) =>{

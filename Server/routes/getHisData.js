@@ -81,7 +81,7 @@ router.post('/getCryptoData',AuthToken, async(req,res)=>{
                     // for (i in oldJsonData.results){
                     //     resultForKeep.push(oldJsonData.results[i])
                     // }
-                    console.log(resultForKeep)
+                    // console.log(resultForKeep)
                     resultForKeep = resultForKeep.reverse()
                     for (item of resultForKeep)
                         newJson.results.unshift(item)

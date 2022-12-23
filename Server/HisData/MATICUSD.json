@@ -1,7 +1,7 @@
 {
     "ticker": "X:MATICUSD",
-    "queryCount": 651,
-    "resultsCount": 651,
+    "queryCount": 652,
+    "resultsCount": 652,
     "adjusted": true,
     "results": [
         {
@@ -6513,9 +6513,19 @@
             "l": 0.7855,
             "t": 1671580800000,
             "n": 66558
+        },
+        {
+            "v": 23757605.90330704,
+            "vw": 0.7867,
+            "o": 0.7938,
+            "c": 0.7963,
+            "h": 0.79874,
+            "l": 0.7697,
+            "t": 1671667200000,
+            "n": 60549
         }
     ],
     "status": "DELAYED",
-    "request_id": "132a3f18ad92b3ccd09e061fcd0a82f3",
-    "count": 651
+    "request_id": "5193eb2ba20fcb05b11f7fd15d9cabed",
+    "count": 652
 }

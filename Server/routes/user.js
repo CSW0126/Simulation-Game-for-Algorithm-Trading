@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken')
 const AuthToken = require('../auth/check-token')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
-const e = require('express')
 
 
 /* create user
