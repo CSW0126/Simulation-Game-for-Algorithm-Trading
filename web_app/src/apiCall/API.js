@@ -35,6 +35,8 @@ export const APICall = {
                 data : data.results
             }
 
+            console.log(processData.data)
+
             for (let i in processData.data){
                 let old = processData.data[i]
                 
@@ -52,6 +54,7 @@ export const APICall = {
                 if (i == 0){
                     newData['color'] = 'rgba(0, 150, 136, 0.8)'
                 }else{
+                    // console.log(processData.data[i-1].close)
                     if (newData.close > processData.data[i-1].close){
                         //green
                         newData.color = 'rgba(0, 150, 136, 0.8)'
@@ -71,7 +74,7 @@ export const APICall = {
             return null
         }
     },
-    AsyncSendConfirmUserData : async(object) =>{
+    AsyncGetSimulation : async(object) =>{
         try{
             let url = `${process.env.REACT_APP_SERVER_HOST}/simulation`
             const response = await axios.post(
@@ -95,6 +98,45 @@ export const APICall = {
         }catch(e){
             console.log(e)
             return {status: 'fail', error: e}
+        }
+    },
+    AsyncFetchRecord : async(obj) =>{
+        try{
+            let url = `${process.env.REACT_APP_SERVER_HOST}/user/viewRecord`
+            let body = obj
+
+            const response = await axios.post(
+                url,
+                body
+            )
+            return response.data
+        }catch(err){
+            console.log(err)
+            return {status:'fail',error:err}
+        }
+    },
+    SimulationDataToMarkers : (simData)=>{
+        try{
+            console.log(simData)
+            let markers = []
+            for(let i in simData){
+                let time = simData[i].time
+                let found = markers.find(ele => ele.time == time)
+                if(found) continue
+                let obj = {
+                    time: simData[i].time,
+                    position: simData[i].order == "Buy" ? "aboveBar": "belowBar",
+                    shape: simData[i].order == "Buy" ? "arrowDown":"arrowUp",
+                    color: simData[i].order == "Buy" ? "#4CAF50":"#FF5252",
+                    text: simData[i].order+ " @ " + simData[i].executePrice
+                }
+
+                markers.push(obj)
+            }
+            return markers
+        }catch(e){
+            console.log(e)
+            return null
         }
     }
 }

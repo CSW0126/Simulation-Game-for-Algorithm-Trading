@@ -142,8 +142,8 @@ body:
 
 router.post('/verify',AuthToken, (req,res)=>{
     try{
-        username = req.username
-        _id = req._id
+        let username = req.username
+        let _id = req._id
         User.findOne({username:username, _id: _id})
         .exec()
         .then(user =>{
@@ -201,9 +201,9 @@ body:
 router.post('/edit',AuthToken, (req,res)=>{
     try{
         console.log(req.body)
-        username = req.username
-        _id = req._id
-        request_user = req.body.user
+        let username = req.username
+        let _id = req._id
+        let request_user = req.body.user
 
         //if _id not match
         if (request_user._id != _id){
@@ -267,10 +267,12 @@ router.post('/edit',AuthToken, (req,res)=>{
     }
 })
 
+
+
 router.post('/view', AuthToken, async(req,res) =>{
     try{
         console.log(req.body)
-        _id = req._id
+        let _id = req._id
 
         let user = await  User.findById(_id).exec()
         if(user){
@@ -288,6 +290,38 @@ router.post('/view', AuthToken, async(req,res) =>{
             })
         }
 
+    }catch(e){
+        console.log(e)
+        res.status(401).json({
+            status: "fail",
+            message: "Auth fail"
+        })
+    }
+})
+
+router.post('/viewRecord', AuthToken, async(req,res)=>{
+    try{
+        console.log(req.body)
+        let _id = req._id
+        let record_id = req.body.record_id
+
+        let user = await  User.findById(_id).exec()
+        if(user){
+            let records = user.record
+            // console.log(records)
+            let record = records.find(item => item._id == record_id)
+            if(record){
+                return res.status(200).json({
+                    status:"success",
+                    message:record
+                })
+            }else{
+                throw "No Record Found"
+            }
+        }else{
+            throw "User not found"
+        }
+        
     }catch(e){
         console.log(e)
         res.status(401).json({

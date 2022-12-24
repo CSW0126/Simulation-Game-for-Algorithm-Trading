@@ -11,6 +11,7 @@ import Login from './Auth/Login'
 import SignUp from './Auth/SignUp'
 import './App.css'
 import { useStateContext } from './contexts/ContextProvider';
+import Record from './components/Record';
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -85,6 +86,13 @@ const App = () => {
                     <Route path="/History" element={
                       <RequireAuth loginPath='/login'>
                         <History/>
+                      </RequireAuth>
+                    } />
+
+                    {/* Trade Record */}
+                    <Route path="/History/:id" element={
+                      <RequireAuth loginPath='/login'>
+                        <Record/>
                       </RequireAuth>
                     } />
                     

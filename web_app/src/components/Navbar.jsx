@@ -7,7 +7,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import avatar from '../data/PolyU.png';
-import { Notification, UserProfile } from '.';
+import { UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -77,8 +77,7 @@ const Navbar = () => {
         </div>
       </TooltipComponent>
 
-      {isClicked.notification && (<Notification />)}
-      {isClicked.userProfile && (<UserProfile />)}
+      {/* {isClicked.userProfile && (<UserProfile />)} */}
     </div>
   </div>
   )

@@ -67,6 +67,10 @@ const LineChart = (props) => {
           },
           borderVisible: false,
         },
+        localization: {
+          dateFormat: 'yyyy-MM-dd',
+          locale: 'en-US'
+      },
 			});
 			chart.timeScale().fitContent();
 
@@ -91,16 +95,20 @@ const LineChart = (props) => {
 
       chart.subscribeCrosshairMove((param) => {
         if (param.time) {
-          const price = param.seriesPrices.get(candlestickSeries);
-          const vol = param.seriesPrices.get(volumeSeries)
-          // console.log(vol)
-          setDisplayPrice({
-            open:price.open,
-            high: price.high,
-            low:price.low,
-            close:price.close,
-            volume:vol.toFixed(2)
-          })
+          try{
+            const price = param.seriesPrices.get(candlestickSeries);
+            const vol = param.seriesPrices.get(volumeSeries)
+            // console.log(vol)
+            setDisplayPrice({
+              open:price.open,
+              high: price.high,
+              low:price.low,
+              close:price.close,
+              volume:vol.toFixed(2)
+            })
+          }catch(e){
+            console.log(e)
+          }
         }
       });
 

@@ -44,7 +44,7 @@ const ProfitMove = (props) => {
                 to:today,
                 token
             }
-            let response = await APICall.AsyncSendConfirmUserData(body) 
+            let response = await APICall.AsyncGetSimulation(body) 
             let historicalDataResponse = await APICall.AsyncGetHistoricalData(historicalObj)
             processFetchData(response, historicalDataResponse.message.results)
         }
@@ -104,7 +104,7 @@ const ProfitMove = (props) => {
 
         style={
             data.investment > fetchData[fetchData.length-1] ? 
-            {stroke:"#089981", strokeDasharray: '2, 2'}: 
+            {stroke:"#E91E63", strokeDasharray: '2, 2'}: 
             {stroke:"#E91E63", strokeDasharray: '2, 2'}
         }
             />

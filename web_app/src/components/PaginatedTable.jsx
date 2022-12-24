@@ -11,11 +11,13 @@ import {
 } from 'baseui/table-semantic';
 import {Button, KIND, SIZE} from 'baseui/button';
 import ProfitMove from './Charts/ProfitMove';
+import { useNavigate } from 'react-router-dom';
 
 const PaginatedTable = (props) => {
     const [css, theme] = useStyletron();
     const [page, setPage] = React.useState(1);
     const [limit, setLimit] = React.useState(5);
+    const navigate = useNavigate()
 
     const handlePageChange = (nextPage) => {
       if (nextPage < 1) {
@@ -43,7 +45,8 @@ const PaginatedTable = (props) => {
     };
 
     const handleViewClick = (_id) =>{
-      console.log(_id)
+      // console.log(_id)
+      navigate(`/history/${_id}`)
     }
 
     const AlgoType = ({type}) =>{

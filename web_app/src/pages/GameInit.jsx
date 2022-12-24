@@ -126,7 +126,7 @@ const GameInit = () => {
         token :Cookies.get('_auth'),
         data : userData
       }
-      const response = await APICall.AsyncSendConfirmUserData(obj)
+      const response = await APICall.AsyncGetSimulation(obj)
       console.log(response)
       // navigate("/history");
     }catch(err){
