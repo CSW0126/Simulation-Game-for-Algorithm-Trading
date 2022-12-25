@@ -207,6 +207,7 @@ const Martingale = (rules, historicalData) =>{
         let round = 0
         let record = []
         let totalShares = 0
+        let entryInvestment = 0
         //cal total shares
         for(let i in buyParam){
             totalShares += buyParam[i].share
@@ -266,6 +267,7 @@ const Martingale = (rules, historicalData) =>{
 
                     //check buy
                     if(currentPrice <= obj.buyPrice){
+                        entryInvestment = holdingUSD
                         //execute BUY option in current price, update holding coin and USD
                         let getCoin = cost/currentPrice
                         holdingCoin += getCoin
@@ -321,7 +323,9 @@ const Martingale = (rules, historicalData) =>{
                         round,
                         time: moment(historicalData[i].t).format("YYYY-MM-DD"),
                         entryPrice,
+                        entryInvestment,
                         order:"Sell",
+                        currentPrice,
                         executePrice: currentPrice,
                         sellValue,
                         holdingCoin,
@@ -349,7 +353,9 @@ const Martingale = (rules, historicalData) =>{
                         round,
                         time: moment(historicalData[i].t).format("YYYY-MM-DD"),
                         entryPrice,
+                        entryInvestment,
                         order:"Sell",
+                        currentPrice,
                         executePrice: currentPrice,
                         sellValue,
                         holdingCoin,
@@ -380,7 +386,9 @@ const Martingale = (rules, historicalData) =>{
                         round,
                         time: moment(historicalData[i].t).format("YYYY-MM-DD"),
                         entryPrice,
+                        entryInvestment,
                         order:"Sell",
+                        currentPrice,
                         executePrice: currentPrice,
                         sellValue,
                         holdingCoin,

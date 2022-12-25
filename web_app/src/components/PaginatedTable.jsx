@@ -108,8 +108,8 @@ const PaginatedTable = (props) => {
             paddingBottom: theme.sizing.scale600,
           })}
         >
-          <div className={css({...theme.typography.font750})}>
-            Table Example
+          <div className={css({...theme.typography.font750, paddingLeft:'1rem'})}>
+            Records
           </div>
         </div>
         <div className={css({height: '500px'})}>
