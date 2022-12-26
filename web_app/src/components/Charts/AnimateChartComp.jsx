@@ -8,26 +8,10 @@ const AnimateChartComp = (props) => {
     const textColor = 'black'
     const areaTopColor = '#2962FF'
     const areaBottomColor = 'rgba(41, 98, 255, 0.28)'
-	const {data, simulationData, displayPrice, setDisplayPrice} = props;
+	const {data, simulationData, setDisplayPrice} = props;
     const speed = props.speed ? props.speed : 100
 	const chartContainerRef = useRef();
-    const toolTipRef = useRef()
     const maxBar = 50
-    const tooltipStyle ={
-        
-        "display": "hidden",
-        "box-sizing": "border-box",
-        "font-size": "12px",
-        "color": "#131722",
-        "background-color": "rgba(255, 255, 255, 1)",
-        "text-align": "left",
-        "z-index": 1000,
-        "top": "12px",
-        "left": "12px",
-        "pointer-events": "none",
-        "border": "1px solid rgba(0, 150, 136, 1)",
-        "border-radius":" 2px"
-    }
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
     var toolTipWidth = 80;
@@ -35,10 +19,14 @@ const AnimateChartComp = (props) => {
     var toolTipMargin = 15;
     var toolTip = document.createElement('div');
     toolTip.className="absolute hidden bg-white w-auto h-auto p-[8px] box-border text-xs z-[1000] top-3 left-3 pointer-events-none border rounded-sm border-cyan-700 text-left"
-
-	useEffect(async() => {
+    
+    useEffect(()=>{
         chartContainerRef.current.appendChild(toolTip)
-        console.log(simulationData)
+    },[])
+    
+
+	useEffect(() => {
+        //console.log(simulationData)
 			const handleResize = () => {
 				chart.applyOptions({ width: chartContainerRef.current.clientWidth });
 			};
@@ -75,28 +63,19 @@ const AnimateChartComp = (props) => {
                 },
               })
             volumeSeries.setData([])
-			const candleSeries = chart.addCandlestickSeries({ lineColor, topColor: areaTopColor, bottomColor: areaBottomColor });
+
+			const candleSeries = chart.addCandlestickSeries({ 
+                lineColor, 
+                topColor: areaTopColor, 
+                bottomColor: areaBottomColor 
+            });
+
 			candleSeries.setData([]);
+            
             candleSeries.setMarkers(simulationData)
             chart.subscribeCrosshairMove((param) => {
 
                         try{
-                        //   if (param.time) {
-                        //       try{
-                        //         const price = param.seriesPrices.get(candleSeries);
-                        //         const vol = param.seriesPrices.get(volumeSeries)
-                        //         // console.log(vol)
-                        //         setDisplayPrice({
-                        //           open:price.open,
-                        //           high: price.high,
-                        //           low:price.low,
-                        //           close:price.close,
-                        //           volume:vol.toFixed(2)
-                        //         })
-                        //       }catch(e){
-                        //         console.log(e)
-                        //       }
-                        //     }
                           const price = param.seriesPrices.get(candleSeries);
                           const vol = param.seriesPrices.get(volumeSeries)
           
@@ -109,13 +88,13 @@ const AnimateChartComp = (props) => {
                           {
                               toolTip.style.display = 'none';
                           } else {
-                              setDisplayPrice({
-                                  open:price.open,
-                                  high: price.high,
-                                  low:price.low,
-                                  close:price.close,
-                                  volume:vol.toFixed(2)
-                                })
+                            //   setDisplayPrice({
+                            //       open:price.open,
+                            //       high: price.high,
+                            //       low:price.low,
+                            //       close:price.close,
+                            //       volume:vol.toFixed(2)
+                            //     })
                               toolTip.style.display = 'block';
                               toolTip.innerHTML = 
                               `
@@ -132,7 +111,7 @@ const AnimateChartComp = (props) => {
                                   close : ${price.close}
                               </div>
                               <div className="">
-                                  volume : ${vol.toFixed(2)}
+                                  volume : ${vol?.toFixed(2)}
                               </div>`;
                               var coordinate = candleSeries.priceToCoordinate(price.close);
                               var shiftedCoordinate = param.point.x - 50;
@@ -149,6 +128,8 @@ const AnimateChartComp = (props) => {
                         }
       
                   });
+
+
             const play = async(chart)=>{
                 try{
                     let count = 0
@@ -157,7 +138,8 @@ const AnimateChartComp = (props) => {
                         candleSeries.update(item);
                         volumeSeries.update(item)
                         if (count <= maxBar) chart.timeScale().fitContent();
-                        await sleep(speed)
+                        if(speed > 0)
+                            await sleep(speed)
                     }
 
                 }catch(e){
@@ -169,7 +151,7 @@ const AnimateChartComp = (props) => {
 			window.addEventListener('resize', handleResize);
 
             //chart animate
-            await play(chart, candleSeries)
+            play(chart, candleSeries)
 			return () => {
 				window.removeEventListener('resize', handleResize);
 				chart.remove();  

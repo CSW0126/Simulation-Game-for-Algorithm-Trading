@@ -138,6 +138,63 @@ export const APICall = {
             console.log(e)
             return null
         }
+    },
+    GetProfitMovementData : (simulationData, historicalData, data) =>{
+        try{
+            let startDate = moment(data.rangeDate[0]).valueOf()
+            let endDate = moment(data.rangeDate[1]).valueOf()
+            let orderData = simulationData.message.reverse()
+            let profitArray = []
+            let processedHistoricalData = []
+    
+            for(let i in historicalData){
+                if(historicalData[i].t < startDate) continue
+                if(historicalData[i].t > endDate) continue
+                processedHistoricalData.push(historicalData[i])
+            }
+    
+            let lastHoldingUSD = data.investment
+            let lastHoldingCoin = 0
+    
+            for(let i in processedHistoricalData){
+                let date = moment(processedHistoricalData[i].t).format("YYYY-MM-DD")
+                let price = processedHistoricalData[i].c
+    
+                const data2Item = orderData.find(j =>j.time <= date)
+                if(data2Item){
+                    lastHoldingCoin = data2Item.holdingCoin
+                    lastHoldingUSD = data2Item.holdingUSD
+                }
+                const value = lastHoldingCoin * price + lastHoldingUSD
+                profitArray.push(value)
+     
+            }
+            return profitArray
+        }catch(e){
+            console.log(e)
+            return []
+        }
+    },
+    MatchProfitWithData : (profitMoveData, processHis) =>{
+        try{
+            if(processHis.length == profitMoveData.length){
+                let result = []
+                console.log(profitMoveData)
+                for(let i in processHis){
+                    let obj = {
+                        time: processHis[i].time,
+                        value: profitMoveData[i]
+                    }
+                    result.push(obj)
+                }
+                return result
+            }else{
+                throw "Length Not Same"
+            }
+        }catch(e){
+            console.log(e)
+            return []
+        }
     }
 }
 

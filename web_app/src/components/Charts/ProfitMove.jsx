@@ -56,35 +56,8 @@ const ProfitMove = (props) => {
         // console.log(historicalData)
         // console.log(response.message)
         // console.log(data)
-
-        let startDate = moment(data.rangeDate[0]).valueOf()
-        let endDate = moment(data.rangeDate[1]).valueOf()
-        let orderData = response.message.reverse()
-        let profitArray = []
-        let processedHistoricalData = []
-
-        for(let i in historicalData){
-            if(historicalData[i].t < startDate) continue
-            if(historicalData[i].t > endDate) continue
-            processedHistoricalData.push(historicalData[i])
-        }
-
-        let lastHoldingUSD = data.investment
-        let lastHoldingCoin = 0
-
-        for(let i in processedHistoricalData){
-            let date = moment(processedHistoricalData[i].t).format("YYYY-MM-DD")
-            let price = processedHistoricalData[i].c
-
-            const data2Item = orderData.find(j =>j.time <= date)
-            if(data2Item){
-                lastHoldingCoin = data2Item.holdingCoin
-                lastHoldingUSD = data2Item.holdingUSD
-            }
-            const value = lastHoldingCoin * price + lastHoldingUSD
-            profitArray.push(value)
- 
-        }
+        let profitArray = APICall.GetProfitMovementData(response, historicalData, data)
+        
         // console.log(profitArray)
 
         setFetchData(profitArray)
