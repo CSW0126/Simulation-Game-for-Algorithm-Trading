@@ -50,13 +50,13 @@ const ProfitMove = (props) => {
         }
 
         fetchData()
-    },[])
+    },[data])
    
     const processFetchData = (response, historicalData) =>{
         // console.log(historicalData)
         // console.log(response.message)
         // console.log(data)
-        let profitArray = APICall.GetProfitMovementData(response, historicalData, data)
+        let profitArray = APICall.GetProfitMovementData(response, historicalData, data).data
         
         // console.log(profitArray)
 

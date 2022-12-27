@@ -37,6 +37,7 @@ router.post('/',AuthToken, async(req,res)=>{
         if(body.data.type == 1){
             //crypto
             historicalData = getCryptoData(body.data.pair, body.data.rangeDate)
+            // console.log(historicalData)
         }else{
             //stock
             //TODO

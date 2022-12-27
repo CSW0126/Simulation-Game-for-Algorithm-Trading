@@ -112,7 +112,7 @@ const PaginatedTable = (props) => {
             Records
           </div>
         </div>
-        <div className={css({height: '500px'})}>
+        <div className={css({height: 'auto'})}>
             <TableBuilder
               isLoading={props.isLoading}
               // overrides={{Root: {style: {maxHeight: '500px'}}}}

@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
+import APICall from '../apiCall/API';
 
 const ExecutionTable = (props) => {
     const [css, theme] = useStyletron();
@@ -22,7 +23,7 @@ const ExecutionTable = (props) => {
     const [page, setPage] = React.useState(1);
     const [limit, setLimit] = React.useState(10);
     const navigate = useNavigate()
-
+    
     const handlePageChange = (nextPage) => {
         if (nextPage < 1) {
           return;
@@ -47,43 +48,6 @@ const ExecutionTable = (props) => {
         const min = (page - 1) * limit;
         return props.data.slice(min, min + limit);
       };
-
-      const handleToFixed = (value) =>{
-        try{
-            let pair = rules.pair
-            if(pair == "X:BTCUSD"){
-                return value.toFixed(0)
-            }else if(pair == "X:DOGEUSD"){
-                return value.toFixed(5)
-            }else if(pair == "X:MATICUSD"){
-                return value.toFixed(4)
-            }else if(pair == "X:ETHUSD"){
-                return value.toFixed(0)
-            }
-
-        }catch(e){
-            console.log(e)
-            return value
-        }
-      }
-
-      const handleGetCoinToFixed = (value) =>{
-        try{
-            let pair = rules.pair
-            if(pair == "X:BTCUSD"){
-                return value.toFixed(6) + " BTC"
-            }else if(pair == "X:DOGEUSD"){
-                return value.toFixed(2) + " DOGE"
-            }else if(pair == "X:MATICUSD"){
-                return value.toFixed(2) + " MATIC"
-            }else if(pair == "X:ETHUSD"){
-                return value.toFixed(5) + " ETH"
-            }
-
-        }catch(e){
-            return value
-        }
-      }
 
       const calProfit = (row) =>{
         try{
@@ -240,7 +204,7 @@ const ExecutionTable = (props) => {
                   }
                 }}
               >
-                {row =>(<div className='flex text-gray-700 font-body justify-center'>${handleToFixed(row.currentPrice)}</div>)}
+                {row =>(<div className='flex text-gray-700 font-body justify-center'>${APICall.HandleToFixed(row.currentPrice, rules.pair)}</div>)}
               </TableBuilderColumn>
 
               <TableBuilderColumn header="Get/Sell Coin"
@@ -273,9 +237,9 @@ const ExecutionTable = (props) => {
               >
                 {row =>(<div className={`flex text-gray-700 font-body justify-center ${row.order == "Buy" ? "text-[#00B070]" : "text-[#FF5252]"}`}>{
                 row.getCoin ? 
-                "+" + handleGetCoinToFixed(row.getCoin)
+                "+" + APICall.HandleGetCoinToFixed(row.getCoin, rules.pair)
                 : 
-                "-" + handleGetCoinToFixed(row.sellValue/row.currentPrice)}</div>)}
+                "-" + APICall.HandleGetCoinToFixed(row.sellValue/row.currentPrice , rules.pair)}</div>)}
               </TableBuilderColumn>
 
               <TableBuilderColumn header="Coin Avg Price"
@@ -308,7 +272,7 @@ const ExecutionTable = (props) => {
               >
                 {row =>(<div className='flex text-gray-700 font-body justify-center'>{
                 row.holdingAvg ? 
-                "$" + handleToFixed(row.holdingAvg) : "/"}</div>)}
+                "$" + APICall.HandleToFixed(row.holdingAvg, rules.pair) : "/"}</div>)}
               </TableBuilderColumn>
 
               <TableBuilderColumn header="USD Balance"
@@ -370,7 +334,7 @@ const ExecutionTable = (props) => {
                   }
                 }}
               >
-                {row =>(<div className='flex text-gray-700 font-body justify-center'>{handleGetCoinToFixed(row.holdingCoin)}</div>)}
+                {row =>(<div className='flex text-gray-700 font-body justify-center'>{APICall.HandleGetCoinToFixed(row.holdingCoin, rules.pair)}</div>)}
               </TableBuilderColumn>
 
               <TableBuilderColumn header="Holding Value"

@@ -128,7 +128,16 @@ const GameInit = () => {
       }
       const response = await APICall.AsyncGetSimulation(obj)
       console.log(response)
-      // navigate("/history");
+      if(response.status == 'success'){
+        let newID = response.user.record[response.user.record.length-1]._id
+        if(newID){
+          navigate(`/history/${newID}`);
+        }
+      }else{
+        console.log(response)
+        throw "Error response"
+      }
+      
     }catch(err){
       console.log(err)
     }

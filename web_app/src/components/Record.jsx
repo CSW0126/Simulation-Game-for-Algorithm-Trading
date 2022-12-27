@@ -6,7 +6,7 @@ import AnimateChart from './Charts/AnimateChart'
 import moment from 'moment'
 import ExecutionTable from './ExecutionTable'
 import ProfitMovementChart from './Charts/ProfitMovementChart'
-
+import { Spinner } from "baseui/spinner";
 
 const Record = () => {
     const params = useParams()
@@ -17,6 +17,7 @@ const Record = () => {
     const [rawSimulationData, setRawSimulationData] = useState([])
     const [historicalData, setHistoricalData] = useState([])
     const [movementData, setMovementData] = useState([])
+    const [rawMovementData, setRawMovementData] = useState([])
     const [speed, setSpeed] = useState(0.1)
     const [displayPrice, setDisplayPrice] = useState({
       open:0,
@@ -46,7 +47,8 @@ const Record = () => {
             let responseOfSimulation = await APICall.AsyncGetSimulation(getSimulationBody)
             if(responseOfSimulation.status == 'success'){
               let simTemp = responseOfSimulation.message
-              setRawSimulationData(simTemp)
+              let simTempReverse = [...simTemp]
+              setRawSimulationData(simTempReverse)
               let markers = APICall.SimulationDataToMarkers(simTemp)
               setSimulationData(markers)
             }else{
@@ -80,7 +82,8 @@ const Record = () => {
 
               let rawProfitMoveData = APICall.GetProfitMovementData(responseOfSimulation, hisResponse.message.results, responseOfRecord.message)
               // console.log(rawProfitMoveData)
-              let profitMoveData = APICall.MatchProfitWithData(rawProfitMoveData, hisTemp)
+              setRawMovementData(rawProfitMoveData)
+              let profitMoveData = APICall.MatchProfitWithData(rawProfitMoveData.data, hisTemp)
               // console.log(profitMoveData.length)
               // console.log(processHis.length)
               // console.log(profitMoveData)
@@ -103,13 +106,19 @@ const Record = () => {
 
 
   const ErrorBody = (
-    <div>Fetch data Error</div>
+      <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
+          <p className=' font-semibold text-cyan-600 m-5 text-xl' >Loading...</p>
+          <div className='ml-5 mb-5'>
+            <Spinner $color="#0891b2" />
+          </div>
+
+      </div>
   )
   const SuccessBody = (
 
       <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
         <p className=' font-semibold text-cyan-600 m-5 text-xl' >Record Summary</p>
-        <div className='ml-5 py-5 grid grid-cols-1 gap-4 border-t-1 border-gray-300'>
+        <div className='ml-5 p-5 grid grid-cols-1 gap-4 border-t-1 border-gray-300'>
         {/* <div className='flex'>
             <p className='gap-5 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 m-2 text-left text-sm'>High : 
               <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.high}</span> - Low:&nbsp;
@@ -121,9 +130,9 @@ const Record = () => {
           </div> */}
           <AnimateChart data={historicalData.data} speed={speed} simulationData={simulationData} displayPrice={displayPrice} setDisplayPrice={setDisplayPrice}/>
         </div>
-        <p className=' font-semibold text-cyan-600 mx-5 text-sm' >Profit Movement</p>
-        <div>
-          <ProfitMovementChart data={movementData} ruleData={rulesData}/>
+        <p className=' font-semibold text-cyan-600 mx-5 text-sm mt-5' >Profit Movement</p>
+        <div className='px-5 pb-10 pt-5'>
+          <ProfitMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/>
         </div>
 
         <p className=' font-semibold text-cyan-600 mx-5 text-sm' >Buy / Sell Record</p>

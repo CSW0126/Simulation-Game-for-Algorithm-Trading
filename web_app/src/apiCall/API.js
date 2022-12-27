@@ -146,6 +146,7 @@ export const APICall = {
             let orderData = simulationData.message.reverse()
             let profitArray = []
             let processedHistoricalData = []
+            let objArr = []
     
             for(let i in historicalData){
                 if(historicalData[i].t < startDate) continue
@@ -155,21 +156,40 @@ export const APICall = {
     
             let lastHoldingUSD = data.investment
             let lastHoldingCoin = 0
+            let lastOrder = 0
     
             for(let i in processedHistoricalData){
+                let dataObj = {}
                 let date = moment(processedHistoricalData[i].t).format("YYYY-MM-DD")
                 let price = processedHistoricalData[i].c
-    
+                
+                dataObj.time = date
+                dataObj.price = price
+
                 const data2Item = orderData.find(j =>j.time <= date)
                 if(data2Item){
                     lastHoldingCoin = data2Item.holdingCoin
                     lastHoldingUSD = data2Item.holdingUSD
+                    lastOrder = data2Item.round
+
+                    dataObj.holdingCoin = lastHoldingCoin
+                    dataObj.holdingUSD = lastHoldingUSD
+                    dataObj.round = lastOrder
+                }else{
+                    console.log("NAN")
                 }
                 const value = lastHoldingCoin * price + lastHoldingUSD
+
+                dataObj.holdingValue = value
                 profitArray.push(value)
-     
+                objArr.push(dataObj)
             }
-            return profitArray
+            let result = {
+                objArr,
+                data : profitArray
+            }
+
+            return result
         }catch(e){
             console.log(e)
             return []
@@ -179,7 +199,7 @@ export const APICall = {
         try{
             if(processHis.length == profitMoveData.length){
                 let result = []
-                console.log(profitMoveData)
+                // console.log(profitMoveData)
                 for(let i in processHis){
                     let obj = {
                         time: processHis[i].time,
@@ -194,6 +214,39 @@ export const APICall = {
         }catch(e){
             console.log(e)
             return []
+        }
+    },
+    HandleToFixed : (value, pair) =>{
+        try{
+            if(pair == "X:BTCUSD"){
+                return value.toFixed(0)
+            }else if(pair == "X:DOGEUSD"){
+                return value.toFixed(5)
+            }else if(pair == "X:MATICUSD"){
+                return value.toFixed(4)
+            }else if(pair == "X:ETHUSD"){
+                return value.toFixed(0)
+            }
+
+        }catch(e){
+            console.log(e)
+            return value
+        }
+    },
+    HandleGetCoinToFixed : (value, pair) =>{
+        try{
+            if(pair == "X:BTCUSD"){
+                return value.toFixed(6) + " BTC"
+            }else if(pair == "X:DOGEUSD"){
+                return value.toFixed(2) + " DOGE"
+            }else if(pair == "X:MATICUSD"){
+                return value.toFixed(2) + " MATIC"
+            }else if(pair == "X:ETHUSD"){
+                return value.toFixed(5) + " ETH"
+            }
+
+        }catch(e){
+            return value
         }
     }
 }

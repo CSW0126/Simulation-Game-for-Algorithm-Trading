@@ -18,10 +18,10 @@ const CryptoFrom = ({setPair}) => {
           value: 'X:ETHUSD',
           label: 'ETH-USD',
         },
-        {
-          value: 'X:MATICUSD',
-          label: 'MATIC-USD',
-        },
+        // {
+        //   value: 'X:MATICUSD',
+        //   label: 'MATIC-USD',
+        // },
         {
           value: 'X:DOGEUSD',
           label: 'DOGE-USD',

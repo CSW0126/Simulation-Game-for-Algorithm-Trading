@@ -1,7 +1,7 @@
 {
     "ticker": "X:DOGEUSD",
-    "queryCount": 730,
-    "resultsCount": 730,
+    "queryCount": 729,
+    "resultsCount": 729,
     "adjusted": true,
     "results": [
         {
@@ -7373,9 +7373,19 @@
             "l": 0.07314,
             "t": 1671926400000,
             "n": 57620
+        },
+        {
+            "v": 206316560.40771517,
+            "vw": 0.0756,
+            "o": 0.0761,
+            "c": 0.07566,
+            "h": 0.076686,
+            "l": 0.0741394,
+            "t": 1672012800000,
+            "n": 34241
         }
     ],
     "status": "DELAYED",
-    "request_id": "257374b3c89fba12be06fbe66b62a55b",
-    "count": 730
+    "request_id": "2a63db6f4602483494b75132a3f5fac0",
+    "count": 729
 }
