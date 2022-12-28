@@ -7,11 +7,15 @@ import moment from 'moment'
 import ExecutionTable from './ExecutionTable'
 import ProfitMovementChart from './Charts/ProfitMovementChart'
 import { Spinner } from "baseui/spinner";
+import { Button } from 'baseui/button'
+import Collapse from '@mui/material/Collapse';
+import MarFinal from './Form/Steps/MarFinal'
 
 const Record = () => {
     const params = useParams()
     const [record_id, setRecord_id] = useState(params.id)
     const [isError, setIsError] = useState(true)
+    const [errorMsg, setErrorMsg] = useState("Loading...")
     const [rulesData, setRulesData] = useState(null)
     const [simulationData, setSimulationData] = useState([])
     const [rawSimulationData, setRawSimulationData] = useState([])
@@ -19,6 +23,7 @@ const Record = () => {
     const [movementData, setMovementData] = useState([])
     const [rawMovementData, setRawMovementData] = useState([])
     const [speed, setSpeed] = useState(0.1)
+    const [open, setOpen] = useState(false);
     const [displayPrice, setDisplayPrice] = useState({
       open:0,
       high:0,
@@ -26,6 +31,15 @@ const Record = () => {
       close:0,
       volume:0
     })
+
+    const handleCollapseClick = () => {
+      setOpen(!open);
+    };
+
+    useEffect(()=>{
+      setErrorMsg("Loading...")
+    },[])
+
     useEffect(()=>{
       const fetchResult = async()=>{
         try{
@@ -97,6 +111,7 @@ const Record = () => {
           }
         }catch(e){
           console.log(e)
+          setErrorMsg("Error...")
           setIsError(true)
         }
       }
@@ -104,48 +119,64 @@ const Record = () => {
 
     },[record_id])
 
+    const ruleDetails = () =>{
+      switch(rulesData?.algoType){
+        case 1:
+          return (
+              <MarFinal userData={rulesData}/>
+          )
+
+        case 2:
+          return <div>2</div>
+        case 3:
+          return <div>3</div>
+        default:
+          return <div>4</div>
+      }
+    }
 
   const ErrorBody = (
       <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
-          <p className=' font-semibold text-cyan-600 m-5 text-xl' >Loading...</p>
+          <p className=' font-semibold text-cyan-600 m-5 text-xl' >{errorMsg}.</p>
           <div className='ml-5 mb-5'>
-            <Spinner $color="#0891b2" />
+            {errorMsg != "Error..." ? (<Spinner $color="#0891b2" />):(<></>)}
           </div>
-
       </div>
   )
   const SuccessBody = (
 
-      <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
+      <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5 mt-5'>
         <p className=' font-semibold text-cyan-600 m-5 text-xl' >Record Summary</p>
-        <div className='ml-5 p-5 grid grid-cols-1 gap-4 border-t-1 border-gray-300'>
-        {/* <div className='flex'>
-            <p className='gap-5 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 m-2 text-left text-sm'>High : 
-              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.high}</span> - Low:&nbsp;
-              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.low}</span> - Open:&nbsp;
-              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.open}</span> - Close:&nbsp;
-              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.close}</span> - Volume:&nbsp;
-              <span className={`font-bold ${displayPrice.close >= displayPrice.open ? "text-green-600" : "text-rose-600"}`}>{displayPrice.volume}</span>
-            </p>
-          </div> */}
+        <div className='ml-5 mb-5'>
+          <Button onClick={()=>handleCollapseClick()}>Rules Review</Button>
+        </div>
+        <div className=''>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            {ruleDetails()}
+          </Collapse>
+        </div>
+
+        <div className='m-5 '>
           <AnimateChart data={historicalData.data} speed={speed} simulationData={simulationData} displayPrice={displayPrice} setDisplayPrice={setDisplayPrice}/>
         </div>
         <p className=' font-semibold text-cyan-600 mx-5 text-sm mt-5' >Profit Movement</p>
-        <div className='px-5 pb-10 pt-5'>
+        <div className='m-5'>
           <ProfitMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/>
         </div>
 
         <p className=' font-semibold text-cyan-600 mx-5 text-sm' >Buy / Sell Record</p>
-        <div>
+        <div className='grid grid-cols-1'>
           <ExecutionTable data={rawSimulationData} rules={rulesData}/>
         </div>
       </div>
+      
 
   )
   return (
-    <div className='mb-10 min-w-[70%]'>
+    <div className='mb-10 ' >
       {isError? ErrorBody: SuccessBody}
     </div>
+
   )
 }
 

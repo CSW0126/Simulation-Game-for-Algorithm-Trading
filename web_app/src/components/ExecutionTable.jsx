@@ -75,7 +75,7 @@ const ExecutionTable = (props) => {
         </div>
         <div className={css({height: 'auto'})}>
             <TableBuilder
-              // overrides={{Root: {style: {maxHeight: '500px'}}}}
+              overrides={{Root: {style: {width: 'auto'}}}}
               data={window()}
             >
               <TableBuilderColumn header="Round"

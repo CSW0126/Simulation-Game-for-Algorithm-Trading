@@ -1,7 +1,7 @@
 {
     "ticker": "X:ETHUSD",
-    "queryCount": 729,
-    "resultsCount": 729,
+    "queryCount": 730,
+    "resultsCount": 730,
     "adjusted": true,
     "results": [
         {
@@ -7383,9 +7383,19 @@
             "l": 1209,
             "t": 1672012800000,
             "n": 281296
+        },
+        {
+            "v": 236661.94762580557,
+            "vw": 1215.1966,
+            "o": 1229.7,
+            "c": 1210.94,
+            "h": 1234.9,
+            "l": 1199.58,
+            "t": 1672099200000,
+            "n": 410141
         }
     ],
     "status": "DELAYED",
-    "request_id": "d69f53521137d56f35ce076cfb3f734b",
-    "count": 729
+    "request_id": "2ddb30d01b0c61977daf896135862eeb",
+    "count": 730
 }
