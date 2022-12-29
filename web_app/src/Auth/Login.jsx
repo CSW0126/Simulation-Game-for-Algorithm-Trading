@@ -34,11 +34,13 @@ const Login = () => {
             console.log(response)
     
             if (response.data.status == 'success'){
+                let user = response.data.user
+                user.record = []
                 signIn({
                     token: response.data.token,
                     expiresIn: 360000,
                     tokenType: "Bearer",
-                    authState: { user: response.data.user},
+                    authState: { user: user},
                   });
                 navigate('/')
             }else{
@@ -98,7 +100,9 @@ const Login = () => {
                 />
             </div>
             <div className="mt-6">
-                <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-cyan-500 rounded-md hover:bg-cyan-400 focus:outline-none focus:bg-cyan-400">
+                <button 
+                  type='submit'
+                  className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-cyan-500 rounded-md hover:bg-cyan-400 focus:outline-none focus:bg-cyan-400">
                     Login
                 </button>
             </div>
