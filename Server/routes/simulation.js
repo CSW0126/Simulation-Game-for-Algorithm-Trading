@@ -6,25 +6,16 @@ const fs = require('fs')
 const moment = require('moment')
 const User = require('../models/user')
 
-/* get historical data (crypto)
-URL:localhost:3000//his/getCryptoData
+/* do simulation
+URL:localhost:3000//simulation/
 Method: POST
 body:
 {
-    saveUser: true,
+    token: xxx,
     type: 1,
-    ticker: 'X:DOGEUSD',
-    from: '2020-12-19',
-    to: '2022-12-19',
-    token: xxx
+    algoType: 1,
+    ... (rule object with token) 
 }
-
-if data not exists, get from API
-
-(due to the API limitation, Data can only be obtained within 730 days at most,
-but if there are already some old data, it will combine them and return more than 730 data to the web)
-if latest date of the oldData is == today/yesterday, return oldData
-if not, get newData from API and update the oldDate, return newData
 */
 router.post('/',AuthToken, async(req,res)=>{
     try{
