@@ -112,8 +112,8 @@ router.post('/',AuthToken, async(req,res)=>{
 const getCryptoData = (ticker, dateRange) =>{
     try{
         console.log(ticker)
-        // console.log(moment(dateRange[0]).valueOf())
-        // console.log(moment(dateRange[1]).valueOf())
+        console.log(moment(dateRange[0]).valueOf())
+        console.log(moment(dateRange[1]).valueOf())
 
         var filename = (ticker).slice(2)
         var path = `HisData/${filename}.json`
@@ -123,10 +123,10 @@ const getCryptoData = (ticker, dateRange) =>{
             let beginIndex = -1
             let endIndex = -1
             oldJsonData.results.every((value, i) => {
-                if(value.t == moment(dateRange[0]).valueOf() && beginIndex == -1){
+                if(moment(value.t).format("YYYY-MM-DD") == moment(dateRange[0]).format("YYYY-MM-DD")){
                     beginIndex = i
                 }
-                if (value.t == moment(dateRange[1]).valueOf() && endIndex == -1){
+                if (moment(value.t).format("YYYY-MM-DD") == moment(dateRange[1]).format("YYYY-MM-DD")){
                     endIndex = i
                 }
 
@@ -200,6 +200,7 @@ const Martingale = (rules, historicalData) =>{
         let record = []
         let totalShares = 0
         let entryInvestment = 0
+ 
         //cal total shares
         for(let i in buyParam){
             totalShares += buyParam[i].share
