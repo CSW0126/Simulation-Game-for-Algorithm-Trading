@@ -10,7 +10,7 @@ import {
   TableBuilderColumn,
 } from 'baseui/table-semantic';
 import {Button, KIND, SIZE} from 'baseui/button';
-import ProfitMove from './Charts/ProfitMove';
+import ProfitMove from './Charts/ProfitMoveChart/SmallProfitMove';
 import { useNavigate } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';

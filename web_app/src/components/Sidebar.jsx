@@ -2,8 +2,11 @@ import React from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AiOutlineStock, AiOutlineHistory } from 'react-icons/ai';
 import { MdOutlineCancel } from 'react-icons/md';
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlineLeaderboard } from "react-icons/md";
 import { BiGame } from "react-icons/bi";
+import { VscSignIn } from "react-icons/vsc"
+import { TfiWrite } from "react-icons/tfi"
+import { ImProfile } from "react-icons/im"
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { useStateContext } from '../contexts/ContextProvider';
 import { Button } from "baseui/button";
@@ -45,7 +48,46 @@ const Sidebar = () => {
           icon: <AiOutlineHistory />,
         },
       ],
+    },
+    {
+      title: 'Ranking',
+      links: [
+        {
+          name: 'Leader Board',
+          link:'LeaderBoard',
+          icon: <MdOutlineLeaderboard />,
+        },
+      ],
+    },
+    {
+      title: 'Profile',
+      links: [
+        {
+          name: 'My Profile',
+          link:'Profile',
+          icon: <ImProfile />,
+        },
+      ],
     }
+  ]
+
+  const auth_links = [
+    {
+      title: "Registration",
+      links: [
+        {
+          name: 'SignIn',
+          link: 'login',
+          icon: <VscSignIn />,
+        },
+        {
+          name: 'SignUp',
+          link: 'SignUp',
+          icon: <TfiWrite />,
+        },
+      ] 
+    }
+
   ]
   const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg  text-white  text-md m-2';
   const normalLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
@@ -59,6 +101,58 @@ const Sidebar = () => {
   const handleLogout = ()=>{
     signOut()
     navigate('/login')
+  }
+
+  const nav_map = () =>{
+    return (
+      links.map((item)=>(
+        <div key={item.title}>
+          <p className="text-gray-400 dark:text-gray-400 m-3 mt-4 uppercase">
+            {item.title}
+          </p>
+          {item.links.map((link) => (
+            <NavLink
+              to={`/${link.link}`}
+              key={link.name}
+              onClick={handleCloseSideBar}
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? currentColor : '',
+              })}
+              className={({ isActive }) => (isActive ? activeLink : normalLink)}
+            >
+              {link.icon}
+              <span className="capitalize ">{link.name}</span>
+            </NavLink>
+          ))}
+        </div>
+      ))
+    )
+  }
+
+  const non_auth_nav_map = () =>{
+    return (
+      auth_links.map((item)=>(
+        <div key={item.title}>
+          <p className="text-gray-400 dark:text-gray-400 m-3 mt-4 uppercase">
+            {item.title}
+          </p>
+          {item.links.map((link) => (
+            <NavLink
+              to={`/${link.link}`}
+              key={link.name}
+              onClick={handleCloseSideBar}
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? currentColor : '',
+              })}
+              className={({ isActive }) => (isActive ? activeLink : normalLink)}
+            >
+              {link.icon}
+              <span className="capitalize ">{link.name}</span>
+            </NavLink>
+          ))}
+        </div>
+      ))
+    )
   }
 
 
@@ -83,27 +177,7 @@ const Sidebar = () => {
           </div>
 
           <div className="mt-10 ">
-            {links.map((item)=>(
-              <div key={item.title}>
-                <p className="text-gray-400 dark:text-gray-400 m-3 mt-4 uppercase">
-                  {item.title}
-                </p>
-                {item.links.map((link) => (
-                  <NavLink
-                    to={`/${link.link}`}
-                    key={link.name}
-                    onClick={handleCloseSideBar}
-                    style={({ isActive }) => ({
-                      backgroundColor: isActive ? currentColor : '',
-                    })}
-                    className={({ isActive }) => (isActive ? activeLink : normalLink)}
-                  >
-                    {link.icon}
-                    <span className="capitalize ">{link.name}</span>
-                  </NavLink>
-                ))}
-              </div>
-            ))}
+            {isAuthenticated() ? nav_map() : non_auth_nav_map()}
             {isAuthenticated() ? 
             (
               <div 

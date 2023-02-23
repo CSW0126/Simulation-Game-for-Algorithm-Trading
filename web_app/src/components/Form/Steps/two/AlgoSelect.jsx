@@ -1,14 +1,14 @@
 import React,{useContext} from 'react'
-import { StepperContext } from '../../../contexts/StepperContext'
-import { useStateContext } from '../../../contexts/ContextProvider';
+import { StepperContext } from '../../../../contexts/StepperContext'
+import { useStateContext } from '../../../../contexts/ContextProvider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import dcaImage from '../../../data/DCA.jpg'
-import martingaleImage from '../../../data/martingale.png'
-import indImage from '../../../data/ind.jpg'
+import dcaImage from '../../../../data/DCA.jpg'
+import martingaleImage from '../../../../data/martingale.png'
+import indImage from '../../../../data/ind.jpg'
 
 const AlgoSelect = () => {
   const { currentColor } = useStateContext();

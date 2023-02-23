@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import APICall from '../apiCall/API'
-import AnimateChart from './Charts/AnimateChart'
+import AnimateChart from './Charts/AnimateChart/AnimateChart'
 import moment from 'moment'
 import ExecutionTable from './ExecutionTable'
-import ProfitMovementChart from './Charts/ProfitMovementChart'
+import ProfitMovementChart from './Charts/ProfitMoveChart/ProfitMovementChart'
 import { Spinner } from "baseui/spinner";
 import { Button } from 'baseui/button'
 import Collapse from '@mui/material/Collapse';
-import MarFinal from './Form/Steps/MarFinal'
+import MarFinal from './Form/Steps/four/MarFinal'
 
 const Record = () => {
     const params = useParams()

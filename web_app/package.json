@@ -19,6 +19,8 @@
     "@syncfusion/ej2-react-popups": "^19.4.52",
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
     "@syncfusion/ej2-react-schedule": "^19.4.50",
+    "animate.css": "^4.1.1",
+    "aos": "^3.0.0-beta.6",
     "axios": "^1.2.1",
     "baseui": "^12.2.0",
     "chart.js": "^4.1.1",

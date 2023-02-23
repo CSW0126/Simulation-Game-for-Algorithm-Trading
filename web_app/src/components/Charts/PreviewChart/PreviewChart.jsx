@@ -2,7 +2,7 @@ import { createChart, ColorType } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 
-const LineChart = (props) => {
+const PreviewChart = (props) => {
   const {candData} = props
   const	backgroundColor = 'white'
 	const	lineColor = '#2962FF'
@@ -20,7 +20,7 @@ const LineChart = (props) => {
     close:0,
     volume:0
   })
-    //   c*number
+    // c*number
     // The close price for the symbol in the given time period.
 
     // h*number
@@ -154,4 +154,4 @@ const LineChart = (props) => {
   )
 }
 
-export default LineChart
+export default PreviewChart

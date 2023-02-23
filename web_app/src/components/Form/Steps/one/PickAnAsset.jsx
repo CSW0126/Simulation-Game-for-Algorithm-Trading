@@ -1,35 +1,25 @@
-import React, {useContext, useEffect, useState} from 'react'
-import { StepperContext } from '../../../contexts/StepperContext'
-import crypto_img from '../../../data/eth-btc.png'
-import stock_img from '../../../data/stock-market.jpg'
+import React, {useContext} from 'react'
+import { StepperContext } from '../../../../contexts/StepperContext'
+import crypto_img from '../../../../data/eth-btc.png'
+import stock_img from '../../../../data/stock-market.jpg'
+import random_img  from '../../../../data/Candlestick.png'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import { useStateContext } from '../../../contexts/ContextProvider';
+import { useStateContext } from '../../../../contexts/ContextProvider';
 import CryptoFrom from './CryptoFrom';
 import StockForm from './StockForm';
+import RandomForm from './RandomForm'
 
 
 const PickTrade = () => {
     const {userData, setUserData} = useContext(StepperContext)
     const { currentColor } = useStateContext();
 
-    //crypto = 1, stock = 2
-    const [type, setType] = useState(0);
-    //if crypto
-    const [pair, setPair] = useState('')
-
-
-    // const handleChange = (e) =>{
-    //     const {name, value} = e.target
-    //     setUserData({...userData, [name]:value})
-    // }
-
     const handleTypeClick = (selectType) =>{
         if (selectType === 'Crypto'){
-            setType(1)
             setUserData({
                 ...userData,
                 saveUser:true,
@@ -43,7 +33,6 @@ const PickTrade = () => {
                 price_range_bot:0
             })
         }else if(selectType === 'Stock'){
-            setType(2)
             setUserData({
                 ...userData,
                 saveUser:true,
@@ -56,14 +45,21 @@ const PickTrade = () => {
                 price_range_up:0,
                 price_range_bot:0
             })
+        }else if(selectType === 'Random'){
+            setUserData({
+                ...userData,
+                saveUser:true,
+                type:3,
+            })
         }
     }
 
     const marketType = (
         <div className='flex place-content-center flex-row flex-wrap'>
+            {/* crypto */}
             <div 
                 // onClick={()=> handleTypeClick('Crypto')}
-                className='flex hover:scale-105 ease-in-out m-auto mt-5'>
+                className='flex hover:scale-105 ease-in-out m-auto mt-5 animate__animated animate__fadeIn'>
                 <Card sx={{ maxWidth: 300, borderColor:currentColor ,  borderWidth: userData.type === 1 ? '2px':'0px'  }}>
                     <CardActionArea onClick={()=> handleTypeClick('Crypto')}>
                         <CardMedia
@@ -89,10 +85,10 @@ const PickTrade = () => {
                     </CardActionArea>
                 </Card>
             </div>
-
+            {/* stock */}
             <div
                 // onClick={()=> handleTypeClick('Stock')} 
-                className='flex hover:scale-105 ease-in-out m-auto mt-5'>
+                className='flex hover:scale-105 ease-in-out m-auto mt-5 animate__animated animate__fadeIn'>
                 <Card sx={{ maxWidth: 300,borderColor:currentColor , borderWidth: userData.type === 2 ?'2px':'0px'  }}>
                     <CardActionArea onClick={()=> handleTypeClick('Stock')} >
                         <CardMedia
@@ -118,6 +114,35 @@ const PickTrade = () => {
                     </CardActionArea>
                 </Card>
             </div>
+            {/* random */}
+            <div
+                // onClick={()=> handleTypeClick('Stock')} 
+                className='flex hover:scale-105 ease-in-out m-auto mt-5 animate__animated animate__fadeIn'>
+                <Card sx={{ maxWidth: 300,borderColor:currentColor , borderWidth: userData.type === 3 ?'2px':'0px'  }}>
+                    <CardActionArea onClick={()=> handleTypeClick('Random')} >
+                        <CardMedia
+                            component="img"
+                            image={random_img}
+                            alt=""
+                            sx={{ padding: "1em 1em 0 1em", objectFit: "contain", width:345, height:100 }}
+                        />
+                        <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                            Random Data
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" align='left'>
+                        &#x2022; Randomly generate market data
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" align='left'>
+                        &#x2022; Unpredictable manner
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" align='left'>
+                        &#x2022; Your result can show in Leader board
+                        </Typography>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </div>
         </div>
 
 
@@ -129,11 +154,12 @@ const PickTrade = () => {
             {userData.type === 0 || userData.type === undefined? <></> 
             // 1(crypto) or 2(stock)?
             : userData.type === 1? 
-            <CryptoFrom
-                setPair={setPair}
-            /> 
+            <CryptoFrom/> 
+            : userData.type === 2? 
+            <StockForm/>
             : 
-            <StockForm/>}
+            <RandomForm/>
+        }
         </div>
     </div>
   )

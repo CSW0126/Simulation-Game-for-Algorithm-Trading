@@ -1,7 +1,7 @@
 import { createChart, ColorType } from 'lightweight-charts';
 import React, { useEffect, useRef, useState } from 'react';
 import moment from 'moment'
-import APICall from '../../apiCall/API';
+import APICall from '../../../apiCall/API';
 
 
 const ProfitMovementChart = ({data, ruleData, rawData}) => {

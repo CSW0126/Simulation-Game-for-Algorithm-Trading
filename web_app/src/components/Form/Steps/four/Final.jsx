@@ -1,5 +1,5 @@
 import React, {useContext} from 'react'
-import { StepperContext } from '../../../contexts/StepperContext'
+import { StepperContext } from '../../../../contexts/StepperContext'
 import DCAFinal from './DCAFinal';
 import IndFinal from './IndFinal';
 import MarFinal from './MarFinal';

@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import LineChart from '../components/Charts/LineChart'
+import PreviewChart from '../components/Charts/PreviewChart/PreviewChart'
 import Stepper from '../components/Form/Stepper'
 import StepperControl from '../components/Form/StepperControl'
-import AlgoSelect from '../components/Form/Steps/AlgoSelect'
-import Final from '../components/Form/Steps/Final'
-import MarRules from '../components/Form/Steps/MarRules'
-import PickTrade from '../components/Form/Steps/PickTrade'
+import AlgoSelect from '../components/Form/Steps/two/AlgoSelect'
+import Final from '../components/Form/Steps/four/Final'
+import MarRules from '../components/Form/Steps/three/MarRules'
+import PickTrade from '../components/Form/Steps/one/PickAnAsset'
 import { StepperContext } from '../contexts/StepperContext'
 import moment from 'moment';
 import APICall from '../apiCall/API'
 import Cookies from 'js-cookie'
 import { useRef } from 'react'
-import DCARules from '../components/Form/Steps/DCARules'
-import CusRules from '../components/Form/Steps/CusRules'
+import DCARules from '../components/Form/Steps/three/DCARules'
+import CusRules from '../components/Form/Steps/three/CusRules'
 import { Button } from "baseui/button";
 import {
   Modal,
@@ -147,15 +147,12 @@ const GameInit = () => {
     <div className='mb-10'>
       <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
           {showChart ? (         
-              <div>
-                  <LineChart
+              <div className='animate__animated  animate__bounceIn'>
+                  <PreviewChart
                     // currentData = {initialData}
                     candData = {historicalData}
-                  ></LineChart>
+                  ></PreviewChart>
               </div>
-
-
-              
           ): (<></>)}
         <div className='container horizontal mt-5'>
           <Stepper 

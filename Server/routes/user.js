@@ -267,7 +267,14 @@ router.post('/edit',AuthToken, (req,res)=>{
     }
 })
 
-
+/* view user
+URL:localhost:3000/user/view
+Method: POST
+body:
+{
+    "token": xxxxxxxxx
+}
+*/
 
 router.post('/view', AuthToken, async(req,res) =>{
     try{
@@ -298,6 +305,17 @@ router.post('/view', AuthToken, async(req,res) =>{
         })
     }
 })
+
+/* view user record with record ID
+URL:localhost:3000/user/view
+Method: POST
+body:
+{
+    "token": xxxxxxxxx
+    "record_id": xxxxxxx
+}
+*/
+
 
 router.post('/viewRecord', AuthToken, async(req,res)=>{
     try{

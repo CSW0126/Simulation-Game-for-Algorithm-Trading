@@ -1,7 +1,7 @@
 import React, {useRef, useEffect,useState, useMemo} from 'react'
 import { Sparklines, SparklinesLine, SparklinesReferenceLine  } from 'react-sparklines';
 import Cookies from 'js-cookie'
-import APICall from '../../apiCall/API';
+import APICall from '../../../apiCall/API';
 import moment from 'moment'
 
 const arrayMin = (data)=> Math.min.apply(Math, data)
