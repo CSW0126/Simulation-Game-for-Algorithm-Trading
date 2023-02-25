@@ -11,8 +11,8 @@ export const APICall = {
             //     to: today,
             //     token: Cookies.get('_auth')
             //   }
-            if(object.type === 1){
-                let url = `${process.env.REACT_APP_SERVER_HOST}/his/getCryptoData`
+            if(object.type === 1 || object.type === 2){
+                let url = `${process.env.REACT_APP_SERVER_HOST}/his/getHistoricalData`
                 let body = object
 
                 const response = await axios.post(

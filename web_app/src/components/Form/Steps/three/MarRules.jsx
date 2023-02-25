@@ -23,7 +23,8 @@ const MarRules = () => {
     t_drawback: 1,
     t_shares: 3
   })
-  const [userMoney, setUserMoney] = useState((JSON.parse(Cookies.get('_auth_state'))).user.money)
+  const [minInvest, setMinInvest] = useState(1)
+  const [userMoney, setUserMoney] = useState((userData.type == 1 || userData == 2) ?  9999999 : (JSON.parse(Cookies.get('_auth_state'))).user.money)
 
   const [priceScaleData, setPriceScaleData] = useState([])
 
@@ -55,8 +56,25 @@ const MarRules = () => {
         console.log(err)
       }
     }
+    const initMinInvestValue = () =>{
+      try{
+        if (userData.type == 1){
+          setMinInvest(100)
+        }else if (userData.type == 2){
+          //3x current close price
+          let price = 3 * historicalData.data[historicalData.data.length-1].close
+          price = Math.ceil(price)
+          setMinInvest(price)
+        }
+      }catch(err){
+        console.log(err)
+      }
+    }
+
     autoInputPriceScaleDataIfAny()
+    initMinInvestValue()
   },[])
+
 
   useEffect(()=>{
     console.log(priceScaleData)
@@ -77,10 +95,20 @@ const MarRules = () => {
       t_shares: totalS
     })
 
+    setMinInvest(Math.ceil(totalS * historicalData.data[historicalData.data.length-1].close))
+
     setUserData({...userData,priceScaleData:priceScaleData})
   },[priceScaleData])
 
+  useEffect(() =>{
+    setUserData({
+      ...userData,
+      investment: minInvest
+    })
+  }, [minInvest])
+
   useEffect(()=>{
+    console.log(rangeDate)
     if(rangeDate.length == 2){
       setUserData({
         ...userData,
@@ -88,6 +116,8 @@ const MarRules = () => {
       })
     }
   },[rangeDate])
+
+
 
   const hasMoreThanTwoDC = (num) =>{
     const parts = num.toString().split('.');
@@ -183,7 +213,7 @@ const MarRules = () => {
       if(!isNaN(value)){
         value = Number(value)
         if(value >= userMoney) value = userMoney
-        if(value <= 0) value = 1
+        if(value <= minInvest) value = minInvest
         if(hasMoreThanTwoDC(value)) value = value.toFixed(2)
         setUserData({
           ...userData,
@@ -300,6 +330,7 @@ const MarRules = () => {
         }}
         noValidate
         autoComplete="off"
+        className='animate__animated animate__fadeIn '
       >
         <div className=' border py-5 border-slate-600 rounded-lg p-5'>
           <span className=' text-lg ml-5 mb-3'>Setup the rules</span>
@@ -412,9 +443,9 @@ const MarRules = () => {
                     sx={{ m: 1, width: '25ch' }}
                     type="number"
                     InputProps={{
-                      inputProps: { min: 1, max: userMoney }
+                      inputProps: { min: minInvest, max: userMoney }
                     }}
-                    value={userData.investment ?  userData.investment : 1}
+                    value={userData.investment ?  userData.investment : minInvest}
                     onChange={(e)=>handleInvestmentChange(e.target.value)}
                     onBlur={(e)=>{
                       if(e.target.value > userMoney){
@@ -424,7 +455,8 @@ const MarRules = () => {
             />
           </div>
           <div className='flex'>
-              <span className=' flex text-sm text-gray-900 my-auto'>P.S. You have total: ${userMoney}</span>
+              {/* <span className=' flex text-sm text-gray-900 my-auto'>P.S. You have total: ${userMoney}</span> */}
+              <span className=' flex text-sm text-gray-900 my-auto'>Your Investment.</span>
           </div>
         </div>
         {/* take profit */}

@@ -37,7 +37,7 @@ const PickTrade = () => {
                 ...userData,
                 saveUser:true,
                 type:2,
-                pair: 'not set (PickTrade.jsx)',
+                pair: 'AAPL',
                 investment : 1,
                 take_profit: 0.1,
                 stop_earn: 0,

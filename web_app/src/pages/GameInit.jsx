@@ -185,7 +185,7 @@ const GameInit = () => {
             />
           </StepperContext.Provider>
 
-          {userData.type === 1 && currentStep === 1 ? (          
+          {(userData.type === 1 || userData.type === 2) && currentStep === 1 ? (          
             <div className='mt-5 mb-2 ml-10'>
                   <Button onClick={() => handlePreview(false)}>Preview Chart</Button>
             </div>

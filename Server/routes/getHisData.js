@@ -6,8 +6,8 @@ const fs = require('fs')
 const moment = require('moment')
 
 
-/* get historical data (crypto)
-URL:localhost:3000//his/getCryptoData
+/* get historical data
+URL:localhost:3000//his/getHistoricalData
 Method: POST
 body:
 {
@@ -25,13 +25,19 @@ but if there are already some old data, it will combine them and return more tha
 if latest date of the oldData is == today/yesterday, return oldData
 if not, get newData from API and update the oldDate, return newData
 */
-router.post('/getCryptoData',AuthToken, async(req,res)=>{
+router.post('/getHistoricalData',AuthToken, async(req,res)=>{
     try{
         username = req.username
         _id = req._id
         console.log(req.body)
 
-        var filename = (req.body.ticker).slice(2)
+        var filename = 'xx'
+
+        if(req.body.type == 1){
+            filename = (req.body.ticker).slice(2)  
+        }else if (req.body.type == 2){
+            filename = req.body.ticker
+        }
 
         var path = `HisData/${filename}.json`
         if (fs.existsSync(path)){
