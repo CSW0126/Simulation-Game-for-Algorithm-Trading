@@ -38,6 +38,8 @@ const ProfitMovementChart = ({data, ruleData, rawData}) => {
                 return value.toFixed(4)
             }else if(pair == "X:ETHUSD"){
                 return value.toFixed(0)
+            }else{
+                return value
             }
 
         }catch(e){

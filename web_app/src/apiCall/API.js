@@ -141,6 +141,7 @@ export const APICall = {
     },
     GetProfitMovementData : (simulationData, historicalData, data) =>{
         try{
+            console.log(simulationData.message)
             let startDate = moment(data.rangeDate[0]).valueOf()
             let endDate = moment(data.rangeDate[1]).valueOf()
             let orderData = simulationData.message.reverse()
@@ -226,6 +227,8 @@ export const APICall = {
                 return value.toFixed(4)
             }else if(pair == "X:ETHUSD"){
                 return value.toFixed(0)
+            }else{
+                return value.toFixed(2)
             }
 
         }catch(e){
@@ -243,6 +246,8 @@ export const APICall = {
                 return value.toFixed(2) + " MATIC"
             }else if(pair == "X:ETHUSD"){
                 return value.toFixed(5) + " ETH"
+            }else{
+                return value.toFixed(0)
             }
 
         }catch(e){
