@@ -42,13 +42,8 @@ router.post('/',AuthToken, async(req,res)=>{
                 case 1: 
                     //martingale
                     //apply algo
-                    // console.log(body.data.type)
-                    if(body.data.type == 1){
-                        result = Martingale(body.data, historicalData)
-                    }else if(body.data.type == 2){
-                        // result = Martingale(body.data, historicalData)
-                        result = MartingaleForStock(body.data, historicalData)
-                    }
+                    result = Martingale(body.data, historicalData, body.data.type)
+
 
                     if(!result) throw "Rule error"
                     if(body.data.saveUser){
@@ -193,11 +188,13 @@ const SaveUser = async(body, _id ) =>{
         return false
     }
 }
-const MartingaleForStock = (rules, historicalData) =>{
+
+const Martingale = (rules, historicalData, assetsType) =>{
     try{
         let useAtt = 'c' //close
-        let upperPrice = rules.price_range_up
-        if(upperPrice == 0) upperPrice = 2 ** 256
+
+        //by rules object
+        let upperPrice = (rules.price_range_up == 0 ? 2** 256 : rules.price_range_up)
         let lowerPrice = rules.price_range_bot
         let takeProfitRatio = rules.take_profit
         let stopLoss = rules.stop_loss
@@ -205,296 +202,45 @@ const MartingaleForStock = (rules, historicalData) =>{
         let buyParam = rules.priceScaleData
         let initInvestment = rules.investment
         let holdingUSD = rules.investment
-        let holdingCoin = 0
+
+        let holdingShares = 0
         let entryPrice = 0
         let round = 0
         let record = []
         let totalShares = 0
         let entryInvestment = 0
         let buyParamList = []
-
-        for(let i in historicalData){
-            const currentPrice = Number(historicalData[i][useAtt])
-            let profitRatio = 0
-
-            //looking for first buy option
-            //next action can only be BUY
-            if (holdingCoin == 0){
-                //cal profitRatio
-                profitRatio = (-(1-(holdingUSD/initInvestment))) *100
-                //check stop loss
-                if(profitRatio <= -stopLoss){
-                    console.log("STOP LOSS")
-                    break
-                }
-
-                //check stop earn
-                if(profitRatio >= stopEarn && stopEarn != 0){
-                    console.log("STOP Earn")
-                    break
-                }
-
-                //check in range
-                if(currentPrice >= upperPrice || currentPrice <= lowerPrice){
-                    //console.log("Not in Range")
-                    continue
-                }
-
-                //buy parameter, always start in 0 if holding = 0
-                for(let j in buyParam){
-                    let param = buyParam[j]
-                    let shares = param.share
-                    // let cost = eachShareValue * shares
-    
-                    //total drawback
-                    let totalD = 1
-                    for(let k = 0; k < j; k++){
-                        totalD *= ((100 - buyParam[k+1].priceScale)/100)
-                    }
-                    totalD = (1- totalD) * 100
-                    let buyPrice = currentPrice * (1-(totalD/100))
-
-                    let obj = {
-                        index:j,
-                        creation:currentPrice,
-                        buyPrice:buyPrice,
-                        ratio:totalD,
-                        shares,
-                        executed: false
-                    }
-
-                    //check buy
-                    if(currentPrice <= obj.buyPrice){
-                        entryInvestment = holdingUSD
-                        //execute BUY option in current price, update holding coin and USD
-                        
-                        let getCoin = buyParam[j].share
-                        let cost = getCoin*currentPrice
-                        holdingCoin += getCoin
-                        holdingUSD -= getCoin * currentPrice
-                        entryPrice = currentPrice
-                        let holdingAvg = getCoin * buyPrice / holdingCoin
-                        if(holdingUSD < 0) holdingUSD = 0
-
-                        let recordData = {
-                            round,
-                            time: moment(historicalData[i].t).format("YYYY-MM-DD"),
-                            entryPrice,
-                            order:"Buy",
-                            currentPrice,
-                            executePrice: buyPrice,
-                            cost,
-                            getCoin,
-                            holdingCoin,
-                            holdingUSD,
-                            holdingAvg
-                        }
-                        // console.log(recordData)
-                        obj.executed = true
-                        record.push(recordData)
-                    }
-                    buyParamList.push(obj)
-                }
-            }else{
-                //next action sell or buy 
-                //cal profitRatio
-                let coinValueInUSD = holdingCoin * currentPrice
-                profitRatio = (-(1-((holdingUSD+coinValueInUSD)/initInvestment))) *100
-                //update avg price
-                let avgPrice = 0
-                for(let j in record){
-                    if(record[j].round == round){
-                        //total cost of coin , execute Price * coin
-                        avgPrice += record[j].getCoin * record[j].executePrice
-                    }
-                }
-                avgPrice /= holdingCoin
-
-                //check stop loss
-                if(profitRatio <= -stopLoss){
-                    console.log("STOP LOSS")
-                    //sell all holding coin
-                    let sellValue = holdingCoin * currentPrice
-                    holdingUSD += sellValue
-                    holdingCoin = 0
-                    let recordData = {
-                        round,
-                        time: moment(historicalData[i].t).format("YYYY-MM-DD"),
-                        entryPrice,
-                        entryInvestment,
-                        order:"Sell",
-                        currentPrice,
-                        executePrice: currentPrice,
-                        sellValue,
-                        holdingCoin,
-                        holdingUSD,
-                        holdingAvg: avgPrice
-                    }
-
-                    record.push(recordData)
-                    //update each share value
-                    eachShareValue = holdingUSD * 1/totalShares
-                    //update round
-                    round ++
-                    buyParamList = []
-                    break
-                }
-
-                //check stop earn
-                if(profitRatio >= stopEarn && stopEarn != 0){
-                    console.log("STOP Earn")
-                    //sell all holding coin
-                    let sellValue = holdingCoin * currentPrice
-                    holdingUSD += sellValue
-                    holdingCoin = 0
-                    let recordData = {
-                        round,
-                        time: moment(historicalData[i].t).format("YYYY-MM-DD"),
-                        entryPrice,
-                        entryInvestment,
-                        order:"Sell",
-                        currentPrice,
-                        executePrice: currentPrice,
-                        sellValue,
-                        holdingCoin,
-                        holdingUSD,
-                        holdingAvg: avgPrice
-                    }
-
-                    record.push(recordData)
-                    //update each share value
-                    eachShareValue = holdingUSD * 1/totalShares
-                    //update round
-                    round ++
-                    buyParamList = []
-                    break
-                }
-
-                //calculate the sell price according to take profit ratio
-                let sellForProfitPrice = avgPrice * (1+(takeProfitRatio/100))
-
-                //if going up and pass the sell price, take profit (sell)
-                if(currentPrice >= sellForProfitPrice){
-                    //sell and end this round
-                    let sellValue = holdingCoin * currentPrice
-                    holdingUSD += sellValue
-                    holdingCoin = 0
-
-                    let recordData = {
-                        round,
-                        time: moment(historicalData[i].t).format("YYYY-MM-DD"),
-                        entryPrice,
-                        entryInvestment,
-                        order:"Sell",
-                        currentPrice,
-                        executePrice: currentPrice,
-                        sellValue,
-                        holdingCoin,
-                        holdingUSD,
-                        holdingAvg: avgPrice
-                    }
-
-                    record.push(recordData)
-
-                    //update each share value
-                    eachShareValue = holdingUSD * 1/totalShares
-                    //update round
-                    round ++
-                    buyParamList = []
-                    continue
-                }
-
-                //check in range, no buy order
-                if(currentPrice >= upperPrice || currentPrice <= lowerPrice){
-                    //console.log("Not in Range")
-                    continue
-                }
-
-                //if going down, check if need to execute Buy
-                // console.log(buyParamList)
-                for(let j in buyParamList){
-                    //pass if executed
-                    // console.log(buyParamList[j].executed)
-                    
-                    if(buyParamList[j].executed) continue
-                    
-                    if(currentPrice <= buyParamList[j].buyPrice){
-                        //buy in current
-                        let cost = currentPrice * buyParamList[j].shares
-                        let getCoin = buyParamList[j].shares
-                        let holdingAvg = ((holdingCoin * avgPrice) + (getCoin * currentPrice)) / (holdingCoin+getCoin)
-
-                        holdingCoin += getCoin
-                        holdingUSD -= buyParamList[j].shares * currentPrice
-
-                        if(holdingUSD < 0) holdingUSD = 0
-
-                        let recordData = {
-                            round,
-                            time: moment(historicalData[i].t).format("YYYY-MM-DD"),
-                            entryPrice,
-                            order:"Buy",
-                            currentPrice,
-                            executePrice: currentPrice,
-                            cost,
-                            getCoin,
-                            holdingCoin,
-                            holdingUSD,
-                            holdingAvg
-
-                        }
-                        buyParamList[j].executed = true
-                        record.push(recordData)
-                    }
-                }
-            }
-        }
-        console.log("hi")
-        console.log(record)
-        return record
-    }catch(err){
-        console.log(err)
-        return null
-    }
-}
-
-const Martingale = (rules, historicalData) =>{
-    try{
-        let useAtt = 'c' //close
-        let upperPrice = rules.price_range_up
-        if(upperPrice == 0) upperPrice = 2 ** 256
-        let lowerPrice = rules.price_range_bot
-        let takeProfitRatio = rules.take_profit
-        let stopLoss = rules.stop_loss
-        let stopEarn = rules.stop_earn
-        let buyParam = rules.priceScaleData
-        let initInvestment = rules.investment
-        let holdingUSD = rules.investment
-        let holdingCoin = 0
-        let entryPrice = 0
-        let round = 0
-        let record = []
-        let totalShares = 0
-        let entryInvestment = 0
  
-        //cal total shares
-        for(let i in buyParam){
-            totalShares += buyParam[i].share
+        //if is crypto, calculate the share value according to investment
+        //if is stock, each share value should equal to current price of 1 share
+        let eachShareValue = 0
+        if(assetsType == 1){
+            //cal total shares
+            for(let i in buyParam){
+                totalShares += buyParam[i].share
+            }
+            eachShareValue = holdingUSD / totalShares  
         }
-        let eachShareValue = holdingUSD / totalShares
-        let buyParamList = []
+
+
+        //for each day
         for(let i in historicalData){
             const currentPrice = Number(historicalData[i][useAtt])
             let profitRatio = 0
-            // console.log(buyParamList)
+
+            //for stock
+            if (assetsType == 2){
+                eachShareValue = currentPrice
+            } 
 
             //check holding
-            if(holdingCoin == 0){
+            if(holdingShares == 0){
                 //next action can only be BUY
 
                 //cal profitRatio
                 profitRatio = (-(1-(holdingUSD/initInvestment))) *100
                 //check stop loss
+                
                 if(profitRatio <= -stopLoss){
                     console.log("STOP LOSS")
                     break
@@ -513,11 +259,13 @@ const Martingale = (rules, historicalData) =>{
                 }
 
                 //buy parameter, always start in 0 if holding = 0
+                //for each buy param
                 for(let j in buyParam){
                     let param = buyParam[j]
                     let shares = param.share
                     let cost = eachShareValue * shares
  
+                    //calculate drawback value to find out buy price of each buy param 
                     let totalD = 1
                     for(let k = 0; k < j; k++){
                         totalD *= ((100 - buyParam[k+1].priceScale)/100)
@@ -538,11 +286,20 @@ const Martingale = (rules, historicalData) =>{
                     if(currentPrice <= obj.buyPrice){
                         entryInvestment = holdingUSD
                         //execute BUY option in current price, update holding coin and USD
-                        let getCoin = cost/currentPrice
-                        holdingCoin += getCoin
+                        let getShares = 0 
+                        
+                        //calculate the share will get
+                        if (assetsType == 1){
+                            getShares = cost/currentPrice
+                        }else if (assetsType == 2){
+                            getShares = shares
+                        }
+                        
+                        
+                        holdingShares += getShares
                         holdingUSD -= cost
                         entryPrice = currentPrice
-                        let holdingAvg = getCoin * buyPrice / holdingCoin
+                        let holdingAvg = getShares * buyPrice / holdingShares
                         if(holdingUSD < 0) holdingUSD = 0
 
                         let recordData = {
@@ -553,8 +310,8 @@ const Martingale = (rules, historicalData) =>{
                             currentPrice,
                             executePrice: buyPrice,
                             cost,
-                            getCoin,
-                            holdingCoin,
+                            getShares,
+                            holdingShares,
                             holdingUSD,
                             holdingAvg
                         }
@@ -564,47 +321,50 @@ const Martingale = (rules, historicalData) =>{
                     }
                     buyParamList.push(obj)
                 }
-                //console.log(buyParamList)
-                
             }else{
                 //next action sell or buy 
                 //cal profitRatio
-                let coinValueInUSD = holdingCoin * currentPrice
-                profitRatio = (-(1-((holdingUSD+coinValueInUSD)/initInvestment))) *100
+                let sharesValueInUSD = holdingShares * currentPrice
+                profitRatio = (-(1-((holdingUSD+sharesValueInUSD)/initInvestment))) *100
+
                 //update avg price
                 let avgPrice = 0
                 for(let j in record){
                     if(record[j].round == round){
-                        //total cost of coin , execute Price * coin
-                        avgPrice += record[j].getCoin * record[j].executePrice
+                        //total cost of shares , execute Price * shares
+                        avgPrice += record[j].getShares * record[j].executePrice
                     }
                 }
-                avgPrice /= holdingCoin
+                avgPrice /= holdingShares
 
                 //check stop loss
                 if(profitRatio <= -stopLoss){
                     console.log("STOP LOSS")
-                    //sell all holding coin
-                    let sellValue = holdingCoin * currentPrice
-                    holdingUSD += sellValue
-                    holdingCoin = 0
+                    //sell all holding shares
+                    let sellValue = holdingShares * currentPrice;
+                    holdingUSD += sellValue;
+                    holdingShares = 0;
                     let recordData = {
                         round,
                         time: moment(historicalData[i].t).format("YYYY-MM-DD"),
                         entryPrice,
                         entryInvestment,
-                        order:"Sell",
+                        order: "Sell",
                         currentPrice,
                         executePrice: currentPrice,
                         sellValue,
-                        holdingCoin,
+                        holdingShares,
                         holdingUSD,
                         holdingAvg: avgPrice
-                    }
+                    };
 
                     record.push(recordData)
+
                     //update each share value
-                    eachShareValue = holdingUSD * 1/totalShares
+                    if (assetsType == 1){
+                        eachShareValue = holdingUSD / totalShares
+                    }
+
                     //update round
                     round ++
                     buyParamList = []
@@ -614,27 +374,30 @@ const Martingale = (rules, historicalData) =>{
                 //check stop earn
                 if(profitRatio >= stopEarn && stopEarn != 0){
                     console.log("STOP Earn")
-                    //sell all holding coin
-                    let sellValue = holdingCoin * currentPrice
-                    holdingUSD += sellValue
-                    holdingCoin = 0
+                    //sell all holding shares
+                    let sellValue = holdingShares * currentPrice;
+                    holdingUSD += sellValue;
+                    holdingShares = 0;
                     let recordData = {
                         round,
                         time: moment(historicalData[i].t).format("YYYY-MM-DD"),
                         entryPrice,
                         entryInvestment,
-                        order:"Sell",
+                        order: "Sell",
                         currentPrice,
                         executePrice: currentPrice,
                         sellValue,
-                        holdingCoin,
+                        holdingShares,
                         holdingUSD,
                         holdingAvg: avgPrice
-                    }
+                    };
 
                     record.push(recordData)
                     //update each share value
-                    eachShareValue = holdingUSD * 1/totalShares
+                    if(assetsType == 1){
+                        eachShareValue = holdingUSD /totalShares 
+                    }
+
                     //update round
                     round ++
                     buyParamList = []
@@ -647,28 +410,30 @@ const Martingale = (rules, historicalData) =>{
                 //if going up and pass the sell price, take profit (sell)
                 if(currentPrice >= sellForProfitPrice){
                     //sell and end this round
-                    let sellValue = holdingCoin * currentPrice
-                    holdingUSD += sellValue
-                    holdingCoin = 0
-
+                    let sellValue = holdingShares * currentPrice;
+                    holdingUSD += sellValue;
+                    holdingShares = 0;
                     let recordData = {
                         round,
                         time: moment(historicalData[i].t).format("YYYY-MM-DD"),
                         entryPrice,
                         entryInvestment,
-                        order:"Sell",
+                        order: "Sell",
                         currentPrice,
                         executePrice: currentPrice,
                         sellValue,
-                        holdingCoin,
+                        holdingShares,
                         holdingUSD,
                         holdingAvg: avgPrice
-                    }
+                    };
 
                     record.push(recordData)
 
                     //update each share value
-                    eachShareValue = holdingUSD * 1/totalShares
+                    if(assetsType == 1){
+                        eachShareValue = holdingUSD / totalShares
+                    }
+
                     //update round
                     round ++
                     buyParamList = []
@@ -692,10 +457,10 @@ const Martingale = (rules, historicalData) =>{
                     if(currentPrice <= buyParamList[j].buyPrice){
                         //buy in current
                         let cost = eachShareValue * buyParamList[j].shares
-                        let getCoin = cost/currentPrice
-                        let holdingAvg = ((holdingCoin * avgPrice) + (getCoin * currentPrice)) / (holdingCoin+getCoin)
+                        let getShares = assetsType == 1 ? (cost/currentPrice) : assetsType == 2 ? (buyParamList[j].shares) : 0
+                        let holdingAvg = ((holdingShares * avgPrice) + (getShares * currentPrice)) / (holdingShares+getShares)
 
-                        holdingCoin += getCoin
+                        holdingShares += getShares
                         holdingUSD -= cost
 
                         if(holdingUSD < 0) holdingUSD = 0
@@ -708,8 +473,8 @@ const Martingale = (rules, historicalData) =>{
                             currentPrice,
                             executePrice: currentPrice,
                             cost,
-                            getCoin,
-                            holdingCoin,
+                            getShares,
+                            holdingShares,
                             holdingUSD,
                             holdingAvg
 
@@ -724,6 +489,26 @@ const Martingale = (rules, historicalData) =>{
     }catch(err){
         console.log(err)
         return null
+    }
+
+    function sell(currentPrice, holdingUSD, round, i, entryPrice, entryInvestment, avgPrice, holdingShares) {
+        let sellValue = holdingShares * currentPrice;
+        holdingUSD += sellValue;
+        holdingShares = 0;
+        let recordData = {
+            round,
+            time: moment(historicalData[i].t).format("YYYY-MM-DD"),
+            entryPrice,
+            entryInvestment,
+            order: "Sell",
+            currentPrice,
+            executePrice: currentPrice,
+            sellValue,
+            holdingShares,
+            holdingUSD,
+            holdingAvg: avgPrice
+        };
+        return { recordData, holdingUSD };
     }
 }
 

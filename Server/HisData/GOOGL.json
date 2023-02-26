@@ -1,7 +1,7 @@
 {
     "ticker": "GOOGL",
-    "queryCount": 504,
-    "resultsCount": 504,
+    "queryCount": 503,
+    "resultsCount": 503,
     "adjusted": true,
     "results": [
         {
@@ -5046,6 +5046,6 @@
         }
     ],
     "status": "DELAYED",
-    "request_id": "81607377f6a97cdd53dc1a4ce7a1714a",
-    "count": 504
+    "request_id": "551b095126645d4f7328e4da53533434",
+    "count": 503
 }

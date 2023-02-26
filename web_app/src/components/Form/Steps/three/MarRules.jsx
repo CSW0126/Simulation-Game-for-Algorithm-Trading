@@ -95,7 +95,9 @@ const MarRules = () => {
       t_shares: totalS
     })
 
-    setMinInvest(Math.ceil(totalS * historicalData.data[historicalData.data.length-1].close))
+    if(userData.type == 2){
+      setMinInvest(Math.ceil(totalS * historicalData.data[historicalData.data.length-1].close))
+    }
 
     setUserData({...userData,priceScaleData:priceScaleData})
   },[priceScaleData])

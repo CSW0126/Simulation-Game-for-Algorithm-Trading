@@ -1,3 +1,4 @@
+//in History page
 import React from 'react'
 import {useStyletron} from 'baseui';
 import TriangleDown from 'baseui/icon/triangle-down';
@@ -10,7 +11,7 @@ import {
   TableBuilderColumn,
 } from 'baseui/table-semantic';
 import {Button, KIND, SIZE} from 'baseui/button';
-import ProfitMove from './Charts/ProfitMoveChart/SmallProfitMove';
+import ProfitMove from '../Charts/ProfitMoveChart/SmallProfitMove';
 import { useNavigate } from 'react-router-dom';
 
 const PaginatedTable = (props) => {

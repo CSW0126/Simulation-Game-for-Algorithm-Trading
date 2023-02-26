@@ -1,7 +1,7 @@
 {
     "ticker": "TSLA",
-    "queryCount": 504,
-    "resultsCount": 504,
+    "queryCount": 503,
+    "resultsCount": 503,
     "adjusted": true,
     "results": [
         {
@@ -5046,6 +5046,6 @@
         }
     ],
     "status": "DELAYED",
-    "request_id": "5c3fd70e560016906c161249174f20bc",
-    "count": 504
+    "request_id": "387f904556534ac3a4ac3fc1e14abee1",
+    "count": 503
 }

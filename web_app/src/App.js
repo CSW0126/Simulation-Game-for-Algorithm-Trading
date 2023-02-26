@@ -8,7 +8,7 @@ import Login from './Auth/Login'
 import SignUp from './Auth/SignUp'
 import './App.css'
 import { useStateContext } from './contexts/ContextProvider';
-import Record from './components/Record';
+import Record from './pages/Record';
 import 'animate.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';

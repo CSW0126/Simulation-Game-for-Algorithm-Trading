@@ -1,7 +1,7 @@
 {
     "ticker": "MSFT",
-    "queryCount": 504,
-    "resultsCount": 504,
+    "queryCount": 503,
+    "resultsCount": 503,
     "adjusted": true,
     "results": [
         {
@@ -5046,6 +5046,6 @@
         }
     ],
     "status": "DELAYED",
-    "request_id": "7ead6e2cac41f93b0f8d10e6a7b122cf",
-    "count": 504
+    "request_id": "22f54e76296d23d358a55b45227916f2",
+    "count": 503
 }

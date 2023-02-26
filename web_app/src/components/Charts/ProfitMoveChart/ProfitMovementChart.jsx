@@ -112,7 +112,7 @@ const ProfitMovementChart = ({data, ruleData, rawData}) => {
                         Round : ${dataObj?.round}
                     </div>
                     <div className="">
-                        Holding Coin : ${APICall.HandleGetCoinToFixed(dataObj?.holdingCoin, ruleData.pair)}
+                        Holding Assets : ${APICall.HandleGetCoinToFixed(dataObj?.holdingShares, ruleData.pair)}
                     </div>
                     <div className="">
                         Holding USD : $${dataObj?.holdingUSD.toFixed(2)}

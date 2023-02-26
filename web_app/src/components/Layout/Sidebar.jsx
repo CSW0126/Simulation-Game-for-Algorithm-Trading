@@ -8,7 +8,7 @@ import { VscSignIn } from "react-icons/vsc"
 import { TfiWrite } from "react-icons/tfi"
 import { ImProfile } from "react-icons/im"
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { useStateContext } from '../contexts/ContextProvider';
+import { useStateContext } from '../../contexts/ContextProvider';
 import { Button } from "baseui/button";
 import {useIsAuthenticated} from 'react-auth-kit';
 import {useSignOut} from "react-auth-kit"

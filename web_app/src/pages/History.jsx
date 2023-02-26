@@ -7,7 +7,7 @@ import ArrowUp from 'baseui/icon/arrow-up';
 import ArrowDown from 'baseui/icon/arrow-down';
 import Cookies from 'js-cookie'
 import APICall from '../apiCall/API';
-import PaginatedTable from '../components/PaginatedTable';
+import PaginatedTable from '../components/Table/PaginatedTable';
 
 const History = () => {
   const [record, setRecord] = useState([])

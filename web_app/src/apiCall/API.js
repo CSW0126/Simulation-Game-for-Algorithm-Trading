@@ -156,7 +156,7 @@ export const APICall = {
             }
     
             let lastHoldingUSD = data.investment
-            let lastHoldingCoin = 0
+            let lastHoldingShares = 0
             let lastOrder = 0
     
             for(let i in processedHistoricalData){
@@ -169,17 +169,17 @@ export const APICall = {
 
                 const data2Item = orderData.find(j =>j.time <= date)
                 if(data2Item){
-                    lastHoldingCoin = data2Item.holdingCoin
+                    lastHoldingShares = data2Item.holdingShares
                     lastHoldingUSD = data2Item.holdingUSD
                     lastOrder = data2Item.round
 
-                    dataObj.holdingCoin = lastHoldingCoin
+                    dataObj.holdingShares = lastHoldingShares
                     dataObj.holdingUSD = lastHoldingUSD
                     dataObj.round = lastOrder
                 }else{
                     console.log("NAN")
                 }
-                const value = lastHoldingCoin * price + lastHoldingUSD
+                const value = lastHoldingShares * price + lastHoldingUSD
 
                 dataObj.holdingValue = value
                 profitArray.push(value)

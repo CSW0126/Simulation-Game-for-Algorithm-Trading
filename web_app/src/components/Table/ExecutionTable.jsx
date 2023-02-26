@@ -1,3 +1,4 @@
+//in record page
 import React from 'react'
 import {useStyletron} from 'baseui';
 import TriangleDown from 'baseui/icon/triangle-down';
@@ -10,12 +11,12 @@ import {
   TableBuilderColumn,
 } from 'baseui/table-semantic';
 import {Button, KIND, SIZE} from 'baseui/button';
-import ProfitMove from './Charts/ProfitMoveChart/SmallProfitMove';
+import ProfitMove from '../Charts/ProfitMoveChart/SmallProfitMove';
 import { useNavigate } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
-import APICall from '../apiCall/API';
+import APICall from '../../apiCall/API';
 
 const ExecutionTable = (props) => {
     const [css, theme] = useStyletron();
@@ -52,7 +53,7 @@ const ExecutionTable = (props) => {
       const calProfit = (row) =>{
         try{
             let investment = row.entryInvestment
-            let finalValue = row.holdingCoin * row.currentPrice + row.holdingUSD
+            let finalValue = row.holdingShares * row.currentPrice + row.holdingUSD
             let profit = (finalValue - investment).toFixed(2)
             if(isNaN(profit)){
                 return "/"
@@ -207,7 +208,7 @@ const ExecutionTable = (props) => {
                 {row =>(<div className='flex text-gray-700 font-body justify-center'>${APICall.HandleToFixed(row.currentPrice, rules.pair)}</div>)}
               </TableBuilderColumn>
 
-              <TableBuilderColumn header="Get/Sell Coin"
+              <TableBuilderColumn header={rules.type == 1 ? "Get/Sell Coin" : "Get/Sell Shares"}
                 overrides={{
                   TableHeadCell:{
                     style:{
@@ -236,13 +237,13 @@ const ExecutionTable = (props) => {
                 }}
               >
                 {row =>(<div className={`flex text-gray-700 font-body justify-center ${row.order == "Buy" ? "text-[#00B070]" : "text-[#FF5252]"}`}>{
-                row.getCoin ? 
-                "+" + APICall.HandleGetCoinToFixed(row.getCoin, rules.pair)
+                row.getShares ? 
+                "+" + APICall.HandleGetCoinToFixed(row.getShares, rules.pair)
                 : 
                 "-" + APICall.HandleGetCoinToFixed(row.sellValue/row.currentPrice , rules.pair)}</div>)}
               </TableBuilderColumn>
 
-              <TableBuilderColumn header="Coin Avg Price"
+              <TableBuilderColumn header={rules.type == 1 ? "Coin Avg Price" : "Shares Avg Price"}
                 overrides={{
                   TableHeadCell:{
                     style:{
@@ -306,7 +307,7 @@ const ExecutionTable = (props) => {
                 {row =>(<div className='flex text-gray-700 font-body justify-center'>${row.holdingUSD.toFixed(2)}</div>)}
               </TableBuilderColumn>
 
-              <TableBuilderColumn header="Coin Balance"
+              <TableBuilderColumn header={rules.type == 1 ? "Coin Balance" : "Shares Balance"}
                 overrides={{
                   TableHeadCell:{
                     style:{
@@ -334,7 +335,7 @@ const ExecutionTable = (props) => {
                   }
                 }}
               >
-                {row =>(<div className='flex text-gray-700 font-body justify-center'>{APICall.HandleGetCoinToFixed(row.holdingCoin, rules.pair)}</div>)}
+                {row =>(<div className='flex text-gray-700 font-body justify-center'>{APICall.HandleGetCoinToFixed(row.holdingShares, rules.pair)}</div>)}
               </TableBuilderColumn>
 
               <TableBuilderColumn header="Holding Value"
@@ -365,7 +366,7 @@ const ExecutionTable = (props) => {
                   }
                 }}
               >
-                {row =>(<div className='flex text-gray-700 font-body justify-center'>${(row.holdingCoin * row.currentPrice + row.holdingUSD).toFixed(2)}</div>)}
+                {row =>(<div className='flex text-gray-700 font-body justify-center'>${(row.holdingShares * row.currentPrice + row.holdingUSD).toFixed(2)}</div>)}
               </TableBuilderColumn>
 
               <TableBuilderColumn header="Profit"

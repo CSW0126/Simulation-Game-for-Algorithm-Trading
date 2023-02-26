@@ -1,7 +1,7 @@
 {
     "ticker": "AAPL",
-    "queryCount": 504,
-    "resultsCount": 504,
+    "queryCount": 503,
+    "resultsCount": 503,
     "adjusted": true,
     "results": [
         {
@@ -5046,6 +5046,6 @@
         }
     ],
     "status": "DELAYED",
-    "request_id": "52ef5fd41a3ebebcc3cae8ba0bd25752",
-    "count": 504
+    "request_id": "67bb1f9a42b22fd24a814b8902320471",
+    "count": 503
 }
