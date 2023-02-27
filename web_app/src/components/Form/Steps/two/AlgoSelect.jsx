@@ -27,16 +27,16 @@ const AlgoSelect = () => {
   ]
   const cardData = [
     {
-      index: 1,
-      name: 'Martingale',
-      desc: 'After a while she raised herself on her elbows, her face tight with pain and her expression almost happy.',
-      img: martingaleImage
-    },
-    {
       index: 2,
       name: 'Dollar-Cost Averaging',
       desc: 'After a while she raised herself on her elbows, her face tight with pain and her expression almost happy.',
       img: dcaImage
+    },
+    {
+      index: 1,
+      name: 'Martingale',
+      desc: 'After a while she raised herself on her elbows, her face tight with pain and her expression almost happy.',
+      img: martingaleImage
     },
     {
       index: 3,
