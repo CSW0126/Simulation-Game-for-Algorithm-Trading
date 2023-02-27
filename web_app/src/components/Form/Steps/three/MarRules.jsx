@@ -40,8 +40,6 @@ const MarRules = () => {
   const [rangeDate, setRangeDate] = useState(userData.rangeDate ? userData.rangeDate : [
     getDateStringFromHisDate(0),
     getDateStringFromHisDate(historicalData.data.length - 1)
-    // new Date(historicalData.data[0].time),
-    // new Date(historicalData.data[historicalData.data.length-1].time)
   ]);
 
   useEffect(()=>{

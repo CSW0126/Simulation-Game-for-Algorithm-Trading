@@ -30,7 +30,9 @@ const PickTrade = () => {
                 stop_earn: 0,
                 stop_loss: 100,
                 price_range_up:0,
-                price_range_bot:0
+                price_range_bot:0,
+                period: 1,
+                DCAInvestAmount: 1
             })
         }else if(selectType === 'Stock'){
             setUserData({
@@ -43,7 +45,9 @@ const PickTrade = () => {
                 stop_earn: 0,
                 stop_loss: 100,
                 price_range_up:0,
-                price_range_bot:0
+                price_range_bot:0,
+                period: 1,
+                DCAInvestAmount: 1
             })
         }else if(selectType === 'Random'){
             setUserData({

@@ -56,7 +56,7 @@ const AlgoSelect = () => {
     }else if(algoType == 2){
       setUserData({
         ...userData,
-        algoType: algoType
+        algoType: algoType,
       })
     }else if (algoType == 3){
       setUserData({
