@@ -74,10 +74,29 @@ router.post('/',AuthToken, async(req,res)=>{
                     //apply algo
                     result = DCA(body.data, historicalData)
                     if(!result) throw "Rule error"
-                    return res.status(200).json({
-                        status: "success",
-                        message: "TODO (DCA)"
-                       })
+                    if(body.data.saveUser){
+                        let saveUser = await SaveUser(body, _id)
+                        console.log(saveUser)
+                        if (saveUser){
+                            return res.status(200).json({
+                                status: "success",
+                                message: result,
+                                user:saveUser
+                            })
+                        }else{
+                            return res.status(200).json({
+                                status: "success",
+                                message: result,
+                                user: null
+    
+                            })
+                        }
+                    }else{
+                        return res.status(200).json({
+                            status: "success",
+                            message: result,
+                        })
+                    }
                     
                 case 3:
                     //custom Indicator
@@ -490,31 +509,13 @@ const Martingale = (rules, historicalData, assetsType) =>{
         console.log(err)
         return null
     }
-
-    function sell(currentPrice, holdingUSD, round, i, entryPrice, entryInvestment, avgPrice, holdingShares) {
-        let sellValue = holdingShares * currentPrice;
-        holdingUSD += sellValue;
-        holdingShares = 0;
-        let recordData = {
-            round,
-            time: moment(historicalData[i].t).format("YYYY-MM-DD"),
-            entryPrice,
-            entryInvestment,
-            order: "Sell",
-            currentPrice,
-            executePrice: currentPrice,
-            sellValue,
-            holdingShares,
-            holdingUSD,
-            holdingAvg: avgPrice
-        };
-        return { recordData, holdingUSD };
-    }
 }
 
 const DCA = (rules, historicalData) =>{
     try{
+        let useAtt = 'c' //close
 
+        // let period = rules.
     }catch(err){
         console.log(err)
         return null

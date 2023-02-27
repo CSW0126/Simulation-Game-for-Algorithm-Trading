@@ -56,17 +56,21 @@ const DCARules = () => {
 
   useEffect(()=>{
     console.log(rangeDate)
-    if(rangeDate.length == 2){
-      setUserData({
-        ...userData,
-        rangeDate : rangeDate
-      })
-    }
+
     let amount = getTradingDay(rangeDate)
     if(amount){
       setValidTradingDay(amount)
     }
-    console.log(amount)
+
+    if(rangeDate.length == 2){
+      setUserData({
+        ...userData,
+        rangeDate : rangeDate,
+        validDate: amount
+      })
+    }
+
+
   },[rangeDate])
 
   const convertHisDatetoString = (data) =>{
@@ -83,19 +87,20 @@ const DCARules = () => {
       let startDay = moment(rangeDate[0]).format('YYYY-MM-DD')
       let endDay = moment(rangeDate[1]).format('YYYY-MM-DD')
   
-      console.log(moment(endDay).format('YYYY-MM-DD'))
       if(startDay == endDay){
         return 1
       }
   
       for (let i = 0; i < historicalData.data.length; i++){
         let temp = convertHisDatetoString(historicalData.data[i].time)
-        console.log(historicalData.data)
-        console.log(temp)
         if (moment(temp).isSameOrAfter(startDay) && moment(temp).isSameOrBefore(endDay) ){
           result += 1
         }
       }
+      // setUserData({
+      //   ...userData,
+      //   vaildDate: result
+      // })
       return result
     }catch(err){
       console.log(err)

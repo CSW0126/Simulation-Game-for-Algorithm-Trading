@@ -35,7 +35,7 @@ const MarFinal = ({userData}) => {
         }
       }
   return (
-    <div className='mb-10 min-w-[70%]' >
+  <div className='mb-10 min-w-[70%]' >
     <div className='shadow-xl rounded-2xl pd-2 bg-white p-5 mx-5'>
       <p className=' font-semibold text-cyan-600 m-5 text-xl' >Parameters</p>
       <div className='ml-5 py-5 grid grid-cols-2 gap-4 border-t-1 border-gray-300'>
