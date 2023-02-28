@@ -15,15 +15,22 @@ module.exports = new mongoose.Schema({
     investment:{type:Number, default: 0},
     stop_earn:{type:Number, default: 0},
     stop_loss:{type:Number, default: 0},
+
+    //common lv 2
     price_range_up:{type:Number, default: 0},
     price_range_bot:{type:Number, default: 0},
+
+    //record time
     recordTime:{type:Date, default:new Date()},
     
     //martingale related
     take_profit: {type:Number, default: 0},
-    priceScaleData:{type:[MartingaleParam], default:[]}
+    priceScaleData:{type:[MartingaleParam], default:[]},
 
     //DCA related
+    validDate: {type:Number, default:0},
+    DCAInvestAmount: {type:Number, default:1},
+    period: {type:Number, default:1}
 
     //Custom Indicator related
 })

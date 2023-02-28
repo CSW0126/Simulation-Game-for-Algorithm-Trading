@@ -210,18 +210,18 @@ const SaveUser = async(body, _id ) =>{
 
 const Martingale = (rules, historicalData, assetsType) =>{
     try{
-        let useAtt = 'c' //close
+        const useAtt = 'c' //close
 
         //by rules object
-        let upperPrice = (rules.price_range_up == 0 ? 2** 256 : rules.price_range_up)
-        let lowerPrice = rules.price_range_bot
-        let takeProfitRatio = rules.take_profit
-        let stopLoss = rules.stop_loss
-        let stopEarn = rules.stop_earn
-        let buyParam = rules.priceScaleData
-        let initInvestment = rules.investment
-        let holdingUSD = rules.investment
+        const upperPrice = (rules.price_range_up == 0 ? 2** 256 : rules.price_range_up)
+        const lowerPrice = rules.price_range_bot
+        const takeProfitRatio = rules.take_profit
+        const stopLoss = rules.stop_loss
+        const stopEarn = rules.stop_earn
+        const buyParam = rules.priceScaleData
+        const initInvestment = rules.investment
 
+        let holdingUSD = rules.investment
         let holdingShares = 0
         let entryPrice = 0
         let round = 0
@@ -513,7 +513,65 @@ const Martingale = (rules, historicalData, assetsType) =>{
 
 const DCA = (rules, historicalData) =>{
     try{
-        let useAtt = 'c' //close
+        const useAtt = 'c' //close
+
+        //DCA rules
+        const period = rules.period
+        const DCAInvestAmount = rules.DCAInvestAmount
+        const validDate = rules.validDate
+        const stop_earn = rules.stop_earn
+        const stop_loss = rules.stop_loss
+        const type = rules.type
+
+        let usingUSD = 0
+        let holdingShare = 0
+        let round = 0
+        let record = []
+
+        for (let i in historicalData){
+            const currentPrice = Number(historicalData[i][useAtt])
+
+            //calculate stop earn
+            let sharesValueInUSD = holdingShare * currentPrice
+            let profitRatio = 0
+            if (usingUSD != 0){
+                profitRatio = (-(1-((sharesValueInUSD)/usingUSD))) *100
+            }
+
+            
+            if(stop_earn != 0 && stop_earn >= profitRatio){
+                console.log("Stop Earn")
+                //sell
+            }
+
+            //calculate stop loss
+            //sell
+            if(profitRatio <= -stop_loss){
+                console.log("STOP LOSS")
+                break
+            }
+
+            let tempIndex = i+1
+            if(tempIndex % period == 0){
+                //buy
+                if(type == 1){
+                    //buy with same USD
+                    usingUSD += DCAInvestAmount
+                    holdingShare += (DCAInvestAmount/currentPrice)
+                }else if (type == 2){
+                    //buy according to shares value
+                    usingUSD += (DCAInvestAmount * currentPrice)
+                    holdingShare += DCAInvestAmount
+                }
+            }
+            sharesValueInUSD = holdingShare * currentPrice
+            console.log(profitRatio + " " + currentPrice + " " + usingUSD + " " + sharesValueInUSD + " " + holdingShare)
+            //next day
+            continue
+            
+        }
+
+
 
         // let period = rules.
     }catch(err){
