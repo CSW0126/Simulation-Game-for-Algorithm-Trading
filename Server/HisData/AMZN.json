@@ -1,7 +1,7 @@
 {
     "ticker": "AMZN",
-    "queryCount": 503,
-    "resultsCount": 503,
+    "queryCount": 504,
+    "resultsCount": 504,
     "adjusted": true,
     "results": [
         {
@@ -5053,9 +5053,19 @@
             "l": 93.14,
             "t": 1677474000000,
             "n": 409004
+        },
+        {
+            "v": 43959290,
+            "vw": 93.9332,
+            "o": 93.14,
+            "c": 94.23,
+            "h": 94.69,
+            "l": 92.92,
+            "t": 1677560400000,
+            "n": 369518
         }
     ],
     "status": "DELAYED",
-    "request_id": "e2efec1eb00689f3bd24933a48f3ae99",
-    "count": 503
+    "request_id": "009eb1efe1dada3375d87e34c0cf279d",
+    "count": 504
 }

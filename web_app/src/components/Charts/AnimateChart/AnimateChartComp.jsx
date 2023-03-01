@@ -72,7 +72,7 @@ const AnimateChartComp = (props) => {
         });
 
         candleSeries.setData([]);
-        
+        console.log(simulationData)
         candleSeries.setMarkers(simulationData)
         chart.subscribeCrosshairMove((param) => {
 

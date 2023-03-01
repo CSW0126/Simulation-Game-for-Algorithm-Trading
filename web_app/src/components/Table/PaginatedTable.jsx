@@ -71,6 +71,21 @@ const PaginatedTable = (props) => {
       )
     }
 
+    const getInvestmentValue = (row) =>{
+      console.log(row)
+      let resultStr = ""
+      if (row.algoType == 1){
+        resultStr = "$" + row.investment
+      }else if (row.algoType == 2){
+        if (row.type == 1){
+          resultStr = "$" + (row.DCAInvestAmount * row.validDate)
+        }else if (row.type == 2){
+          resultStr = (row.DCAInvestAmount * row.validDate) + " Shares"
+        }
+      }
+      return resultStr
+    }
+
     function ButtonsCell({labels, _id}) {
       const [css, theme] = useStyletron();
       return (
@@ -187,7 +202,7 @@ const PaginatedTable = (props) => {
                     }
                   }}
                 >
-              {row =>(<div className='flex text-gray-700 font-body justify-center '>${row.investment}</div>)}
+              {row =>(<div className='flex text-gray-700 font-body justify-center '>{getInvestmentValue(row)}</div>)}
                 {/* {row => <TagsCell tags={row.list} />} */}
               </TableBuilderColumn>
 

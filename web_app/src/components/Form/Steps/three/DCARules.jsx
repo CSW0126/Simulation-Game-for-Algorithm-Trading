@@ -300,7 +300,7 @@ const DCARules = () => {
             </div>
 
             {/* stop Earn */}
-            <div className='flex flex-wrap justify-start mt-5 '>
+            {/* <div className='flex flex-wrap justify-start mt-5 '>
               <div className='flex'>
                 <TextField
                         label="Stop Earning %"
@@ -327,10 +327,10 @@ const DCARules = () => {
                   </IconButton>
                 </Tooltip>
               </div>
-            </div>
+            </div> */}
 
             {/* stop loss */}
-            <div className='flex flex-wrap justify-start '>
+            {/* <div className='flex flex-wrap justify-start '>
               <div className='flex'>
                 <TextField
                         label="Stop Loss -%"
@@ -357,7 +357,7 @@ const DCARules = () => {
                   </IconButton>
                 </Tooltip>
               </div>
-            </div>
+            </div> */}
             
         </div>
       </Box>

@@ -10,6 +10,7 @@ import { Spinner } from "baseui/spinner";
 import { Button } from 'baseui/button'
 import Collapse from '@mui/material/Collapse';
 import MarFinal from '../components/Form/Steps/four/MarFinal'
+import DCAFinal from '../components/Form/Steps/four/DCAFinal'
 
 const Record = () => {
     const params = useParams()
@@ -63,7 +64,13 @@ const Record = () => {
               let simTemp = responseOfSimulation.message
               let simTempReverse = [...simTemp]
               setRawSimulationData(simTempReverse)
-              let markers = APICall.SimulationDataToMarkers(simTemp)
+              let markers = []
+              if(responseOfRecord.message.algoType == 1){
+                  markers = APICall.SimulationDataToMarkers(simTemp)
+              }else if(responseOfRecord.message.algoType == 2){
+                markers = APICall.SimulationDataToMarkersDCA(simTemp)
+              }
+
               setSimulationData(markers)
             }else{
               throw "responseOfSimulation fail"
@@ -127,7 +134,7 @@ const Record = () => {
           )
 
         case 2:
-          return <div>2</div>
+          return <DCAFinal userData={rulesData} />
         case 3:
           return <div>3</div>
         default:
@@ -161,12 +168,12 @@ const Record = () => {
         </div>
         <p className=' font-semibold text-cyan-600 mx-5 text-sm mt-5' >Profit Movement</p>
         <div className='m-5'>
-          <ProfitMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/>
+          {/* <ProfitMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/> */}
         </div>
 
         <p className=' font-semibold text-cyan-600 mx-5 text-sm' >Buy / Sell Record</p>
         <div className='grid grid-cols-1'>
-          <ExecutionTable data={rawSimulationData} rules={rulesData}/>
+          {/* <ExecutionTable data={rawSimulationData} rules={rulesData}/> */}
         </div>
       </div>
       

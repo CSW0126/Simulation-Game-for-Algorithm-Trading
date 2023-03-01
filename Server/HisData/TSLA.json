@@ -1,7 +1,7 @@
 {
     "ticker": "TSLA",
-    "queryCount": 503,
-    "resultsCount": 503,
+    "queryCount": 504,
+    "resultsCount": 504,
     "adjusted": true,
     "results": [
         {
@@ -5053,9 +5053,19 @@
             "l": 201.26,
             "t": 1677474000000,
             "n": 1526655
+        },
+        {
+            "v": 153140787,
+            "vw": 207.0803,
+            "o": 210.59,
+            "c": 205.71,
+            "h": 211.23,
+            "l": 203.75,
+            "t": 1677560400000,
+            "n": 1422655
         }
     ],
     "status": "DELAYED",
-    "request_id": "e51ab07f5a8a95f25e3c6a7e93e41a00",
-    "count": 503
+    "request_id": "fe1933c430934c185ac3e2d10af25374",
+    "count": 504
 }

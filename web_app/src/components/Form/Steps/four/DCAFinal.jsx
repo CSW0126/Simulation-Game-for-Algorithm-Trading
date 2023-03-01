@@ -72,7 +72,7 @@ const DCAFinal = ({userData}) => {
             </div>
         </div>
 
-        <div className='ml-5 py-5 grid grid-cols-2 gap-4 border-t-1 border-gray-300'>
+        {/* <div className='ml-5 py-5 grid grid-cols-2 gap-4 border-t-1 border-gray-300'>
             <div className=''>
               <span className=' font-semibold text-gray-600 text-base'>Stop Loss:</span>
             </div>
@@ -92,7 +92,7 @@ const DCAFinal = ({userData}) => {
                 {userData.stop_earn}%
               </span>
             </div>
-        </div>
+        </div> */}
 
         <div className='ml-5 py-5 grid grid-cols-2 gap-4 border-t-1 border-gray-300'>
             <div className=''>

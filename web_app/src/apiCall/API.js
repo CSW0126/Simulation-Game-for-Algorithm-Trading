@@ -139,6 +139,63 @@ export const APICall = {
             return null
         }
     },
+    SimulationDataToMarkersDCA: (simData)=>{
+        try{
+            console.log("simdata")
+            console.log(simData)
+            let markers = []
+            for(let i in simData){
+                if (i == simData.length-1) break
+                let time = simData[i].time
+                let found = markers.find(ele => ele.time == time)
+                if(found) continue
+                let obj = {
+                    time: moment(simData[i].time).format("YYYY-MM-DD"),
+                    position: simData[i].order == "Buy" ? "aboveBar": "belowBar",
+                    shape: simData[i].order == "Buy" ? "arrowDown":"arrowUp",
+                    color: simData[i].order == "Buy" ? "#4CAF50":"#FF5252",
+                    text: simData[i].order+ " @ " + simData[i].currentPrice
+                }
+
+                markers.push(obj)
+            }
+            return markers
+        }catch(e){
+            console.log(e)
+            return null
+        }
+    },
+    GetProfitMovementDataForDCA: (simulationData, historicalData, data) =>{
+        try{
+            let simData = simulationData.message
+            let objArr = []
+            let profitArray = []
+
+            for (let i in simData){
+                let dataObj = {}
+                dataObj.time = simData[i].time
+                dataObj.price = simData[i].currentPrice
+                dataObj.holdingShares = simData[i].holdingShare
+                dataObj.usingUSD = simData[i].usingUSD
+                dataObj.round = simData[i].round
+                dataObj.holdingValue = simData[i].sharesValueInUSD
+                profitArray.push(simData[i].sharesValueInUSD)
+                objArr.push(dataObj)
+            }
+
+            // console.log("jo")
+            // console.log(result)
+            let result = {
+                objArr,
+                data : profitArray
+            }
+            return result
+        }catch(err){
+            console.log(err)
+            return []
+        }
+
+    },
     GetProfitMovementData : (simulationData, historicalData, data) =>{
         try{
             console.log(simulationData.message)
@@ -193,7 +250,7 @@ export const APICall = {
             return result
         }catch(e){
             console.log(e)
-            return []
+            return {data:[]}
         }
     },
     MatchProfitWithData : (profitMoveData, processHis) =>{

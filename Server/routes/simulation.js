@@ -512,6 +512,7 @@ const Martingale = (rules, historicalData, assetsType) =>{
 }
 
 const DCA = (rules, historicalData) =>{
+    // https://dcacryptocalculator.com/bitcoin?start_date=2020-12-19&finish_date=2023-02-27&regular_investment=1&currency_code=USD&investment_interval=daily&exchange_fee=0
     try{
         const useAtt = 'c' //close
 
@@ -519,8 +520,8 @@ const DCA = (rules, historicalData) =>{
         const period = rules.period
         const DCAInvestAmount = rules.DCAInvestAmount
         const validDate = rules.validDate
-        const stop_earn = rules.stop_earn
-        const stop_loss = rules.stop_loss
+        // const stop_earn = rules.stop_earn
+        // const stop_loss = rules.stop_loss
         const type = rules.type
 
         let usingUSD = 0
@@ -529,6 +530,8 @@ const DCA = (rules, historicalData) =>{
         let record = []
 
         for (let i in historicalData){
+            let order = "None"
+
             const currentPrice = Number(historicalData[i][useAtt])
 
             //calculate stop earn
@@ -539,21 +542,26 @@ const DCA = (rules, historicalData) =>{
             }
 
             
-            if(stop_earn != 0 && stop_earn >= profitRatio){
-                console.log("Stop Earn")
-                //sell
-            }
+            // if(stop_earn != 0 && stop_earn >= profitRatio){
+            //     console.log("Stop Earn")
+            //     round += 1
+            //     //sell
+            //     order = "Sell"
+            // }
 
-            //calculate stop loss
-            //sell
-            if(profitRatio <= -stop_loss){
-                console.log("STOP LOSS")
-                break
-            }
+            // //calculate stop loss
+            // //sell
+            // if(profitRatio <= -stop_loss){
+            //     console.log("STOP LOSS")
+            //     round += 1
+            //     //sell
+            //     order = "Sell"
+            // }
 
             let tempIndex = i+1
-            if(tempIndex % period == 0){
+            if(tempIndex % period == 0 && order != "Sell"){
                 //buy
+                order = "Buy"
                 if(type == 1){
                     //buy with same USD
                     usingUSD += DCAInvestAmount
@@ -563,13 +571,28 @@ const DCA = (rules, historicalData) =>{
                     usingUSD += (DCAInvestAmount * currentPrice)
                     holdingShare += DCAInvestAmount
                 }
+
+                round += 1
             }
+
+            //update holding
             sharesValueInUSD = holdingShare * currentPrice
-            console.log(profitRatio + " " + currentPrice + " " + usingUSD + " " + sharesValueInUSD + " " + holdingShare)
-            //next day
-            continue
-            
+
+            let recordData = {
+                round,
+                time: historicalData[i].t,
+                order,
+                currentPrice,
+                sharesValueInUSD,
+                profitRatio,
+                usingUSD,
+                holdingShare
+            };
+
+            record.push(recordData)
         }
+
+        return record
 
 
 

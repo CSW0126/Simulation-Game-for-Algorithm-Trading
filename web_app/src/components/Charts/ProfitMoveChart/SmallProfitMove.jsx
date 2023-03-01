@@ -23,7 +23,12 @@ const ProfitMove = (props) => {
     const {data} = props
 
     const refValue = useMemo(() => {
-      return calcRefValue({ data: fetchData, height, margin, referenceValue: data.investment })
+        if(data.algoType == 1){
+            return calcRefValue({ data: fetchData, height, margin, referenceValue: data.investment })
+        }else if(data.algoType == 2){
+            return  calcRefValue({ data: fetchData, height, margin, referenceValue: (data.DCAInvestAmount * data.validDate) })
+        }
+
     }, [fetchData, height, margin])
 
     useEffect(()=>{
@@ -56,15 +61,33 @@ const ProfitMove = (props) => {
         // console.log(historicalData)
         // console.log(response.message)
         // console.log(data)
-        let profitArray = APICall.GetProfitMovementData(response, historicalData, data).data
-        
-        // console.log(profitArray)
+        if(data.algoType == 1){
+            let profitArray = APICall.GetProfitMovementData(response, historicalData, data).data
+            setFetchData(profitArray)
+        }else if(data.algoType == 2){
 
-        setFetchData(profitArray)
-        // console.log(moment(data.rangeDate[0]).valueOf())
-        // console.log(moment(data.rangeDate[1]).valueOf())
-        // console.log(processedHistoricalData)
-        // console.log(orderData)
+            let profitArray = APICall.GetProfitMovementDataForDCA(response, historicalData, data).data
+            setFetchData(profitArray)
+        }
+    }
+
+    const calColor = () =>{
+        let result = "#E91E63"
+        if(data.algoType == 1){
+            if (data.investment > fetchData[fetchData.length-1]){
+                result =  "#E91E63"
+            }else{
+                result = "#089981"
+            }
+        }else if(data.algoType == 2){
+            if (data.DCAInvestAmount * data.validDate > fetchData[fetchData.length-1]){
+                result = "#E91E63"
+            }else{
+                result = "#089981"
+            }
+        }
+
+        return result
     }
   return (
     <Sparklines 
@@ -72,14 +95,16 @@ const ProfitMove = (props) => {
         width={150} height={height} margin={0}
         style={{}}
         >
-        <SparklinesLine color={data.investment > fetchData[fetchData.length-1]? "#E91E63": "#089981"}  />
+        <SparklinesLine color={calColor()}  />
+        <Sparklines 
+            data={fetchData}
+            width={150} height={height} margin={0}
+            style={{}}
+        ></Sparklines>
         <SparklinesReferenceLine type="custom" value={refValue} 
-
-        style={
-            data.investment > fetchData[fetchData.length-1] ? 
-            {stroke:"#E91E63", strokeDasharray: '2, 2'}: 
-            {stroke:"#E91E63", strokeDasharray: '2, 2'}
-        }
+            style={
+                {stroke:"#E91E63", strokeDasharray: '2, 2'}
+            }
             />
     </Sparklines>
   )
