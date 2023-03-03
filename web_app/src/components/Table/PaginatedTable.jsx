@@ -72,15 +72,16 @@ const PaginatedTable = (props) => {
     }
 
     const getInvestmentValue = (row) =>{
-      console.log(row)
+      // console.log("row")
+      // console.log(row)
       let resultStr = ""
       if (row.algoType == 1){
         resultStr = "$" + row.investment
       }else if (row.algoType == 2){
         if (row.type == 1){
-          resultStr = "$" + (row.DCAInvestAmount * row.validDate)
+          resultStr = "$" + (row.DCAInvestAmount * Math.ceil(row.validDate/row.period))
         }else if (row.type == 2){
-          resultStr = (row.DCAInvestAmount * row.validDate) + " Shares"
+          resultStr = (row.DCAInvestAmount * Math.ceil(row.validDate/row.period)) + " Shares"
         }
       }
       return resultStr

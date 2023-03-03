@@ -558,8 +558,8 @@ const DCA = (rules, historicalData) =>{
             //     order = "Sell"
             // }
 
-            let tempIndex = i+1
-            if(tempIndex % period == 0 && order != "Sell"){
+
+            if((Number(i) % period) === 0 ){
                 //buy
                 order = "Buy"
                 if(type == 1){

@@ -11,6 +11,7 @@ import { Button } from 'baseui/button'
 import Collapse from '@mui/material/Collapse';
 import MarFinal from '../components/Form/Steps/four/MarFinal'
 import DCAFinal from '../components/Form/Steps/four/DCAFinal'
+import DCAMovementChart from '../components/Charts/ProfitMoveChart/DCAMovementChart'
 
 const Record = () => {
     const params = useParams()
@@ -100,15 +101,18 @@ const Record = () => {
               }
               setHistoricalData(APICall.ReturnDataProcessor(passObj))
               setIsError(false)
+              let rawProfitMoveData = []
+              if(responseOfRecord.message.algoType == 1){
+                rawProfitMoveData = APICall.GetProfitMovementData(responseOfSimulation, hisResponse.message.results, responseOfRecord.message)
+                setRawMovementData(rawProfitMoveData)
+                let profitMoveData = APICall.MatchProfitWithData(rawProfitMoveData.data, hisTemp)
+                setMovementData(profitMoveData)
+              }else if(responseOfRecord.message.algoType == 2){
+                
+                setMovementData(responseOfSimulation)
+              }else{
 
-              let rawProfitMoveData = APICall.GetProfitMovementData(responseOfSimulation, hisResponse.message.results, responseOfRecord.message)
-              // console.log(rawProfitMoveData)
-              setRawMovementData(rawProfitMoveData)
-              let profitMoveData = APICall.MatchProfitWithData(rawProfitMoveData.data, hisTemp)
-              // console.log(profitMoveData.length)
-              // console.log(processHis.length)
-              // console.log(profitMoveData)
-              setMovementData(profitMoveData)
+              }
             }else{
               throw "fetch historical data fail"
             }
@@ -168,7 +172,11 @@ const Record = () => {
         </div>
         <p className=' font-semibold text-cyan-600 mx-5 text-sm mt-5' >Profit Movement</p>
         <div className='m-5'>
-          {/* <ProfitMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/> */}
+          {rulesData?.algoType == 1 ? <ProfitMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/> : 
+            rulesData?.algoType == 2 ? <DCAMovementChart data={movementData} ruleData={rulesData} rawData={rawMovementData.objArr}/>: 
+            <div>3</div>
+          }
+
         </div>
 
         <p className=' font-semibold text-cyan-600 mx-5 text-sm' >Buy / Sell Record</p>

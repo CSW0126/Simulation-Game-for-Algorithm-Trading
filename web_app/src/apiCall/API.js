@@ -141,14 +141,10 @@ export const APICall = {
     },
     SimulationDataToMarkersDCA: (simData)=>{
         try{
-            console.log("simdata")
-            console.log(simData)
             let markers = []
             for(let i in simData){
                 if (i == simData.length-1) break
-                let time = simData[i].time
-                let found = markers.find(ele => ele.time == time)
-                if(found) continue
+                if(simData[i].order == "None") continue
                 let obj = {
                     time: moment(simData[i].time).format("YYYY-MM-DD"),
                     position: simData[i].order == "Buy" ? "aboveBar": "belowBar",
@@ -309,6 +305,85 @@ export const APICall = {
 
         }catch(e){
             return value
+        }
+    },
+    ConvertToHoldingSharesValue : (data) =>{
+        try{
+            let preData = data.message
+            let result = []
+            for(let i in preData){
+                let obj = {
+                    time: moment(preData[i].time).format("YYYY-MM-DD"),
+                    value: preData[i].sharesValueInUSD
+                }
+                result.push(obj)
+            }
+
+            return result
+        }catch(err){
+            console.log(err)
+            return []
+        }
+    },
+
+    ConvertToUsingUSD : (data) =>{
+        try{
+            let preData = data.message
+            let result = []
+            for(let i in preData){
+                let obj = {
+                    time: moment(preData[i].time).format("YYYY-MM-DD"),
+                    value: preData[i].usingUSD
+                }
+                result.push(obj)
+            }
+
+            return result
+        }catch(err){
+            console.log(err)
+            return []
+        }
+    },
+    GetCurrentPriceDCA : (dayStr, data) =>{
+        try{
+            // console.log(dayStr)
+            // console.log(data)
+            for(let i in data.message){
+                let tempStr = moment(data.message[i].time).format("YYYY-MM-DD")
+                if(tempStr == dayStr){
+                    return data.message[i].currentPrice
+                }
+            }
+        }catch(err){
+            console.log(err)
+            return ''  
+        }
+    },
+
+    GetHoldingShares : (dayStr, data) =>{
+        try{
+            for(let i in data.message){
+                let tempStr = moment(data.message[i].time).format("YYYY-MM-DD")
+                if(tempStr == dayStr){
+                    return data.message[i].holdingShare
+                }
+            }
+        }catch(err){
+            console.log(err)
+            return ''
+        }
+    },
+    GetDCAInvestment : (data) =>{
+        try{
+            let result = 0
+            for(let i in data){
+                if(data[i].order == "Buy"){
+                    
+                }
+            }
+        }catch(err){
+            console.log(err)
+            return 0
         }
     }
 }

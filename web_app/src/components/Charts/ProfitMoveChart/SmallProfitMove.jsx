@@ -18,6 +18,7 @@ const calcRefValue = ({ data, height, margin, referenceValue }) => {
 
 const ProfitMove = (props) => {
     const [fetchData, setFetchData] = useState([])
+    const [investValue, setInvestValue] = useState(1)
     const height = 50
     const margin = 0
     const {data} = props
@@ -51,6 +52,9 @@ const ProfitMove = (props) => {
             }
             let response = await APICall.AsyncGetSimulation(body) 
             let historicalDataResponse = await APICall.AsyncGetHistoricalData(historicalObj)
+            if(data.type == 2 && data.algoType == 2){
+                setInvestValue(response.message[response.message.length - 1].usingUSD)
+            }
             processFetchData(response, historicalDataResponse.message.results)
         }
 
@@ -80,10 +84,25 @@ const ProfitMove = (props) => {
                 result = "#089981"
             }
         }else if(data.algoType == 2){
-            if (data.DCAInvestAmount * data.validDate > fetchData[fetchData.length-1]){
-                result = "#E91E63"
-            }else{
-                result = "#089981"
+            if(data.type == 1){
+                let investment = data.DCAInvestAmount * Math.ceil(data.validDate / data.period)
+                let finalHoldingValue = fetchData[fetchData.length-1]
+
+                if (finalHoldingValue >= investment){
+                    result = "#089981"
+                }else{
+                    result = "#E91E63"
+                }
+            }else if(data.type == 2){
+                // console.log("final holding value :" + fetchData[fetchData.length-1])
+                // console.log("investment :" + investValue)
+
+                let finalHoldingValue = fetchData[fetchData.length-1]
+                if (finalHoldingValue >= investValue){
+                    result = "#089981"
+                }else{
+                    result = "#E91E63"
+                }
             }
         }
 
@@ -101,11 +120,14 @@ const ProfitMove = (props) => {
             width={150} height={height} margin={0}
             style={{}}
         ></Sparklines>
-        <SparklinesReferenceLine type="custom" value={refValue} 
-            style={
-                {stroke:"#E91E63", strokeDasharray: '2, 2'}
-            }
+        {data.algoType == 2? <></> : 
+            <SparklinesReferenceLine type="custom" value={refValue} 
+                style={
+                    {stroke:"#E91E63", strokeDasharray: '2, 2'}
+                }
             />
+        }
+
     </Sparklines>
   )
 }
