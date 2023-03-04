@@ -67,7 +67,7 @@ const DCAFinal = ({userData}) => {
             </div>
             <div>
               <span className=' text-gray-600 text-base'>
-                {userData.type == 1? "$": ""}{userData.DCAInvestAmount * userData.validDate}{userData.type == 1? " USD": " Shares"}
+                {userData.type == 1? "$": ""}{userData.DCAInvestAmount * Math.ceil(userData.validDate / userData.period)}{userData.type == 1? " USD": " Shares"}
               </span>
             </div>
         </div>

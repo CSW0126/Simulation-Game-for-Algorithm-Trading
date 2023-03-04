@@ -119,7 +119,7 @@ const PickTrade = () => {
                 </Card>
             </div>
             {/* random */}
-            <div
+            {/* <div
                 // onClick={()=> handleTypeClick('Stock')} 
                 className='flex hover:scale-105 ease-in-out m-auto mt-5 animate__animated animate__fadeIn'>
                 <Card sx={{ maxWidth: 300,borderColor:currentColor , borderWidth: userData.type === 3 ?'2px':'0px'  }}>
@@ -146,7 +146,7 @@ const PickTrade = () => {
                         </CardContent>
                     </CardActionArea>
                 </Card>
-            </div>
+            </div> */}
         </div>
 
 

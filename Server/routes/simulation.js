@@ -526,6 +526,7 @@ const DCA = (rules, historicalData) =>{
 
         let usingUSD = 0
         let holdingShare = 0
+        let getShares = 0
         let round = 0
         let record = []
 
@@ -565,11 +566,13 @@ const DCA = (rules, historicalData) =>{
                 if(type == 1){
                     //buy with same USD
                     usingUSD += DCAInvestAmount
+                    getShares = (DCAInvestAmount/currentPrice)
                     holdingShare += (DCAInvestAmount/currentPrice)
                 }else if (type == 2){
                     //buy according to shares value
                     usingUSD += (DCAInvestAmount * currentPrice)
                     holdingShare += DCAInvestAmount
+                    getShares = DCAInvestAmount
                 }
 
                 round += 1
@@ -586,7 +589,8 @@ const DCA = (rules, historicalData) =>{
                 sharesValueInUSD,
                 profitRatio,
                 usingUSD,
-                holdingShare
+                holdingShare,
+                getShares
             };
 
             record.push(recordData)
