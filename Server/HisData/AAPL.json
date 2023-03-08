@@ -1,7 +1,7 @@
 {
     "ticker": "AAPL",
-    "queryCount": 503,
-    "resultsCount": 503,
+    "queryCount": 504,
+    "resultsCount": 504,
     "adjusted": true,
     "results": [
         {
@@ -5103,9 +5103,19 @@
             "l": 153.46,
             "t": 1678078800000,
             "n": 691990
+        },
+        {
+            "v": 56136378,
+            "vw": 152.2768,
+            "o": 153.7,
+            "c": 151.6,
+            "h": 154.0299,
+            "l": 151.13,
+            "t": 1678165200000,
+            "n": 496631
         }
     ],
     "status": "DELAYED",
-    "request_id": "98dbddf13babc2c1eec4b0433f70ad2c",
-    "count": 503
+    "request_id": "33907eecf4928c1c2c0fc8c8f23b3fa0",
+    "count": 504
 }

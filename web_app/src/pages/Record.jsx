@@ -185,8 +185,8 @@ const Record = () => {
 
     const renderInvestSummary = () =>{
       try{
-        console.log("hihi")
-        console.log(rawMovementData.objArr)
+        // console.log("hihi")
+        // console.log(rawMovementData.objArr)
         if(rulesData.algoType == 1){
           //mart
           return (

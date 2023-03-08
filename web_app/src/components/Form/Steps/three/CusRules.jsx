@@ -12,14 +12,15 @@ import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
 import {DatePicker} from 'baseui/datepicker';
+import { Collapse } from '@mui/material';
 
 
 
 const CusRules = () => {
   const initRules = {
-    expression1:{type: "Close Price", value:""},
+    expression1:{type: "Close Price", param:{}},
     operator:">",
-    expression2: {type: "Number", value: "1"}
+    expression2: {type: "Number", param:{}}
   }
   const initGroup = {
     // And / Not / Count
@@ -103,13 +104,17 @@ const CusRules = () => {
     },
   ]
   const {userData, setUserData, historicalData} = useContext(StepperContext)
+  const [openBuy, setOpenBuy] = useState(true)
+  const [openSell, setOpenSell] = useState(true)
   const [algorithm, setAlgorithm] = useState([initGroup]);
-  const [ex1, setEx1] = useState([expression.filter(item => item.value != "Number" )])
-  const [ex2, setEx2] = useState([expression.filter(item => item.value != "Close Price" )])
+  const [ex1, setEx1] = useState([
+    [expression.filter(item => item.value != "Number" )]
+  ])
+  const [ex2, setEx2] = useState([[expression.filter(item => item.value != "Close Price")]])
 
   useEffect(()=>{
-    console.log("algo")
-    console.log(algorithm)
+    // console.log("algo")
+    // console.log(algorithm)
     // console.log(ex1)
     // console.log(ex2)
   },[algorithm, ex1, ex2])
@@ -118,7 +123,11 @@ const CusRules = () => {
   const handleAddGroup = () =>{
     try{
       const tempGroup = [...algorithm, initGroup]
+      const tempEx1 = [...ex1, [expression.filter(item => item.value != "Number" )]]
+      const tempEx2 = [...ex2, [expression.filter(item => item.value != "Close Price")]]
       setAlgorithm(tempGroup)
+      setEx1(tempEx1)
+      setEx2(tempEx2)
     }catch(err){
       console.log(err)
     }
@@ -127,9 +136,18 @@ const CusRules = () => {
   // Remove Group
   const handleRemoveGroup =(groupIndex) =>{
     try{
+      console.log(groupIndex)
       const tempGroup = [...algorithm]
+      const tempEx1 = [...ex1]
+      const tempEx2 = [...ex2]
+
       tempGroup.splice(groupIndex, 1)
+      tempEx1.splice(groupIndex, 1)
+      tempEx2.splice(groupIndex, 1)
+
       setAlgorithm(tempGroup)
+      setEx1(tempEx1)
+      setEx2(tempEx2)
     }catch(err){
       console.log(err)
     }
@@ -162,63 +180,134 @@ const CusRules = () => {
   const handleAddRules = (groupIndex) =>{
     try{
       const tempGroup = [...algorithm]
-      const tempRules = [...tempGroup, initRules]
-      const tempEx1 = [...ex1, expression.filter(item => item.value != "Number" )]
-      const tempEx2 = [...ex2, expression.filter(item => item.value != "Close Price" )]
+      tempGroup[groupIndex].rules.push(initRules)
+      const tempEx1 = [...ex1]
+      const tempEx2 = [...ex2]
+
+      tempEx1[groupIndex].push(expression.filter(item => item.value != "Number" ))
+      tempEx2[groupIndex].push(expression.filter(item => item.value != "Close Price" ))
+
+      setAlgorithm(tempGroup)
+      setEx1(tempEx1)
+      setEx2(tempEx2)
     }catch(err){
       console.log(err)
     }
-    // const temp = [...algorithm, initRules]
-    // const tempEx1 = [...ex1, expression.filter(item => item.value != "Number" )]
-    // const tempEx2 = [...ex2, expression.filter(item => item.value != "Close Price" )]
-
-    // setAlgorithm(temp)
-    // setEx1(tempEx1)
-    // setEx2(tempEx2)
   }
 
+  // remove rules
   const handleRemoveRules = (groupIndex, ruleIndex) =>{
-    // const deleteTemp = [...algorithm]
-    // const deleteEx1 = [...ex1]
-    // const deleteEx2 = [...ex2]
+    try{
+      const tempGroup = [...algorithm]
+      const tempEx1 = [...ex1]
+      const tempEx2 = [...ex2]
 
-    // deleteTemp.splice(i, 1)
-    // deleteEx1.splice(i, 1)
-    // deleteEx2.splice(i, 1)
+      tempGroup[groupIndex].rules.splice(ruleIndex,1)
+      tempEx1[groupIndex].splice(ruleIndex,1)
+      tempEx2[groupIndex].splice(ruleIndex,1)
 
-    // setAlgorithm(deleteTemp)
-    // setEx1(deleteEx1)
-    // setEx2(deleteEx2)
+      setAlgorithm(tempGroup)
+      setEx1(tempEx1)
+      setEx2(tempEx2)
+
+    }catch(err){
+      console.log(err)
+    }
   }
 
+  // exp1
   const handleExpressionOneChange = (value, groupIndex, ruleIndex) =>{
-    // const temp = [...algorithm]
-    // const ex2Temp = [...ex2]
-    // const newEx2 = expression.filter(item => item.value != value );
+    try{
+      const tempGroup = [...algorithm]
+      const tempEx2 = [...ex2]
+      const newEx2 = expression.filter(item => item.value != value );
+      const exObj = expression.filter(item => item.value == value)
 
-    // temp[i].expression1.type = value
-    // ex2Temp[i] = newEx2
+      tempEx2[groupIndex][ruleIndex] = newEx2
+      tempGroup[groupIndex].rules[ruleIndex].expression1.type = value
+      tempGroup[groupIndex].rules[ruleIndex].expression1.param = exObj[0].param
 
-    // setEx2(ex2Temp)
-    // setAlgorithm(temp)
+      setAlgorithm(tempGroup)
+      setEx2(tempEx2)
+    }catch(err){
+      console.log(err)
+    }
   }
 
+  //exp2
   const handleExpressionTwoChange = (value, groupIndex, ruleIndex)=>{
-    // const temp = [...algorithm]
-    // const ex1Temp = [...ex1]
-    // const newEx1 = expression.filter(item => item.value != value );
+    try{
+      const tempGroup = [...algorithm]
+      const tempEx1 = [...ex1]
+      const newEx1 = expression.filter(item => item.value != value );
+      const exObj = expression.filter(item => item.value == value)
 
-    // temp[i].expression2.type = value
-    // ex1Temp[i] = newEx1
+      tempEx1[groupIndex][ruleIndex] = newEx1
+      tempGroup[groupIndex].rules[ruleIndex].expression2.type = value
+      tempGroup[groupIndex].rules[ruleIndex].expression2.param = exObj[0].param
 
-    // setEx1(ex1Temp)
-    // setAlgorithm(temp)
+      setAlgorithm(tempGroup)
+      setEx1(tempEx1)
+    }catch(err){
+      console.log(err)
+    }
   }
 
+  //operator
   const handleOperatorChange = (value, groupIndex, ruleIndex)=>{
-    // const temp = [...algorithm]
-    // temp[i].operator = value
-    // setAlgorithm(temp)
+    try{
+      const tempGroup = [...algorithm]
+      tempGroup[groupIndex].rules[ruleIndex].operator = value
+      setAlgorithm(tempGroup)
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+
+  //renderExpParam1
+  const renderExpParam1 = (value) =>{
+    try{
+      if(value.param != undefined){
+        const keys = Object.keys(value.param)
+        console.log(value.param[keys])
+        return(
+          <div>
+            {keys.map((key, i)=>(
+              <div>
+                  <TextField
+                    label="Min"
+                    sx={{ m: 1, width: 300 }}
+                    style = {{width: 100}}
+                    defaultValue={value.param[key]}
+                    type="number"
+                    color="secondary"
+                    InputProps={{
+                      inputProps: { min: 1, max: 100 }
+                    }}
+                    value={value.param[key]}
+                    onChange={(e)=>{
+                      if (e.target.value > 100) {
+                        // handleCountValueChange(i, 100)
+                      }else{
+                        // handleCountValueChange(i, e.target.value)
+                      }
+                      
+                    }}
+                    onBlur={(e)=>{
+                      // let value = Math.round(e.target.value)
+                      // value <= 0 ? handleCountValueChange(i, 1) : handleCountValueChange(i, value)
+                    }}
+                />
+              </div>
+            ))}
+          </div>
+
+        )
+      }
+    }catch(err){
+      console.log(err)
+    }
   }
 
 
@@ -233,123 +322,188 @@ const CusRules = () => {
         noValidate
         autoComplete="off"
         className='animate__animated animate__fadeIn '>
-        {/* group */}
-        {algorithm.map((group, i)=>(
-            <div className=' border py-5 border-slate-600 rounded-lg p-5'>
-                <span className=' text-lg ml-5 mb-3'>Group {i} Type: </span>
-                {/* group remove button */}
-                {i == 0 ? <></> : <Button onClick={()=>handleRemoveGroup(i)}>Remove Group</Button>}
-                {/* group operator */}
-                <TextField
-                    select
-                    label="Group Operator"
-                    defaultValue= {"And"}
-                      onChange={(event)=>handleGroupRule(event.target.value, i)
-                    }
-                    value={group.type}
-                    >
-                    {groupType.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
-                {/* group count value */}
-                {group.type == 'Count' ? 
-                  <TextField
-                      label="Min"
-                      sx={{ m: 1, width: '25ch' }}
-                      // defaultValue={item.share}
-                      type="number"
-                      InputProps={{
-                        inputProps: { min: 1, max: 100 }
-                      }}
-                      value={group.value}
-                      onChange={(e)=>{
-                        if (e.target.value > 100) {
-                          handleCountValueChange(i, 100)
-                        }else{
-                          handleCountValueChange(i, e.target.value)
-                        }
-                        
-                      }}
-                      onBlur={(e)=>{
-                        let value = Math.round(e.target.value)
-                        value <= 0 ? handleCountValueChange(i, 1) : handleCountValueChange(i, value)
-                      }}
-                  />
-                :<></>}
+          {/* Buy rules button */}
+          <div className='mb-5'>
+              <button className="bg-green-300 text-green-700 font-bold py-2 px-4 rounded inline-flex items-center"
+                onClick={()=>setOpenBuy(!openBuy)}>
+                  <span className="mr-2">Buy Rules</span>
+                  <svg className="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 6L14 10L6 14V6Z" />
+                  </svg>
+              </button>  
+          </div>
 
-                {/* rules */}
-                {group.rules.map((rules, j) =>(
-                  <div>
-                    <div className='flex flex-wrap'>
-                      <div>{j}</div>
-                      {/* expression 1 */}
-                      <div>                    
-                        <TextField
-                                select
-                                label="Expression 1"
-                                defaultValue= {"Close Price"}
-                                  onChange={(event)=>handleExpressionOneChange(event.target.value, i, j)
-                                }
-                                value={rules.expression1.type}
-                                >
-                                {ex1[j].map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </MenuItem>
-                                ))}
+         <div>
+            <Collapse in={openBuy} timeout="auto" unmountOnExit>
+                {/* group */}
+                {algorithm.map((group, i)=>(
+                    <div className=' border py-5 border-slate-600 rounded-lg p-5 mb-5'>
+                        <div className='flex flex-wrap mb-5'>
+                          <div className='self-center w-5/6'>
+                              <span className='text-lg ml-5 font-bold'>Group #{i} &nbsp;&nbsp;&nbsp;</span>
+                          </div>
+
+                            {/* group remove button */}
+
+                            {i == 0 ? <></> : 
+                            <div>
+                              <button className="bg-red-300 text-red-700 font-bold py-2 px-4 rounded inline-flex items-center my-3"
+                                      onClick={()=>handleRemoveGroup(i)}>
+                                  <span className="mr-2">Remove Group</span>
+                                  <svg className="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.348 14.849L10.196 10.697L14.348 6.546C14.742 6.151 14.742 5.516 14.348 5.121C13.954 4.727 13.319 4.727 12.924 5.121L8.772 9.273L4.621 5.121C4.226 4.727 3.591 4.727 3.197 5.121C2.803 5.516 2.803 6.151 3.197 6.546L7.348 10.697L3.197 14.849C2.803 15.243 2.803 15.878 3.197 16.273C3.389 16.465 3.627 16.562 3.864 16.562C4.101 16.562 4.339 16.465 4.531 16.273L8.682 12.121L12.834 16.273C13.026 16.465 13.264 16.562 13.501 16.562C13.738 16.562 13.976 16.465 14.168 16.273C14.562 15.878 14.562 15.243 14.168 14.849Z" />
+                                  </svg>
+                              </button>
+                            </div>
+                              }
+                        </div>
+                        {/* group operator */}
+                        <div className='flex flex-wrap justify-start ml-2'>
+                            <TextField
+                              select
+                              label="Group Operator"
+                              defaultValue= {"And"}
+                                onChange={(event)=>handleGroupRule(event.target.value, i)
+                              }
+                              value={group.type}
+                              >
+                              {groupType.map((option) => (
+                                  <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </MenuItem>
+                              ))}
                           </TextField>
-                      </div>
-                      {/* operator */}
-                      <div>
-                          <TextField
-                                select
-                                label="Operator"
-                                defaultValue= {">"}
-                                  onChange={(event)=>handleOperatorChange(event.target.value, i, j)
-                                }
-                                value={rules.operator}
-                                >
-                                {operator.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </MenuItem>
-                                ))}
-                          </TextField>
-                      </div>
-                      {/* expression 2 */}
-                      <div>
-                          <TextField
-                                select
-                                label="Expression 2"
-                                defaultValue= {rules.expression2.type}
-                                  onChange={(event)=>handleExpressionTwoChange(event.target.value, i, j)
-                                }
-                                value={rules.expression2.type}
-                                >
-                                {ex2[j].map((option)=>(
-                                    <MenuItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </MenuItem>
-                                ))}
-                          </TextField>
-                      </div>
-                      {/* remove rule */}
-                      {j == 0 ? <></>: 
-                        <Button onClick={()=>handleRemoveRules(i,j)}>Remove</Button>
-                      }
+
+                          {/* group count value */}
+                          {group.type == 'Count' ? 
+                            <TextField
+                                label="Min"
+                                sx={{ m: 1, width: '25ch' }}
+                                // defaultValue={item.share}
+                                type="number"
+                                InputProps={{
+                                  inputProps: { min: 1, max: 100 }
+                                }}
+                                value={group.value}
+                                onChange={(e)=>{
+                                  if (e.target.value > 100) {
+                                    handleCountValueChange(i, 100)
+                                  }else{
+                                    handleCountValueChange(i, e.target.value)
+                                  }
+                                  
+                                }}
+                                onBlur={(e)=>{
+                                  let value = Math.round(e.target.value)
+                                  value <= 0 ? handleCountValueChange(i, 1) : handleCountValueChange(i, value)
+                                }}
+                            />
+                          :<></>}
+                        </div>
+                        <div className='py-5'>
+                          <hr className=''/>
+                        </div>
+
+
+                        {/* rules */}
+                        {group.rules.map((rules, j) =>(
+                          <div>
+                            <div className='flex flex-wrap'>
+                              <div className=' justify-center self-center'>
+                                  <span className='text-lg ml-5 font-bold'>Rules #{j}</span>
+                              </div>
+                              {/* expression 1 */}
+                              <div>                    
+                                <TextField
+                                        select
+                                        label="Expression 1"
+                                        defaultValue= {"Close Price"}
+                                          onChange={(event)=>handleExpressionOneChange(event.target.value, i, j)
+                                        }
+                                        value={rules.expression1.type}
+                                        >
+                                        {ex1[i][j].map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                              {option.label}
+                                            </MenuItem>
+                                        ))}
+                                  </TextField>
+                              </div>
+                              {renderExpParam1(rules.expression1)}
+                              {/* operator */}
+                              <div>
+                                  <TextField
+                                        select
+                                        label="Operator"
+                                        defaultValue= {">"}
+                                          onChange={(event)=>handleOperatorChange(event.target.value, i, j)
+                                        }
+                                        value={rules.operator}
+                                        >
+                                        {operator.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                              {option.label}
+                                            </MenuItem>
+                                        ))}
+                                  </TextField>
+                              </div>
+                              {/* expression 2 */}
+                              <div>
+                                  <TextField
+                                        select
+                                        label="Expression 2"
+                                        defaultValue= {rules.expression2.type}
+                                          onChange={(event)=>handleExpressionTwoChange(event.target.value, i, j)
+                                        }
+                                        value={rules.expression2.type}
+                                        >
+                                        {ex2[i][j].map((option)=>(
+                                            <MenuItem key={option.value} value={option.value}>
+                                              {option.label}
+                                            </MenuItem>
+                                        ))}
+                                  </TextField>
+                              </div>
+                              {/* remove rule */}
+                              {j == 0 ? <></>: 
+                              
+                                <button className="bg-red-300 text-red-700 font-bold py-2 px-4 rounded inline-flex items-center my-3"
+                                        onClick={()=>handleRemoveRules(i,j)}>
+                                    <span className="mr-2">Remove Rule</span>
+                                    <svg className="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M14.348 14.849L10.196 10.697L14.348 6.546C14.742 6.151 14.742 5.516 14.348 5.121C13.954 4.727 13.319 4.727 12.924 5.121L8.772 9.273L4.621 5.121C4.226 4.727 3.591 4.727 3.197 5.121C2.803 5.516 2.803 6.151 3.197 6.546L7.348 10.697L3.197 14.849C2.803 15.243 2.803 15.878 3.197 16.273C3.389 16.465 3.627 16.562 3.864 16.562C4.101 16.562 4.339 16.465 4.531 16.273L8.682 12.121L12.834 16.273C13.026 16.465 13.264 16.562 13.501 16.562C13.738 16.562 13.976 16.465 14.168 16.273C14.562 15.878 14.562 15.243 14.168 14.849Z" />
+                                    </svg>
+                                </button>
+                                // <Button onClick={()=>handleRemoveRules(i,j)}>Remove</Button>
+                              }
+                            </div>
+                          </div>
+
+                        ))}
+                        {/* add rule */}
+                        <div className='flex flex-wrap justify-start mt-3 mx-4'>
+                          <Button onClick={()=>handleAddRules(i)}>Add Rules</Button>
+                        </div>
+
                     </div>
-                  </div>
-
                 ))}
-                {/* add rule */}
-                 <Button onClick={()=>handleAddRules(i)}>Add Rules</Button>
-            </div>
-        ))}
+                <div className='flex flex-wrap justify-center'>
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+                    onClick={handleAddGroup}>
+                    <svg className="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8V7a1 1 0 012 0v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3z"/>
+                    </svg>
+                    Add Buy Condition Group
+                  </button>
+                </div>
 
-        <Button onClick={handleAddGroup}>Add Group</Button>
+            </Collapse>
+         </div>
+         <div className='my-5'>
+            <hr/>
+         </div>
+
+        
   </Box>
   )
 }
