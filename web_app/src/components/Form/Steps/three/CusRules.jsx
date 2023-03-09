@@ -20,13 +20,13 @@ const CusRules = () => {
   const initRules = {
     expression1:{type: "Close Price", param:{}},
     operator:">",
-    expression2: {type: "Number", param:{}}
+    expression2: {type: "Number", param:{value:1}}
   }
   const initGroup = {
     // And / Not / Count
     type: "And",
     value: 0,
-    rules: [initRules]
+    rules: []
   }
 
   const groupType = [
@@ -50,27 +50,55 @@ const CusRules = () => {
       label: 'Close Price',
     },
     {
+      value: `Prev Close Price`,
+      label: `Prev. Day's Close Price`,
+    },
+    {
       value: 'Open Price',
       label: 'Open Price',
+    },
+    {
+      value: `Prev Open Price`,
+      label: `Prev. Day's Open Price`,
     },
     {
       value: 'High Price',
       label: 'High Price',
     },
     {
+      value: `Prev High Price`,
+      label: `Prev. Day's High Price`,
+    },
+    {
       value: 'Low Price',
       label: 'Low Price',
+    },
+    {
+      value: `Prev Low Price`,
+      label: `Prev. Day's Low Price`,
     },
     {
       value: 'Volume',
       label: 'Volume',
     },
     {
+      value: `Prev Volume`,
+      label: `Prev. Day's Volume`,
+    },
+
+    {
       value: 'Number',
       label: 'Number',
       param: {
-        value:0
-      }
+        value:1
+      },
+    },
+    {
+      value: '%',
+      label: '%',
+      param: {
+        value:1
+      },
     },
     {
       value: "SMA",
@@ -78,7 +106,31 @@ const CusRules = () => {
       param:{
         timePeriod: 10
       }
-    }
+    },
+    {
+      value: "RSI",
+      label: 'Relative Strength Index (RSI)',
+      param:{
+        timePeriod: 10
+      }
+    },
+    {
+      value: "SO",
+      label: 'Stochastic Oscillator',
+      param:{
+        value: 10
+      }
+    },
+    {
+      value: "MACD",
+      label: 'Moving Average Convergence Divergence (MACD)',
+      param:{
+        FastEMAPeriod: 10,
+        SlowEMAPeriod:10,
+        SignalLinePeriod:10
+
+      }
+    },
   ];
 
   const operator = [
@@ -114,7 +166,7 @@ const CusRules = () => {
 
   useEffect(()=>{
     // console.log("algo")
-    // console.log(algorithm)
+    console.log(algorithm)
     // console.log(ex1)
     // console.log(ex2)
   },[algorithm, ex1, ex2])
@@ -136,7 +188,6 @@ const CusRules = () => {
   // Remove Group
   const handleRemoveGroup =(groupIndex) =>{
     try{
-      console.log(groupIndex)
       const tempGroup = [...algorithm]
       const tempEx1 = [...ex1]
       const tempEx2 = [...ex2]
@@ -215,17 +266,38 @@ const CusRules = () => {
     }
   }
 
+  const exFilter = (value) =>{
+    try{
+      if(value == 'RSI'){
+        return expression.filter(item =>item.value == "Number")
+      }else{
+        return expression.filter(item =>item.value != value)
+      }
+
+    }catch(err){
+      console.log(err)
+      return expression.filter(item => item.value != value );
+    }
+  }
+
   // exp1
   const handleExpressionOneChange = (value, groupIndex, ruleIndex) =>{
     try{
-      const tempGroup = [...algorithm]
-      const tempEx2 = [...ex2]
-      const newEx2 = expression.filter(item => item.value != value );
-      const exObj = expression.filter(item => item.value == value)
+      console.log("group"+groupIndex+'rule'+ruleIndex)
+      let tempGroup = [...algorithm]
+      let tempEx2 = [...ex2]
+      let newEx2 = exFilter(value);
+      let exObj = expression.filter(item => item.value == value)
 
       tempEx2[groupIndex][ruleIndex] = newEx2
-      tempGroup[groupIndex].rules[ruleIndex].expression1.type = value
-      tempGroup[groupIndex].rules[ruleIndex].expression1.param = exObj[0].param
+      tempGroup[groupIndex].rules[ruleIndex].expression1 = {
+        type: value,
+        param: exObj[0].param
+      }
+
+      if(value == "RSI"){
+        tempGroup[groupIndex].rules[ruleIndex].expression2 = {type: "Number", param: {value: 1}}
+      } 
 
       setAlgorithm(tempGroup)
       setEx2(tempEx2)
@@ -237,14 +309,20 @@ const CusRules = () => {
   //exp2
   const handleExpressionTwoChange = (value, groupIndex, ruleIndex)=>{
     try{
-      const tempGroup = [...algorithm]
-      const tempEx1 = [...ex1]
-      const newEx1 = expression.filter(item => item.value != value );
-      const exObj = expression.filter(item => item.value == value)
+      let tempGroup = [...algorithm]
+      let tempEx1 = [...ex1]
+      let newEx1 = exFilter(value);
+      let exObj = expression.filter(item => item.value == value)
 
       tempEx1[groupIndex][ruleIndex] = newEx1
-      tempGroup[groupIndex].rules[ruleIndex].expression2.type = value
-      tempGroup[groupIndex].rules[ruleIndex].expression2.param = exObj[0].param
+      tempGroup[groupIndex].rules[ruleIndex].expression2 = {
+        type: value,
+        param: exObj[0].param
+      }
+
+      if(value == "RSI"){
+        tempGroup[groupIndex].rules[ruleIndex].expression1 = {type: "Number", param: {value: 1}}
+      } 
 
       setAlgorithm(tempGroup)
       setEx1(tempEx1)
@@ -264,39 +342,69 @@ const CusRules = () => {
     }
   }
 
-
-  //renderExpParam1
-  const renderExpParam1 = (value) =>{
+  //renderExpParam
+  const renderExpParam = (value, groupIndex, rulesIndex, position) =>{
     try{
+      //param change
+      const handleParamChange = (value, key) =>{
+        try{
+          const tempGroup = [...algorithm]
+          if(position == 1){
+            tempGroup[groupIndex].rules[rulesIndex].expression1.param[key] = value
+          }else if(position == 2){
+            tempGroup[groupIndex].rules[rulesIndex].expression2.param[key] = value
+          }
+          setAlgorithm(tempGroup)
+        }catch(err){
+          console.log(err)
+        }
+      }
+
+      //max and width
+      let max = 999
+      let width = 150
+
+      if(position == 1){
+        max = algorithm[groupIndex].rules[rulesIndex].expression2.type == "Volume" ? 9999999999 : 999
+        if(algorithm[groupIndex].rules[rulesIndex].expression2.type == "RSI"){
+          max = 100
+        }
+        // width = algorithm[groupIndex].rules[rulesIndex].expression2.type == "Volume" ? 150 : 100
+      }else if(position == 2){
+        max = algorithm[groupIndex].rules[rulesIndex].expression1.type == "Volume" ? 9999999999 : 999
+        // width = algorithm[groupIndex].rules[rulesIndex].expression1.type == "Volume" ? 150 : 100
+        if(algorithm[groupIndex].rules[rulesIndex].expression1.type == "RSI"){
+          max = 100
+        }
+      }
+
       if(value.param != undefined){
         const keys = Object.keys(value.param)
-        console.log(value.param[keys])
         return(
-          <div>
+          <div key={value.type+groupIndex+"_"+rulesIndex}>
             {keys.map((key, i)=>(
-              <div>
+              <div key={value.type+"_"+groupIndex+"_"+rulesIndex+"_"+i+"_"+position}>
                   <TextField
-                    label="Min"
+                    label={key}
                     sx={{ m: 1, width: 300 }}
-                    style = {{width: 100}}
-                    defaultValue={value.param[key]}
+                    style = {{width}}
                     type="number"
                     color="secondary"
                     InputProps={{
-                      inputProps: { min: 1, max: 100 }
+                      inputProps: { min: 1, max: max }
                     }}
                     value={value.param[key]}
                     onChange={(e)=>{
-                      if (e.target.value > 100) {
-                        // handleCountValueChange(i, 100)
+                      if (e.target.value > max) {
+                        handleParamChange(max, key, groupIndex, rulesIndex)
                       }else{
-                        // handleCountValueChange(i, e.target.value)
+                        handleParamChange(e.target.value, key, groupIndex, rulesIndex)
                       }
                       
                     }}
                     onBlur={(e)=>{
-                      // let value = Math.round(e.target.value)
-                      // value <= 0 ? handleCountValueChange(i, 1) : handleCountValueChange(i, value)
+                      let value = Math.round(e.target.value)
+                      value <= 0 ? handleParamChange(1, key, groupIndex, rulesIndex) : handleParamChange(value, key, groupIndex, rulesIndex)
                     }}
                 />
               </div>
@@ -337,9 +445,9 @@ const CusRules = () => {
             <Collapse in={openBuy} timeout="auto" unmountOnExit>
                 {/* group */}
                 {algorithm.map((group, i)=>(
-                    <div className=' border py-5 border-slate-600 rounded-lg p-5 mb-5'>
+                    <div className=' border py-5 border-slate-600 rounded-lg p-5 mb-5' key={"Group_"+i}>
                         <div className='flex flex-wrap mb-5'>
-                          <div className='self-center w-5/6'>
+                          <div className='self-center '>
                               <span className='text-lg ml-5 font-bold'>Group #{i} &nbsp;&nbsp;&nbsp;</span>
                           </div>
 
@@ -407,7 +515,7 @@ const CusRules = () => {
 
                         {/* rules */}
                         {group.rules.map((rules, j) =>(
-                          <div>
+                          <div key={"Group_"+i+"_Rule"+j}>
                             <div className='flex flex-wrap'>
                               <div className=' justify-center self-center'>
                                   <span className='text-lg ml-5 font-bold'>Rules #{j}</span>
@@ -429,7 +537,7 @@ const CusRules = () => {
                                         ))}
                                   </TextField>
                               </div>
-                              {renderExpParam1(rules.expression1)}
+                              {renderExpParam(rules.expression1, i, j, 1)}
                               {/* operator */}
                               <div>
                                   <TextField
@@ -464,6 +572,7 @@ const CusRules = () => {
                                         ))}
                                   </TextField>
                               </div>
+                              {renderExpParam(rules.expression2, i, j, 2)}
                               {/* remove rule */}
                               {j == 0 ? <></>: 
                               
