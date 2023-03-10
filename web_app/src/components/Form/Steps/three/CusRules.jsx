@@ -26,7 +26,11 @@ const CusRules = () => {
     // And / Not / Count
     type: "And",
     value: 0,
-    rules: []
+    rules: [{
+      expression1:{type: "Close Price", param:{}},
+      operator:">",
+      expression2: {type: "Number", param:{value:1}}
+    }]
   }
 
   const groupType = [
@@ -507,6 +511,16 @@ const CusRules = () => {
                                 }}
                             />
                           :<></>}
+                          <Tooltip title={
+                            <div>Group Operator
+                              <br/>
+                              <br />And: All rules in the group should be pass inorder to execute the Buy Option
+                              <br/>
+                          </div>} placement="right">
+                            <IconButton>
+                              <HelpIcon/>
+                            </IconButton>
+                          </Tooltip>
                         </div>
                         <div className='py-5'>
                           <hr className=''/>
@@ -525,6 +539,7 @@ const CusRules = () => {
                                 <TextField
                                         select
                                         label="Expression 1"
+                                        style={{width:180}}
                                         defaultValue= {"Close Price"}
                                           onChange={(event)=>handleExpressionOneChange(event.target.value, i, j)
                                         }
@@ -543,6 +558,7 @@ const CusRules = () => {
                                   <TextField
                                         select
                                         label="Operator"
+                                        style={{width:80}}
                                         defaultValue= {">"}
                                           onChange={(event)=>handleOperatorChange(event.target.value, i, j)
                                         }
@@ -559,6 +575,7 @@ const CusRules = () => {
                               <div>
                                   <TextField
                                         select
+                                        style={{width:180}}
                                         label="Expression 2"
                                         defaultValue= {rules.expression2.type}
                                           onChange={(event)=>handleExpressionTwoChange(event.target.value, i, j)
