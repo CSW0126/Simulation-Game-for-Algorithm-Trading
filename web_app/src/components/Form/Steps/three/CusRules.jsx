@@ -173,24 +173,28 @@ const CusRules = () => {
   const [openBuy, setOpenBuy] = useState(true)
   const [openSell, setOpenSell] = useState(false)
   const [openRisk, setOpenRisk] = useState(false)
-  const [buyRules, setBuyRules] = useState([{
-    type: "And",
-    value: 0,
-    rules: [{
-      expression1:{type: "Close Price", param:{}},
-      operator:">",
-      expression2: {type: "Number", param:{value:1}}
+  const [buyRules, setBuyRules] = useState(
+    [{
+      type: "And",
+      value: 0,
+      rules: [{
+        expression1:{type: "Close Price", param:{}},
+        operator:">",
+        expression2: {type: "Number", param:{value:1}}
+      }]
     }]
-  }]);
-  const [sellRules, setSellRules] = useState([{
-    type: "And",
-    value: 0,
-    rules: [{
-      expression1:{type: "Close Price", param:{}},
-      operator:">",
-      expression2: {type: "Number", param:{value:1}}
+  );
+  const [sellRules, setSellRules] = useState(
+    [{
+      type: "And",
+      value: 0,
+      rules: [{
+        expression1:{type: "Close Price", param:{}},
+        operator:">",
+        expression2: {type: "Number", param:{value:1}}
+      }]
     }]
-  }])
+  )
   const [ex1, setEx1] = useState([
     [expression.filter(item => item.value != "Number" )]
   ])
@@ -199,20 +203,13 @@ const CusRules = () => {
   const [sellEx2, setSellEx2] = useState([[expression.filter(item => item.value != "Close Price")]])
 
   useEffect(()=>{
-    // console.log("algo")
-    console.log(buyRules)
     setUserData({
       ...userData,
-      buyCondition:buyRules
-    })
-  },[buyRules])
-
-  useEffect(()=>{
-    setUserData({
-      ...userData,
+      buyCondition:buyRules,
       sellCondition:sellRules
     })
-  },[sellRules])
+  },[buyRules, sellRules])
+
 
   const hasMoreThanTwoDC = (num) =>{
     const parts = num.toString().split('.');
@@ -385,7 +382,7 @@ const CusRules = () => {
     try{
       let tempGroup = [...obj]
       tempGroup[groupIndex].rules[ruleIndex].operator = value
-      setBuyRules(setObj)
+      setObj(setObj)
     }catch(err){
       console.log(err)
     }
@@ -807,7 +804,7 @@ const CusRules = () => {
                               value={group.type}
                               >
                               {groupType.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem key={option.value+"SELL"} value={option.value}>
                                     {option.label}
                                   </MenuItem>
                               ))}
@@ -856,7 +853,7 @@ const CusRules = () => {
 
                         {/* rules */}
                         {group.rules.map((rules, j) =>(
-                          <div key={"Group_"+i+"_Rule"+j}>
+                          <div key={"Sell_Group_"+i+"_Rule"+j}>
                             <div className='flex flex-wrap'>
                               <div className=' justify-center self-center'>
                                   <span className='text-lg ml-5 font-bold'>Rules #{j}</span>
@@ -873,7 +870,7 @@ const CusRules = () => {
                                           }
                                           value={rules.expression1.type}
                                           >
-                                          {ex1[i][j].map((option) => (
+                                          {sellEx1[i][j].map((option) => (
                                               <MenuItem key={option.value} value={option.value}>
                                                 {option.label}
                                               </MenuItem>
@@ -885,7 +882,7 @@ const CusRules = () => {
                                 <Tooltip title={
                                   <div>Rule Explanation
                                     <br/>
-                                    <br />{getDesc(buyRules[i].rules[j].expression1.type)}
+                                    <br />{getDesc(sellRules[i].rules[j].expression1.type)}
                                     <br/>
                                   </div>} placement="right">
                                   <IconButton>
@@ -929,7 +926,7 @@ const CusRules = () => {
                                           }
                                           value={rules.expression2.type}
                                           >
-                                          {ex2[i][j].map((option)=>(
+                                          {sellEx2[i][j].map((option)=>(
                                               <MenuItem key={option.value} value={option.value}>
                                                 {option.label}
                                               </MenuItem>
@@ -942,7 +939,7 @@ const CusRules = () => {
                                 <Tooltip title={
                                   <div>Group Operator
                                     <br/>
-                                    <br />{getDesc(buyRules[i].rules[j].expression2.type)}
+                                    <br />{getDesc(sellRules[i].rules[j].expression2.type)}
                                     <br/>
                                   </div>} placement="right">
                                   <IconButton>
