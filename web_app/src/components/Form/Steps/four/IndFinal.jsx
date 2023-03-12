@@ -3,13 +3,13 @@ import moment from 'moment'
 
 const IndFinal = ({userData}) => {
   useEffect(()=>{
-    console.log("Info")
-    console.log(userData)
+    // console.log("Info")
+    // console.log(userData)
   },[])
 
   const renderParam = (value) =>{
     try{
-      console.log(value)
+      // console.log(value)
       let keys = Object.keys(value)
       let str = ""
       for(let i in keys){

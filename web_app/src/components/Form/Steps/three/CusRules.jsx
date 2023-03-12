@@ -121,7 +121,7 @@ const CusRules = () => {
       value: "RSI",
       label: 'Relative Strength Index (RSI)',
       param:{
-        timePeriod: 10
+        timePeriod: 14
       },
       toolTip:"RSI is an indicator that measures the strength of an asset's recent gains and losses. When RSI is above 70, it indicates overbought conditions and a potential price correction. When RSI is below 30, it indicates oversold conditions and a potential price rebound."
 
@@ -130,7 +130,7 @@ const CusRules = () => {
       value: "SO",
       label: 'Stochastic Oscillator',
       param:{
-        value: 10
+        timePeriod: 14
       },
       toolTip:"Stochastic Oscillator measures an asset's momentum and overbought/oversold levels by comparing its current price range to its historical price range.It shown on a chart between 0 and 100. When the %K line crosses above the %D line, it's a bullish signal for upward momentum, and when the %K line crosses below the %D line, it's a bearish signal for downward momentum."
     },

@@ -131,7 +131,7 @@ const GameInit = () => {
       if(response.status == 'success'){
         let newID = response.user.record[response.user.record.length-1]._id
         if(newID){
-          navigate(`/history/${newID}`);
+          // navigate(`/history/${newID}`);
         }
       }else{
         console.log(response)
@@ -196,7 +196,7 @@ const GameInit = () => {
       <Modal onClose={close} isOpen={isOpen}>
         <ModalHeader>Confirm Simulation</ModalHeader>
         <ModalBody>
-          All the data will be sent to the server to do the simulation. Your account balance will be change according to the simulation result.
+          All the data will be sent to the server to do the simulation.
         </ModalBody>
         <ModalFooter>
           <ModalButton kind="tertiary" onClick={close}>

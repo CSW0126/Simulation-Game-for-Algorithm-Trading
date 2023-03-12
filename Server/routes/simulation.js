@@ -25,18 +25,18 @@ router.post('/',AuthToken, async(req,res)=>{
         console.log(body)
         let historicalData = null
         //check type + get historical data
-        if(body.data.type == 1){
+        if(body.data.type == 1 && body.data.algoType != 3){
             //crypto
             historicalData = getHisData(body.data.pair, body.data.rangeDate, 1)
             // console.log(historicalData)
-        }else if(body.data.type == 2){
+        }else if(body.data.type == 2 && body.data.algoType != 3){
             //stock
             historicalData = getHisData(body.data.pair, body.data.rangeDate, 2)
         }
 
         //get historical data
         let result = null
-        if(historicalData){
+        if(historicalData || body.data.algoType == 3){
             //check algo use
             switch(body.data.algoType){
                 case 1: 
@@ -101,11 +101,11 @@ router.post('/',AuthToken, async(req,res)=>{
                 case 3:
                     //custom Indicator
                     //apply algo
-                    result = CustomIndicator(body.data, historicalData)
+                    result = CustomIndicator(body.data)
                     if(!result) throw "Rule error"
                     return res.status(200).json({
                         status: "success",
-                        message: "TODO (custom Indicator)"
+                        message: result
                        })
                     
                 default:
@@ -607,8 +607,34 @@ const DCA = (rules, historicalData) =>{
     }
 }
 
-const CustomIndicator = (rules, historicalData) =>{
+const CustomIndicator = (rules) =>{
     try{
+        let historicalData = ProcessHisData(rules)
+        if(historicalData){
+            //moving average
+            let smaPeriods = GetPeriod(rules, "SMA")
+            for(let period of smaPeriods){
+                historicalData = SMA(historicalData, period)
+            }
+
+            //RSI
+            let rsiPeriods = GetPeriod(rules, "RSI")
+            for (let period of rsiPeriods){
+                historicalData = RSI(historicalData,period)
+            }
+
+            //Stochastic Oscillator
+            let soPeriods = GetPeriod(rules, "SO")
+            for(let period of soPeriods){
+                historicalData = SO(historicalData, period)
+            }
+
+            
+            return historicalData
+        }else{
+            console.log("historical data not found")
+            return null
+        }
 
     }catch(err){
         console.log(err)
@@ -616,5 +642,173 @@ const CustomIndicator = (rules, historicalData) =>{
     }
 }
 
+const ProcessHisData = (rules) =>{
+    try{
+        let pair = rules.pair
+        let type = rules.type
+
+        var filename = ""
+        if (type == 1){
+            filename =  (pair).slice(2)
+        }else if(type == 2){
+            filename = pair
+        }
+
+        var path = `HisData/${filename}.json`
+
+        if (fs.existsSync(path)){
+            let readData = fs.readFileSync(path)
+            let oldJsonData = JSON.parse(readData)
+            return oldJsonData.results
+        }else{
+            return []
+        }
+
+    }catch(err){
+        console.log(err)
+        return []
+    }
+}
+
+const GetPeriod = (rules, value) =>{
+    try{
+        let buyCondition = rules.buyCondition
+        let sellCondition = rules.sellCondition
+
+        let periodNumber = []
+        for(let group of buyCondition){
+            for(let rule of group.rules){
+                if(rule.expression1.type == value){
+                    periodNumber.push(Number(rule.expression1.param.timePeriod))
+                }else if(rule.expression2.type == value){
+                    periodNumber.push(Number(rule.expression2.param.timePeriod))
+                }
+            }
+        }
+
+        for(let group of sellCondition){
+            for(let rule of group.rules){
+                if(rule.expression1.type == value){
+                    periodNumber.push(Number(rule.expression1.param.timePeriod))
+                }else if(rule.expression2.type == value){
+                    periodNumber.push(Number(rule.expression2.param.timePeriod))
+                }
+            }
+        }
+        return [...new Set(periodNumber)]
+    }catch(err){
+        console.log(err)
+        return []
+    }
+}
+
+const SMA = (data, periods) =>{
+    try{
+        let closingPrices = data.map(obj => obj.c);
+        let smaValues = new Array(closingPrices.length);
+      
+        for (let i = 0; i < closingPrices.length; i++) {
+          if (i < periods - 1) {
+            smaValues[i] = null;
+          } else {
+            let sum = 0;
+            for (let j = i; j > i - periods; j--) {
+              sum += closingPrices[j];
+            }
+            smaValues[i] = sum / periods;
+          }
+        }
+      
+        let result = [];
+      
+        let keyStr = "sma"+periods
+        for (let i = 0; i < data.length; i++) {
+          let obj = { ...data[i]};
+          obj[keyStr] = smaValues[i] 
+          result.push(obj);
+        }
+      
+        return result;
+
+    }catch(err){
+        console.log(err)
+        return data
+    }
+}
+
+const MACD = () =>{
+
+}
+
+const RSI = (historicalData, period) =>{
+    //RS = prevAvgGain / prevAvgLoss
+    //RSI = 100 - (100 / (1 + RS))
+
+    try{
+        console.log(period)
+        let prevAvgGain = 0;
+        let prevAvgLoss = 0;
+        
+        for (let i = 0; i < historicalData.length; i++) {
+          const data = historicalData[i];
+          const close = data.c;
+          let gain = 0;
+          let loss = 0;
+      
+          if (i > 0) {
+            const prevData = historicalData[i-1];
+            const prevClose = prevData.c;
+            const diff = close - prevClose;
+      
+            if (diff > 0) {
+              gain = diff;
+            } else {
+              loss = Math.abs(diff);
+            }
+      
+            prevAvgGain = ((prevAvgGain * (period - 1)) + gain) / period;
+            prevAvgLoss = ((prevAvgLoss * (period - 1)) + loss) / period;
+          }
+      
+          if (i >= period) {
+            const RS = prevAvgGain / prevAvgLoss;
+            const RSI = 100 - (100 / (1 + RS));
+            data["RSI"+period] = Number(RSI.toFixed(2));
+          }else{
+            data["RSI"+period] = null
+          }
+        }
+      
+        return historicalData;
+    }catch(err){
+        console.log(err)
+        return historicalData
+    }
+}
+
+
+const SO = (data, period) =>{
+    // Stochastic Oscillator
+    // K% = ((C-L_period)/(H_period-L_period)) * 100
+    try{
+        for (let i = 0; i < data.length; i++) {
+            if(i >= (period - 1)){
+                const periodData = data.slice(i - period + 1, i + 1);
+                const highestHigh = Math.max(...periodData.map((d) => d.h));
+                const lowestLow = Math.min(...periodData.map((d) => d.l));
+                const currentClose = data[i].c;
+                const SO = ((currentClose - lowestLow) / (highestHigh - lowestLow)) * 100;
+                data[i]["SO"+period] = SO; 
+            }else{
+                data[i]["SO"+period] = null; 
+            }
+          }
+          return data
+
+    }catch(err){
+        console.log(err)
+        return historicalData
+    }
+}
 
 module.exports = router
