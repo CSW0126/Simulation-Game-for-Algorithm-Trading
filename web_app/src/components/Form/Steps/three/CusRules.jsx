@@ -118,6 +118,19 @@ const CusRules = () => {
       toolTip: "SMA calculates average price of an asset over a specific time period to identify trends and price reversals."
     },
     {
+      value: "EMA",
+      label: "Exponential Moving Average (EMA)",
+      param:{
+        timePeriod: 10
+      },
+      toolTip:`EMA is a technical analysis indicator that calculates the average price of an asset over a specified time period, giving more weight to recent price data than older data. EMA = Closing price x multiplier + EMA (previous day) x (1-multiplier)`
+    },
+    {
+      value: "ADX",
+      label: " Average Directional Index (ADX)",
+      toolTip:`The ADX identifies a strong trend when the ADX is over 25 and a weak trend when the ADX is below 20. Crossovers of the -DI and +DI lines can be used to generate trade signals. For example, if the +DI line crosses above the -DI line and the ADX is above 20, or ideally above 25, then that is a potential signal to buy. On the other hand, if the -DI crosses above the +DI, and the ADX is above 20 or 25, then that is an opportunity to enter a potential short trade.`
+    },
+    {
       value: "RSI",
       label: 'Relative Strength Index (RSI)',
       param:{
@@ -137,12 +150,6 @@ const CusRules = () => {
     {
       value: "MACD",
       label: 'Moving Average Convergence Divergence (MACD)',
-      param:{
-        FastEMAPeriod: 12,
-        SlowEMAPeriod:26,
-        SignalLinePeriod:9
-
-      },
       toolTip:"MACD is a technical analysis tool that uses the relationship between two moving averages of an asset's price to identify potential trend changes and momentum shifts."
     },
   ];
@@ -210,6 +217,9 @@ const CusRules = () => {
     })
   },[buyRules, sellRules])
 
+  const checkTypeFor100 = (value) =>{
+    return (value == 'RSI' || value == 'SO' || value == 'ADX')
+  }
 
   const hasMoreThanTwoDC = (num) =>{
     const parts = num.toString().split('.');
@@ -314,7 +324,7 @@ const CusRules = () => {
 
   const exFilter = (value) =>{
     try{
-      if(value == 'RSI' || value == 'SO'){
+      if(checkTypeFor100(value)){
         return expression.filter(item =>item.value == "Number")
       }else{
         return expression.filter(item =>item.value != value)
@@ -341,7 +351,7 @@ const CusRules = () => {
         param: exObj[0].param
       }
 
-      if(value == "RSI" || value == "SO"){
+      if(checkTypeFor100(value)){
         tempGroup[groupIndex].rules[ruleIndex].expression2 = {type: "Number", param: {value: 1}}
       } 
 
@@ -366,7 +376,7 @@ const CusRules = () => {
         param: exObj[0].param
       }
 
-      if(value == "RSI" || value == "SO"){
+      if(checkTypeFor100(value)){
         tempGroup[groupIndex].rules[ruleIndex].expression1 = {type: "Number", param: {value: 1}}
       } 
 
@@ -382,7 +392,7 @@ const CusRules = () => {
     try{
       let tempGroup = [...obj]
       tempGroup[groupIndex].rules[ruleIndex].operator = value
-      setObj(setObj)
+      setObj(tempGroup)
     }catch(err){
       console.log(err)
     }
@@ -412,12 +422,14 @@ const CusRules = () => {
 
       if(position == 1){
         max = obj[groupIndex].rules[rulesIndex].expression2.type == "Volume" ? 9999999999 : 999999
-        if(obj[groupIndex].rules[rulesIndex].expression2.type == "RSI"){
+        let tempType = obj[groupIndex].rules[rulesIndex].expression2.type
+        if(checkTypeFor100(tempType)){
           max = 100
         }
       }else if(position == 2){
+        let tempType = obj[groupIndex].rules[rulesIndex].expression1.type
         max = obj[groupIndex].rules[rulesIndex].expression1.type == "Volume" ? 9999999999 : 999999
-        if(obj[groupIndex].rules[rulesIndex].expression1.type == "RSI"){
+        if(checkTypeFor100(tempType)){
           max = 100
         }
       }
@@ -512,6 +524,26 @@ const CusRules = () => {
     }
   }
 
+  const handleInvestmentChange = (value) =>{
+    try{
+      if(!isNaN(value)){
+        value = Number(value)
+        if(value >= 999999) value = 999999
+        if(value <= 1000) value = 1000
+        if(hasMoreThanTwoDC(value)) value = value.toFixed(2)
+        setUserData({
+          ...userData,
+          investment: value
+        })
+      }else{
+        console.log("Not a number!")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+
   return (
     <Box
         component="div"
@@ -521,6 +553,7 @@ const CusRules = () => {
         noValidate
         autoComplete="off"
         className='animate__animated animate__fadeIn '>
+
           {/* Buy rules button */}
           <div className='mb-5'>
               <button className="bg-green-300 text-green-700 font-bold py-2 px-4 rounded inline-flex items-center"
@@ -534,6 +567,27 @@ const CusRules = () => {
 
          <div>
             <Collapse in={openBuy} timeout="auto" unmountOnExit>
+                <div className='flex flex-wrap justify-start '>
+                  <div className='flex'>
+                      <TextField
+                              label="Investment USD"
+                              id="outlined-start-adornment"
+                              sx={{ m: 1, width: '25ch' }}
+                              style={{margin:0, marginBottom:'1rem', marginRight:'1rem'}}
+                              type="number"
+                              InputProps={{
+                                inputProps: { min: 1000, max: 999999 }
+                              }}
+                              value={userData.investment ?  userData.investment : 1000}
+                              onChange={(e)=>handleInvestmentChange(e.target.value)}
+                              onBlur={(e)=>{
+                                if(e.target.value > 999999){
+                                  handleInvestmentChange(999999)
+                                }
+                              }}
+                      />
+                  </div>
+                </div>
                 {/* group */}
                 {buyRules.map((group, i)=>(
                     <div className=' border py-5 border-slate-600 rounded-lg p-5 mb-5' key={"Group_"+i}>

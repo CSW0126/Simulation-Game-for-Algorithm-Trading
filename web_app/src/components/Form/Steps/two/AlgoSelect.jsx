@@ -61,7 +61,8 @@ const AlgoSelect = () => {
     }else if (algoType == 3){
       setUserData({
         ...userData,
-        algoType: algoType
+        algoType: algoType,
+        investment: 1000
       })
     }
 

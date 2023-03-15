@@ -610,7 +610,15 @@ const DCA = (rules, historicalData) =>{
 const CustomIndicator = (rules) =>{
     try{
         let historicalData = ProcessHisData(rules)
+
+        let buyGroup = rules.buyCondition
+        let sellGroup = rules.sellCondition
+
         if(historicalData){
+
+            //prev price
+            historicalData = Prev(historicalData)
+
             //moving average
             let smaPeriods = GetPeriod(rules, "SMA")
             for(let period of smaPeriods){
@@ -629,6 +637,67 @@ const CustomIndicator = (rules) =>{
                 historicalData = SO(historicalData, period)
             }
 
+            //MACD
+            historicalData = MACD(historicalData)
+            historicalData = PrevMACD(historicalData)
+
+            //EMA
+            let EMAPeriod = GetPeriod(rules, "EMA")
+            if (EMAPeriod.includes(26)){
+                let index = EMAPeriod.indexOf(26)
+                EMAPeriod.splice(index, 1);
+            }
+
+            if(EMAPeriod.includes(12)){
+                let index = EMAPeriod.indexOf(12)
+                EMAPeriod.splice(index, 1)
+            }
+            
+            for(let period of EMAPeriod){
+                calculateEMA(historicalData,period)
+            }
+
+            //ADX
+            historicalData = ADX(historicalData)
+
+            const stopEarn = rules.stop_earn
+            const stopLoss = rules.stop_loss
+
+            let holdingUSD = rules.investment
+            let holdingShares = 0
+            let entryPrice = 0
+            let round = 0
+            let record = []
+            let totalShares = 0
+
+            for (let dayData of historicalData){
+                if(holdingShares == 0){
+                //check buy 
+
+                let buyResult = false
+                for(let group of buyGroup){
+                    // console.log(group)
+                    switch (group.type){
+                        case "And":
+                            buyResult = ProcessAndGroup(dayData, group)
+                            break
+                        case "Not":
+                            break
+                        case "Count":
+                            break
+                        default:
+                            continue
+                    }
+
+                    if(!buyResult) break
+                }
+                }else{
+                    //check sell
+                }
+            }
+
+
+
             
             return historicalData
         }else{
@@ -639,6 +708,148 @@ const CustomIndicator = (rules) =>{
     }catch(err){
         console.log(err)
         return null
+    }
+}
+
+const checkCondition = (operator, expression1, expression2) => {
+    try{
+        switch (operator) {
+        case "<":
+            return expression1 < expression2;
+        case "<=":
+            return expression1 <= expression2;
+        case ">":
+            return expression1 > expression2;
+        case ">=":
+            return expression1 >= expression2;
+        case "=":
+            return expression1 === expression2;
+        default:
+            return false;
+        }
+    }catch(err){
+        console.log(err)
+        return false
+    }
+
+}
+
+const ProcessAndGroup = (dayData, group) =>{
+    try{
+        let result = true
+        for(let rule of group.rules){
+            let ex1 = rule.expression1.type
+            let ex2 = rule.expression2.type
+            let operator = rule.operator
+
+            if(ex1 == "MACD" || ex2 == "MACD"){
+                //first day
+                if(dayData.prevMACDHis == null || dayData.prevMACDLine == null || dayData.prevSignal == null){
+                    return false
+                }else{
+                    if((dayData.prevMACDHis < 0 && dayData.MACDHistogram > 0) || (dayData.prevMACDLine < 0 && dayData.MACDLine > 0) || (dayData.prevSignal < 0 && dayData.signalLine > 0)){
+                        //buy signal
+                        continue
+                    }else{
+                        return false
+                    }
+                }
+            }else{
+                //other rules
+                let ex1Value = mapExpression(dayData,rule.expression1)
+                let ex2Value = mapExpression(dayData,rule.expression2)
+
+            }
+        }
+
+        return result
+    }catch(err){
+        console.log(err)
+        return false
+    }
+}
+
+const mapExpression = (dayData, expression) => {
+    switch(expression.type) {
+      case "Close Price":
+        return dayData.c;
+      case "Prev Close Price":
+        return dayData.pc;
+      case "Open Price":
+        return dayData.o;
+      case "Prev Open Price":
+        return dayData.po;
+      case "High Price":
+        return dayData.h;
+      case "Prev High Price":
+        return dayData.ph;
+      case "Low Price":
+        return dayData.l;
+      case "Prev Low Price":
+        return dayData.pl;
+      case "Volume":
+        return dayData.v;
+      case "Prev Volume":
+        return dayData.pv;
+      case "Number":
+        return expression.param.value;
+      case "SMA":
+        return dayData["sma"+expression.param.timePeriod]
+      case "EMA":
+        return dayData["EMA"+expression.param.timePeriod]
+      case "ADX":
+        return dayData.ADX;
+      case "RSI":
+        return dayData["RSI" + expression.param.timePeriod] 
+      case "SO":
+        return dayData["SO"+expression.param.timePeriod]
+      default:
+        throw new Error(`Unknown expression value: ${expression.value}`);
+    }
+  }
+
+const Prev = (data) =>{
+    try{
+        for (let i in data){
+            if (i == 0){
+                data[i].po = null
+                data[i].ph = null
+                data[i].pl = null
+                data[i].pc = null
+                data[i].pv = null
+            }else{
+                data[i].po = data[i-1].o
+                data[i].ph = data[i-1].h
+                data[i].pl = data[i-1].l
+                data[i].pc = data[i-1].c
+                data[i].pv = data[i-1].v
+            }
+        }
+
+        return data
+    }catch(err){
+        console(err)
+        return data
+    }
+}
+
+const PrevMACD = (data) =>{
+    try{
+        for(let i in data){
+            if (i == 0){
+                data[i].prevMACDHis = null
+                data[i].prevMACDLine = null
+                data[i].prevSignal = null
+            }else{
+                data[i].prevMACDHis = data[i-1].MACDHistogram
+                data[i].prevMACDLine = data[i-1].MACDLine
+                data[i].prevSignal = data[i-1].signalLine
+            }
+        }
+        return data
+    }catch(err){
+        console.log(err)
+        return data
     }
 }
 
@@ -736,16 +947,66 @@ const SMA = (data, periods) =>{
     }
 }
 
-const MACD = () =>{
+const MACD = (historicalData) =>{
+    try{
+        const fastPeriod = 12; // Fast period for EMA calculation
+        const slowPeriod = 26; // Slow period for EMA calculation
+        const signalPeriod = 9; // Signal period for EMA calculation
+      
+        // Calculate the EMA (Exponential Moving Average) for the fast and slow periods
+        let fastEMA = calculateEMA(historicalData, fastPeriod);
+        let slowEMA = calculateEMA(historicalData, slowPeriod);
+      
+        // Calculate the MACD Line
+        let MACDLine = fastEMA.map((value, index) => {
+          return value - slowEMA[index];
+        });
 
+        // Calculate the Signal Line (EMA of the MACD Line)
+        let signalLine = calculateEMA(MACDLine, signalPeriod);
+      
+        // Calculate the MACD Histogram
+        let MACDHistogram = MACDLine.map((value, index) => {
+          return value - signalLine[index];
+        });
+      
+        // Store the calculated MACD values into the historicalData object
+        historicalData.forEach((data, index) => {
+          data.MACDLine = MACDLine[index];
+          data.signalLine = signalLine[index];
+          data.MACDHistogram = MACDHistogram[index];
+        });
+      
+        return historicalData;
+    }catch(err){
+        console.log(err)
+        return historicalData
+    }
 }
+
+const calculateEMA = (data, period) =>{
+    try{
+        let EMAArray = [];
+        let multiplier = 2 / (period + 1);
+        let EMA = data[0].c == undefined ? data[0] : data[0].c;
+      
+        for (let i = 0; i < data.length; i++) {
+            let tempData = data[i].c == undefined ? data[i] : data[i].c
+          EMA = (tempData - EMA) * multiplier + EMA;
+          data[i]["EMA"+period] = EMA
+          EMAArray.push(EMA);
+        }
+        return EMAArray;
+    }catch(err){
+        console.log(err)
+    }
+  }
 
 const RSI = (historicalData, period) =>{
     //RS = prevAvgGain / prevAvgLoss
     //RSI = 100 - (100 / (1 + RS))
 
     try{
-        console.log(period)
         let prevAvgGain = 0;
         let prevAvgLoss = 0;
         
@@ -783,6 +1044,86 @@ const RSI = (historicalData, period) =>{
     }catch(err){
         console.log(err)
         return historicalData
+    }
+}
+
+const ADX = (data)=>{
+    try{
+        // https://www.investopedia.com/terms/a/adx.asp
+        const period = 14; // ADX period
+        const dmPlusArr = [];
+        const dmMinusArr = [];
+        const trArr = [];
+        const trueRange = (i) => Math.max(
+          data[i].h - data[i].l,
+          Math.abs(data[i].h - data[i - 1].c),
+          Math.abs(data[i].l - data[i - 1].c)
+        );
+        const positiveDirectionalMovement = (i) =>
+          data[i].h - data[i - 1].h > data[i - 1].l - data[i].l
+            ? Math.max(data[i].h - data[i - 1].h, 0)
+            : 0;
+        const negativeDirectionalMovement = (i) =>
+          data[i - 1].l - data[i].l > data[i].h - data[i - 1].h
+            ? Math.max(data[i - 1].l - data[i].l, 0)
+            : 0;
+      
+        for (let i = 1; i < data.length; i++) {
+          dmPlusArr.push(positiveDirectionalMovement(i));
+          dmMinusArr.push(negativeDirectionalMovement(i));
+          trArr.push(trueRange(i));
+        }
+      
+        const smoothDMPlus = (i) => {
+          if (i === period) {
+            return dmPlusArr.slice(0, period).reduce((acc, val) => acc + val) / period;
+          } else {
+            return (smoothDMPlus(i - 1) * (period - 1) + dmPlusArr[i - 1]) / period;
+          }
+        };
+      
+        const smoothDMMinus = (i) => {
+          if (i === period) {
+            return dmMinusArr.slice(0, period).reduce((acc, val) => acc + val) / period;
+          } else {
+            return (smoothDMMinus(i - 1) * (period - 1) + dmMinusArr[i - 1]) / period;
+          }
+        };
+      
+        const smoothTR = (i) => {
+          if (i === period) {
+            return trArr.slice(0, period).reduce((acc, val) => acc + val) / period;
+          } else {
+            return (smoothTR(i - 1) * (period - 1) + trArr[i - 1]) / period;
+          }
+        };
+      
+        const plusDI = (i) => (smoothDMPlus(i) / smoothTR(i)) * 100;
+        const minusDI = (i) => (smoothDMMinus(i) / smoothTR(i)) * 100;
+        const diDiff = (i) => Math.abs(plusDI(i) - minusDI(i));
+        const diSum = (i) => plusDI(i) + minusDI(i);
+        const diDiffSum = (i) => diDiff(i) + diSum(i);
+      
+        const dx = (i) => (diDiffSum(i) !== 0 ? (diDiff(i) / diDiffSum(i)) * 100 : 0);
+      
+        const firstADX = dx(period);
+        const adxArr = [firstADX];
+      
+        for (let i = period + 1; i < data.length; i++) {
+          adxArr.push((adxArr[i - period - 1] * (period - 1) + dx(i - 1)) / period);
+        }
+      
+        for (let i = period * 2; i < data.length; i++) {
+            data[i].ADX = adxArr[i - period * 2];
+        }
+
+        for (let i = 0; i < period * 2; i++) {
+            data[i].ADX = null;
+        }
+      
+        return data;
+    }catch(err){
+        console.log(err)
     }
 }
 

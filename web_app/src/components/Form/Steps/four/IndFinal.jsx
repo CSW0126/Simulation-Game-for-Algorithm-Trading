@@ -28,18 +28,18 @@ const IndFinal = ({userData}) => {
       return(
         <div className='w-full'>
           <p className='text-center'>{rules.expression1.type}</p>
-          <p className='text-center'>Fast EMA Period: <span className='font-semibold'>{rules.expression1.param.FastEMAPeriod}</span> days </p>
+          {/* <p className='text-center'>Fast EMA Period: <span className='font-semibold'>{rules.expression1.param.FastEMAPeriod}</span> days </p>
           <p className='text-center'>Slow EMA Period: <span className='font-semibold'>{rules.expression1.param.SlowEMAPeriod}</span> days</p>
-          <p className='text-center'>Signal Line Period: <span className='font-semibold'>{rules.expression1.param.SignalLinePeriod}</span> days</p>
+          <p className='text-center'>Signal Line Period: <span className='font-semibold'>{rules.expression1.param.SignalLinePeriod}</span> days</p> */}
         </div>
       )
     }else if (rules.expression2.type == "MACD"){
       return(
         <div className='w-full'>
           <p className='text-center'>{rules.expression1.type}</p>
-          <p className='text-center'>Fast EMA Period: <span className='font-semibold'>{rules.expression1.param.FastEMAPeriod}</span> days </p>
+          {/* <p className='text-center'>Fast EMA Period: <span className='font-semibold'>{rules.expression1.param.FastEMAPeriod}</span> days </p>
           <p className='text-center'>Slow EMA Period: <span className='font-semibold'>{rules.expression1.param.SlowEMAPeriod}</span> days</p>
-          <p className='text-center'>Signal Line Period: <span className='font-semibold'>{rules.expression1.param.SignalLinePeriod}</span> days</p>
+          <p className='text-center'>Signal Line Period: <span className='font-semibold'>{rules.expression1.param.SignalLinePeriod}</span> days</p> */}
         </div>
       )
     }else{
@@ -90,6 +90,17 @@ const IndFinal = ({userData}) => {
               </span>
             </div>
         </div>
+
+        <div className='ml-5 py-5 grid grid-cols-2 gap-4 border-t-1 border-gray-300'>
+          <div className=''>
+            <span className=' font-semibold text-gray-600 text-base'>Investment</span>
+          </div>
+          <div>
+            <span className=' text-gray-600 text-base'>
+              ${userData.investment}
+            </span>
+          </div>
+      </div>
 
         <div className='ml-5 py-5 flex flex-wrap justify-center border-t-1 border-gray-300'>
             <div className='text-center'>
