@@ -202,20 +202,35 @@ const CusRules = () => {
       }]
     }]
   )
-  const [ex1, setEx1] = useState([
-    [expression.filter(item => item.value != "Number" )]
-  ])
+  const [ex1, setEx1] = useState([[expression.filter(item => item.value != "Number" )]])
   const [ex2, setEx2] = useState([[expression.filter(item => item.value != "Close Price")]])
   const [sellEx1 ,setSellEx1] = useState([[expression.filter(item => item.value != "Number" )]])
   const [sellEx2, setSellEx2] = useState([[expression.filter(item => item.value != "Close Price")]])
 
   useEffect(()=>{
+
+    if (userData.ex1 && userData.ex2 && userData.sellEx1 && userData.sellEx2 && userData.buyCondition && userData.sellCondition) {
+      setEx1(userData.ex1)
+      setEx2(userData.ex2)
+      setSellEx1(userData.sellEx1)
+      setSellEx2(userData.sellEx2)
+      setBuyRules(userData.buyCondition)
+      setSellRules(userData.sellCondition)
+    }
+  },[])
+
+  useEffect(()=>{
     setUserData({
       ...userData,
       buyCondition:buyRules,
-      sellCondition:sellRules
+      sellCondition:sellRules,
+      ex1,
+      ex2,
+      sellEx1,
+      sellEx2
     })
-  },[buyRules, sellRules])
+  },[buyRules, sellRules, ex1, ex2, sellEx1, sellEx2])
+
 
   const checkTypeFor100 = (value) =>{
     return (value == 'RSI' || value == 'SO' || value == 'ADX')

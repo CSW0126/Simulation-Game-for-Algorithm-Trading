@@ -59,11 +59,14 @@ const AlgoSelect = () => {
         algoType: algoType,
       })
     }else if (algoType == 3){
-      setUserData({
-        ...userData,
-        algoType: algoType,
-        investment: 1000
-      })
+      const tempUserData = {...userData}
+      delete tempUserData['ex1']
+      delete tempUserData['ex2']
+      delete tempUserData['sellEx1']
+      delete tempUserData['sellEx2']
+      tempUserData.algoType = algoType
+      tempUserData.investment = 1000
+      setUserData(tempUserData)
     }
 
   }
