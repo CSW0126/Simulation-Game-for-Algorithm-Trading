@@ -664,42 +664,189 @@ const CustomIndicator = (rules) =>{
             const stopLoss = rules.stop_loss
 
             let holdingUSD = rules.investment
-            let holdingShares = 0
-            let entryPrice = 0
+            let holdingShare = 0
             let round = 0
             let record = []
-            let totalShares = 0
+            let initInvestment = 0
+            let usingUSD = 0
 
             for (let dayData of historicalData){
-                if(holdingShares == 0){
-                //check buy 
+                let order = "None"
+                let recordData = {}
+                if(holdingShare == 0){
+                    //check buy 
+                    let buyPass = true
+                    for(let group of buyGroup){
+                        // console.log(group)
+                        switch (group.type){
+                            case "And":
+                                buyPass = ProcessAndGroup(dayData, group, "Buy")
+                                break
+                            case "Not":
+                                buyPass = ProcessNotGroup(dayData, group)
+                                break
+                            case "Count":
+                                buyPass = ProcessCountGroup(dayData, group, "Buy")
+                                break
+                            default:
+                                continue
+                        }
 
-                let buyResult = false
-                for(let group of buyGroup){
-                    // console.log(group)
-                    switch (group.type){
-                        case "And":
-                            buyResult = ProcessAndGroup(dayData, group)
-                            break
-                        case "Not":
-                            break
-                        case "Count":
-                            break
-                        default:
-                            continue
+                        if(!buyPass) break
                     }
 
-                    if(!buyResult) break
-                }
+                    if (buyPass){
+                        //execute buy
+                        order = "Buy"
+                        if(rules.type == 1){
+                            //crypto
+                            usingUSD = holdingUSD
+                            initInvestment = usingUSD
+                            holdingShare = holdingUSD/dayData.c
+                            holdingUSD = 0
+                        }else{
+                            //stock
+                            if(Math.floor(holdingUSD/dayData.c) == 0){
+                                //cannot buy 1 shares
+                                round -= 1
+                                order = "None"
+                            }else{
+                                holdingShare = Math.floor(holdingUSD/dayData.c)
+                                holdingUSD = holdingUSD % dayData.c
+                                usingUSD = dayData.c * holdingShare
+                                initInvestment = usingUSD 
+                            }
+
+                        }
+
+                        sharesValueInUSD = holdingShare * dayData.c
+                        
+                    }
                 }else{
+                    //check stop earn + stop loss
+                    //calculate profit ratio
+                    let usdValue = holdingShare * dayData.c
+                    let profitRatio = (-(1-(usdValue/initInvestment))) *100
+
+                    if(profitRatio <= -stopLoss){
+                        // console.log("stop loss")
+                        order = "StopLoss"
+                        holdingUSD += holdingShare * dayData.c
+                        sharesValueInUSD = 0
+                        holdingShare = 0
+                        usingUSD = 0
+                        recordData = {
+                            round,
+                            time: dayData.t,
+                            order,
+                            currentPrice: dayData.c,
+                            sharesValueInUSD : 0,
+                            holdingUSD,
+                            initInvestment,
+                        };
+                        record.push(recordData)
+                        round += 1
+                        continue
+                    }
+
+                    if(profitRatio >= stopEarn && stopEarn != 0){
+                        // console.log("stopEarn")
+                        order = "StopEarn"
+                        holdingUSD += holdingShare * dayData.c
+                        sharesValueInUSD = 0
+                        holdingShare = 0
+                        usingUSD = 0
+                        recordData = {
+                            round,
+                            time: dayData.t,
+                            order,
+                            currentPrice: dayData.c,
+                            sharesValueInUSD : 0,
+                            holdingUSD,
+                            initInvestment,
+                        };
+                        record.push(recordData)
+                        round += 1
+                        continue
+                    }
+
                     //check sell
+                    let sellPass = true
+                    for(let group of sellGroup){
+                        // console.log(group)
+                        switch (group.type){
+                            case "And":
+                                sellPass = ProcessAndGroup(dayData, group, "Sell")
+                                break
+                            case "Not":
+                                sellPass = ProcessNotGroup(dayData, group)
+                                break
+                            case "Count":
+                                sellPass = ProcessCountGroup(dayData, group, "Sell")
+                                break
+                            default:
+                                continue
+                        }
+
+                        if(!sellPass) break
+                    }
+
+                    if (sellPass){
+                        //execute buy
+                        order = "Sell"
+    
+                        holdingUSD += holdingShare * dayData.c
+                        sharesValueInUSD = 0
+                        holdingShare = 0
+                        usingUSD = 0
+                    }
                 }
+
+                if(order == "Buy"){
+                    recordData = {
+                        round,
+                        time: dayData.t,
+                        order,
+                        currentPrice: dayData.c,
+                        sharesValueInUSD : holdingShare * dayData.c,
+                        usingUSD,
+                        holdingUSD,
+                        holdingShare
+                    };
+                }else if(order == "Sell"){
+                    recordData = {
+                        round,
+                        time: dayData.t,
+                        order,
+                        currentPrice: dayData.c,
+                        sharesValueInUSD : 0,
+                        holdingUSD,
+                        initInvestment,
+                    };
+                }else{
+                    recordData = {
+                        round,
+                        time: dayData.t,
+                        order,
+                        currentPrice: dayData.c,
+                        sharesValueInUSD : holdingShare * dayData.c,
+                        holdingUSD,
+                        initInvestment,
+                        usingUSD,
+                        holdingShare
+                    };
+                }
+
+
+    
+                record.push(recordData)
+                if(order == "Sell") round += 1
             }
 
 
 
             
-            return historicalData
+            return record
         }else{
             console.log("historical data not found")
             return null
@@ -708,6 +855,146 @@ const CustomIndicator = (rules) =>{
     }catch(err){
         console.log(err)
         return null
+    }
+}
+
+const ProcessAndGroup = (dayData, group, order) =>{
+    try{
+        let result = true
+        for(let rule of group.rules){
+            let ex1 = rule.expression1.type
+            let ex2 = rule.expression2.type
+            let operator = rule.operator
+
+            if(ex1 == "MACD" || ex2 == "MACD"){
+                //first day
+                if(dayData.prevMACDHis == null || dayData.prevMACDLine == null || dayData.prevSignal == null){
+                    return false
+                }else{
+                    //buy signal
+                    if (order == "Buy"){
+                        //red turn green
+                        if((dayData.prevMACDHis < 0 && dayData.MACDHistogram > 0)){
+                            //pass
+                            continue
+                        }else{
+                            return false
+                        }
+                    //sell
+                    }else if (order == "Sell"){
+                        //green turn red
+                        if((dayData.prevMACDHis > 0 && dayData.MACDHistogram < 0)){
+                            //pass
+                            continue
+                        }else{
+                            return false
+                        }
+                    }else{
+                        console.log("MACD error")
+                        return false
+                    }
+                }
+            }else{
+                //other rules
+                let ex1Value = mapExpression(dayData,rule.expression1)
+                let ex2Value = mapExpression(dayData,rule.expression2)
+                let pass = checkCondition(operator,ex1Value,ex2Value)
+                if(!pass){
+                    return false
+                }
+            }
+        }
+
+        return result
+    }catch(err){
+        console.log(err)
+        return false
+    }
+}
+
+const ProcessNotGroup = (dayData, group)=>{
+    try{
+        let result = true
+        for (let rule of group.rules){
+            let ex1 = rule.expression1.type
+            let ex2 = rule.expression2.type
+            let operator = rule.operator
+
+            if(ex1 == "MACD" || ex2 == "MACD"){
+                continue
+            }else{
+                //other rules
+                let ex1Value = mapExpression(dayData,rule.expression1)
+                let ex2Value = mapExpression(dayData,rule.expression2)
+                let pass = checkCondition(operator,ex1Value,ex2Value)
+
+                // console.log(ex1Value + " " + ex2Value)
+                if(pass){
+                    return false
+                }
+            }
+        }
+
+        return result
+    }catch(err){
+        console.log(err)
+        return false
+    }
+}
+
+const ProcessCountGroup = (dayData, group, order) =>{
+    try{
+        let count = 0
+        let limit = group.value
+        for(let rule of group.rules){
+            let ex1 = rule.expression1.type
+            let ex2 = rule.expression2.type
+            let operator = rule.operator
+
+            if(ex1 == "MACD" || ex2 == "MACD"){
+                //first day
+                if(dayData.prevMACDHis == null || dayData.prevMACDLine == null || dayData.prevSignal == null){
+                    continue
+                }else{
+                    //buy signal
+                    if (order == "Buy"){
+                        if((dayData.prevMACDHis < 0 && dayData.MACDHistogram > 0)){
+                            //pass
+                            count += 1
+                        }
+                    //sell
+                    }else if (order == "Sell"){
+                        if((dayData.prevMACDHis > 0 && dayData.MACDHistogram < 0)){
+                            //pass
+                            count += 1
+                        }
+                    }else{
+                        console.log("MACD error")
+                        continue
+                    }
+                }
+            }else{
+                //other rules
+                let ex1Value = mapExpression(dayData,rule.expression1)
+                let ex2Value = mapExpression(dayData,rule.expression2)
+                let pass = checkCondition(operator,ex1Value,ex2Value)
+                if(!pass){
+                    continue
+                }else{
+                    count += 1
+                }
+            }
+
+            // console.log(count + " " + limit)
+            if (count >= limit){
+                return true
+            }
+        }
+
+        return false
+    }catch(err){
+        console.log(err)
+        return false
     }
 }
 
@@ -732,41 +1019,6 @@ const checkCondition = (operator, expression1, expression2) => {
         return false
     }
 
-}
-
-const ProcessAndGroup = (dayData, group) =>{
-    try{
-        let result = true
-        for(let rule of group.rules){
-            let ex1 = rule.expression1.type
-            let ex2 = rule.expression2.type
-            let operator = rule.operator
-
-            if(ex1 == "MACD" || ex2 == "MACD"){
-                //first day
-                if(dayData.prevMACDHis == null || dayData.prevMACDLine == null || dayData.prevSignal == null){
-                    return false
-                }else{
-                    if((dayData.prevMACDHis < 0 && dayData.MACDHistogram > 0) || (dayData.prevMACDLine < 0 && dayData.MACDLine > 0) || (dayData.prevSignal < 0 && dayData.signalLine > 0)){
-                        //buy signal
-                        continue
-                    }else{
-                        return false
-                    }
-                }
-            }else{
-                //other rules
-                let ex1Value = mapExpression(dayData,rule.expression1)
-                let ex2Value = mapExpression(dayData,rule.expression2)
-
-            }
-        }
-
-        return result
-    }catch(err){
-        console.log(err)
-        return false
-    }
 }
 
 const mapExpression = (dayData, expression) => {
@@ -806,7 +1058,7 @@ const mapExpression = (dayData, expression) => {
       default:
         throw new Error(`Unknown expression value: ${expression.value}`);
     }
-  }
+}
 
 const Prev = (data) =>{
     try{
@@ -1126,7 +1378,6 @@ const ADX = (data)=>{
         console.log(err)
     }
 }
-
 
 const SO = (data, period) =>{
     // Stochastic Oscillator
