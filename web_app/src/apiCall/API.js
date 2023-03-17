@@ -188,7 +188,7 @@ export const APICall = {
             return result
         }catch(err){
             console.log(err)
-            return []
+            return {data:[]}
         }
 
     },
@@ -247,6 +247,39 @@ export const APICall = {
         }catch(e){
             console.log(e)
             return {data:[]}
+        }
+    },
+    GetProfitMovementDataForInd:(simulationData, historicalData, data) =>{
+        try{
+            let simData = simulationData.message
+            let objArr = []
+            let profitArray = []
+
+            console.log("inc")
+            console.log(simData)
+
+            for (let i in simData){
+                let dataObj = {}
+                dataObj.time = simData[i].time
+                dataObj.price = simData[i].currentPrice
+                dataObj.holdingShares = simData[i].holdingShare
+                dataObj.usingUSD = simData[i].usingUSD
+                dataObj.round = simData[i].round
+                dataObj.holdingValue = simData[i].sharesValueInUSD
+                profitArray.push((simData[i].sharesValueInUSD + simData[i].holdingUSD))
+                objArr.push(dataObj)
+            }
+
+            // console.log("jo")
+            // console.log(result)
+            let result = {
+                objArr,
+                data : profitArray
+            }
+            return result
+        }catch(err){
+            console.log(err)
+            return []
         }
     },
     MatchProfitWithData : (profitMoveData, processHis) =>{

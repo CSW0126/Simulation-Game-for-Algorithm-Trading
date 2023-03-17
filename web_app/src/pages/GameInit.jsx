@@ -131,7 +131,7 @@ const GameInit = () => {
       if(response.status == 'success'){
         let newID = response.user.record[response.user.record.length-1]._id
         if(newID){
-          // navigate(`/history/${newID}`);
+          navigate(`/history/${newID}`);
         }
       }else{
         console.log(response)

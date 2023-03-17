@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const MartingaleParam = require('./martingaleParam')
+const Condition = require('./condition')
 
 module.exports = new mongoose.Schema({
     //1:martingale, 2: DCA , 3: custom Indicator
@@ -30,7 +31,10 @@ module.exports = new mongoose.Schema({
     //DCA related
     validDate: {type:Number, default:0},
     DCAInvestAmount: {type:Number, default:1},
-    period: {type:Number, default:1}
+    period: {type:Number, default:1},
 
     //Custom Indicator related
+    buyCondition:{type: [Condition], default: []},
+    sellCondition: {type: [Condition], default: []}
+
 })

@@ -19,8 +19,8 @@ for (var k in interfaces) {
 server.listen(port)
 //log
 console.log("----------------------------------------------------------------------")
-console.log("Find the IP that is same with your expo app IP")
-console.log("Copy the IP to the HOSTNAME in ../Application/App/constants/Host.js")
+// console.log("Find the IP that is same with your expo app IP")
+// console.log("Copy the IP to the HOSTNAME in ../Application/App/constants/Host.js")
 for (let i in addresses){
     console.log("Listen: [" +i+"] http://" + addresses[i] + ":" + port);
 }

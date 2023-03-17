@@ -28,6 +28,8 @@ const ProfitMove = (props) => {
             return calcRefValue({ data: fetchData, height, margin, referenceValue: data.investment })
         }else if(data.algoType == 2){
             return  calcRefValue({ data: fetchData, height, margin, referenceValue: (data.DCAInvestAmount * data.validDate) })
+        }else if(data.algoType == 3){
+            return calcRefValue({ data: fetchData, height, margin, referenceValue: data.investment })
         }
 
     }, [fetchData, height, margin])
@@ -69,8 +71,10 @@ const ProfitMove = (props) => {
             let profitArray = APICall.GetProfitMovementData(response, historicalData, data).data
             setFetchData(profitArray)
         }else if(data.algoType == 2){
-
             let profitArray = APICall.GetProfitMovementDataForDCA(response, historicalData, data).data
+            setFetchData(profitArray)
+        }else if(data.algoType==3){
+            let profitArray = APICall.GetProfitMovementDataForInd(response,historicalData,data).data
             setFetchData(profitArray)
         }
     }
@@ -103,6 +107,14 @@ const ProfitMove = (props) => {
                 }else{
                     result = "#E91E63"
                 }
+            }
+        }else if(data.algoType == 3){
+            // console.log("fetch data")
+            // console.log( fetchData)
+            if (data.investment > fetchData[fetchData.length-1]){
+                result =  "#E91E63"
+            }else{
+                result = "#089981"
             }
         }
 

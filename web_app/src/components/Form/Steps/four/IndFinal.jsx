@@ -10,49 +10,63 @@ const IndFinal = ({userData}) => {
   const renderParam = (value) =>{
     try{
       // console.log(value)
-      let keys = Object.keys(value)
-      let str = ""
-      for(let i in keys){
-        str += keys + ": " + value[keys[i]]
+      if(value){
+        let keys = Object.keys(value)
+        let str = ""
+        for(let i in keys){
+          str += keys + ": " + value[keys[i]]
+        }
+
+        if(str){ str = "- " + str}
+        return str
       }
 
-      if(str){ str = "- " + str}
-      return str
     }catch(err){
       console.log(err)
     }
   }
 
-  const renderRules = (rules) =>{
-    if(rules.expression1.type == "MACD"){
+  const renderRules = (rules, order, text) =>{
+
+    if((rules.expression1.type == "MACD" || rules.expression2.type == "MACD") && order != "Not"){
       return(
-        <div className='w-full'>
-          <p className='text-center'>{rules.expression1.type}</p>
-          {/* <p className='text-center'>Fast EMA Period: <span className='font-semibold'>{rules.expression1.param.FastEMAPeriod}</span> days </p>
-          <p className='text-center'>Slow EMA Period: <span className='font-semibold'>{rules.expression1.param.SlowEMAPeriod}</span> days</p>
-          <p className='text-center'>Signal Line Period: <span className='font-semibold'>{rules.expression1.param.SignalLinePeriod}</span> days</p> */}
-        </div>
+        <>        
+          {"MACD (" + text + " Signal)"}
+        </>
       )
-    }else if (rules.expression2.type == "MACD"){
+    }else if ((rules.expression1.type == "MACD" || rules.expression2.type == "MACD") && order == "Not"){
       return(
-        <div className='w-full'>
-          <p className='text-center'>{rules.expression1.type}</p>
-          {/* <p className='text-center'>Fast EMA Period: <span className='font-semibold'>{rules.expression1.param.FastEMAPeriod}</span> days </p>
-          <p className='text-center'>Slow EMA Period: <span className='font-semibold'>{rules.expression1.param.SlowEMAPeriod}</span> days</p>
-          <p className='text-center'>Signal Line Period: <span className='font-semibold'>{rules.expression1.param.SignalLinePeriod}</span> days</p> */}
-        </div>
+        <>
+          {"MACD No function in " + order + " Group"}
+        </>
       )
     }else{
       return(
         <>      
-          <span className={"w-2/6 text-center"}>{rules.expression1.type} {renderParam(rules.expression1.param)}</span>
-          <span className={"w-1/6 text-center"}>{rules.operator}</span>
-          <span className={"w-2/6 text-center"}>{rules.expression2.type} {renderParam(rules.expression2.param)}</span>
+          {rules.expression1.type} {renderParam(rules.expression1.param)}
+          {" " + rules.operator + " "}
+          {rules.expression2.type} {renderParam(rules.expression2.param)}
         </>
       )
     }
+  }
 
-
+  const renderTypeStr = (group)=>{
+    try{
+      switch (group.type){
+        case "And":
+          return "(And) Pass when all rules in this group should be satisfied."
+        case "Not":
+          return "(Not) If one of the rules is satisfied, no order will not be executed."
+        case "Count":
+          let value = group.value
+          return `(Count) Pass when only satisfied at least ${value} rules.`
+        default:
+          return ""
+      }
+    }catch(err){
+      console.log(err)
+    }
   }
   return (
     <div className='mb-10 min-w-[70%]' >
@@ -108,20 +122,20 @@ const IndFinal = ({userData}) => {
             </div>
         </div>
 
-
         {userData.buyCondition.map((group, i)=>(
-          <div key={"buy_"+i}  className='ml-5 py-5 flex flex-wrap border-t-1 border-gray-300'>
-            <div className='w-full md:w-1/4 font-semibold text-gray-600'>Group #{i}</div>
-            <div className={"w-full font-base"+ group.type == "Count"? "md:w-1/4" : "w-3/4"}>Condition: <span className=''>&nbsp;{(group.type).toUpperCase()}</span></div>
-            {group.type == "Count" ? <div className='w-full md:w-2/4 font-base'>Value: {group.value}</div>: <></>}
-            
+          <div key={"buy_"+i} className='flex flex-col bg-gray-100 border-t border-b border-gray-300 py-2 px-4'>
+            <div  className='flex items-center'>
+              <div className='text-lg font-semibold text-gray-700'>Group#{i}</div>
+              <div className={"ml-4 text-sm text-gray-500"}>{renderTypeStr(group)}</div>
+            </div>
             {/* rules */}
-            {group.rules.map((rules, j)=>(
-              <div className='w-full ml-5 py-5 mt-3 flex flex-wrap border-t-1 border-gray-300'>
-                <span className='font-semibold text-gray-600 w-full md:w-1/6'>Rule #{j}:</span> 
-                {renderRules(rules)}
-              </div>
-            ))}
+            <ul className="list-disc list-inside mt-5">
+              {group.rules.map((rules, j)=>(
+                <li key={"buy_"+i+"_rule_"+j} className="border-l-4 border-gray-300 pl-4 py-2 mb-2">
+                  Rule {j}: &nbsp;{renderRules(rules, group.type, "Buy")}
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
         <div className='ml-5 py-5 flex flex-wrap justify-center border-t-1 border-gray-300'>
@@ -131,18 +145,20 @@ const IndFinal = ({userData}) => {
         </div>
 
         {userData.sellCondition.map((group, i)=>(
-          <div key={"buy_"+i}  className='ml-5 py-5 flex flex-wrap border-t-1 border-gray-300'>
-            <div className='w-full md:w-1/4 font-semibold text-gray-600'>Group #{i}</div>
-            <div className={"w-full font-base"+ group.type == "Count"? "md:w-1/4" : "w-3/4"}>Condition: <span className=''>&nbsp;{(group.type).toUpperCase()}</span></div>
-            {group.type == "Count" ? <div className='w-full md:w-2/4 font-base'>Value: {group.value}</div>: <></>}
+          <div key={"sell_"+i}  className='flex flex-col bg-gray-100 border-t border-b border-gray-300 py-2 px-4'>
+            <div className='flex items-center'>
+              <div className='text-lg font-semibold text-gray-700'>Group #{i}</div>
+              <div className={"ml-4 text-sm text-gray-500"}>{renderTypeStr(group)}</div>
+            </div>
             
             {/* rules */}
+            <ul className="list-disc list-inside mt-5">
             {group.rules.map((rules, j)=>(
-              <div className='w-full ml-5 py-5 mt-3 flex flex-wrap border-t-1 border-gray-300'>
-                <span className='font-semibold text-gray-600 w-full md:w-1/6'>Rule #{j}:</span> 
-                {renderRules(rules)}
-              </div>
+              <li key={"sell_"+i+"_rule_"+j} className="border-l-4 border-gray-300 pl-4 py-2 mb-2">
+                  Rule {j}: &nbsp;{renderRules(rules, group.type, "Sell")}
+                </li>
             ))}
+            </ul>
           </div>
         ))}
 

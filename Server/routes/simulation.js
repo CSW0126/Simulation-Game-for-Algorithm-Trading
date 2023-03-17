@@ -103,10 +103,29 @@ router.post('/',AuthToken, async(req,res)=>{
                     //apply algo
                     result = CustomIndicator(body.data)
                     if(!result) throw "Rule error"
-                    return res.status(200).json({
-                        status: "success",
-                        message: result
-                       })
+                    if(body.data.saveUser){
+                        let saveUser = await SaveUser(body, _id)
+                        console.log(saveUser)
+                        if (saveUser){
+                            return res.status(200).json({
+                                status: "success",
+                                message: result,
+                                user:saveUser
+                            })
+                        }else{
+                            return res.status(200).json({
+                                status: "success",
+                                message: result,
+                                user: null
+    
+                            })
+                        }
+                    }else{
+                        return res.status(200).json({
+                            status: "success",
+                            message: result,
+                        })
+                    }
                     
                 default:
                     return res.status(200).json({

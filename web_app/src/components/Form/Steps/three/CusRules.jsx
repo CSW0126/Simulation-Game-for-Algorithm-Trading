@@ -696,7 +696,7 @@ const CusRules = () => {
                                   <TextField
                                           select
                                           label="Expression 1"
-                                          style={{width:180}}
+                                          style={rules.expression1.type== "MACD" ? {width:420} : {width:180}}
                                           defaultValue= {"Close Price"}
                                             onChange={(event)=>handleExpressionOneChange(event.target.value, i, j, buyRules, setBuyRules, ex2, setEx2)
                                           }
@@ -751,7 +751,7 @@ const CusRules = () => {
                                   <div className=' self-center'>
                                     <TextField
                                           select
-                                          style={{width:180}}
+                                          style={rules.expression2.type== "MACD" ? {width:420} : {width:180}}
                                           label="Expression 2"
                                           defaultValue= {rules.expression2.type}
                                             onChange={(event)=>handleExpressionTwoChange(event.target.value, i, j, buyRules, setBuyRules, ex1, setEx1)
@@ -933,7 +933,7 @@ const CusRules = () => {
                                   <TextField
                                           select
                                           label="Expression 1"
-                                          style={{width:180}}
+                                          style={rules.expression1.type== "MACD" ? {width:420} : {width:180}}
                                           defaultValue= {"Close Price"}
                                             onChange={(event)=>handleExpressionOneChange(event.target.value, i, j, sellRules,setSellRules,sellEx2,setSellEx2)
                                           }
@@ -988,7 +988,7 @@ const CusRules = () => {
                                   <div className=' self-center'>
                                     <TextField
                                           select
-                                          style={{width:180}}
+                                          style={rules.expression2.type== "MACD" ? {width:420} : {width:180}}
                                           label="Expression 2"
                                           defaultValue= {rules.expression2.type}
                                             onChange={(event)=>handleExpressionTwoChange(event.target.value, i, j, sellRules,setSellRules,sellEx1,setSellEx1)

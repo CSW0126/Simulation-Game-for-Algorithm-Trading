@@ -83,6 +83,8 @@ const PaginatedTable = (props) => {
         }else if (row.type == 2){
           resultStr = (row.DCAInvestAmount * Math.ceil(row.validDate/row.period)) + " Shares"
         }
+      }else{
+        return "$"+row.investment
       }
       return resultStr
     }
