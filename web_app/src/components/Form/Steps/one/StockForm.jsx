@@ -27,6 +27,10 @@ const StockForm = () => {
       value: 'GOOGL',
       label: 'GOOGL (Google)',
     },
+    {
+      value: 'NVDA',
+      label: 'NVDA (NVIDIA Corp.)',
+    },
   ];
 
   const handlePairChange = (value)=>{

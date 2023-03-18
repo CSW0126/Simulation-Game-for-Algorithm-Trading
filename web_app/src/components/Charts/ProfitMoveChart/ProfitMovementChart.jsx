@@ -101,27 +101,48 @@ const ProfitMovementChart = ({data, ruleData, rawData}) => {
                     if (day.toString().length == 1) day = "0" + day
 
                     let dateStr = param.time.year + "-" + month + "-" + day
-                    let dataObj = rawData.find(ele => ele.time == dateStr)
+                    let dataObj = {}
                     toolTip.style.display = 'block';
+
+                    let round = 0
+                    let holdingAssets = 0
+                    let holdingUSD = 0
+                    let holdingValue = 0
+                    let currentPrice = 0
+                    if(ruleData.algoType == 1){
+                        dataObj = rawData.find(ele => ele.time == dateStr)
+                        round = dataObj?.round
+                        holdingAssets = APICall.HandleGetCoinToFixed(dataObj?.holdingShares, ruleData.pair)
+                        holdingUSD = dataObj?.holdingUSD.toFixed(2)
+                        holdingValue = dataObj?.holdingValue.toFixed(2)
+                        currentPrice = handleToFixed(dataObj?.price)
+                    }else if(ruleData.algoType == 3){
+                        dataObj = rawData.message.find(ele => moment(ele.time).format("YYYY-MM-DD") == dateStr)
+                        round = dataObj?.round
+                        holdingAssets = APICall.HandleGetCoinToFixed(dataObj?.holdingShare, ruleData.pair)
+                        holdingUSD = dataObj?.holdingUSD.toFixed(2)
+                        holdingValue = (dataObj?.sharesValueInUSD + dataObj?.holdingUSD).toFixed(2)
+                        currentPrice = handleToFixed(dataObj?.currentPrice)
+                    }
                     toolTip.innerHTML = 
                     `
                     <div className="grid grid-cols-2">
                         ${dateStr} :
                     </div>
                     <div className="">
-                        Round : ${dataObj?.round}
+                        Round : ${round}
                     </div>
                     <div className="">
-                        Holding Assets : ${APICall.HandleGetCoinToFixed(dataObj?.holdingShares, ruleData.pair)}
+                        Holding Assets : ${holdingAssets}
                     </div>
                     <div className="">
-                        Holding USD : $${dataObj?.holdingUSD.toFixed(2)}
+                        Holding USD : $${holdingUSD}
                     </div>
                     <div className="">
-                        Holding Value : $${dataObj?.holdingValue.toFixed(2)}
+                        Holding Value : $${holdingValue}
                     </div>
                     <div className="">
-                        Current Price : $${handleToFixed(dataObj?.price)}
+                        Current Price : $${currentPrice}
                     </div>
                     `
                     var coordinate = newSeries.priceToCoordinate(price);

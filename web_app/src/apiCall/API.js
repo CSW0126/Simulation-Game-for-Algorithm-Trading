@@ -161,6 +161,27 @@ export const APICall = {
             return null
         }
     },
+    SimulationDataToMarkersInc : (simData) =>{
+        try{
+            let markers = []
+            for(let i in simData){
+                if (i == simData.length-1) break
+                if(simData[i].order == "None") continue
+                let obj = {
+                    time: moment(simData[i].time).format("YYYY-MM-DD"),
+                    position: simData[i].order == "Buy" ? "aboveBar": "belowBar",
+                    shape: simData[i].order == "Buy" ? "arrowDown":"arrowUp",
+                    color: simData[i].order == "Buy" ? "#4CAF50":"#FF5252",
+                    text: simData[i].order+ " @ " + simData[i].currentPrice
+                }
+                markers.push(obj)
+            }
+            return markers
+        }catch(e){
+            console.log(e)
+            return null
+        }
+    },
     GetProfitMovementDataForDCA: (simulationData, historicalData, data) =>{
         try{
             let simData = simulationData.message
@@ -247,6 +268,24 @@ export const APICall = {
         }catch(e){
             console.log(e)
             return {data:[]}
+        }
+    },
+    GetIncProfitMovementData : (data) =>{
+        try{
+            const temp = {...data.message}
+            let record = []
+            for (let i in temp){
+                let obj = {
+                    time: moment(temp[i].time).format("YYYY-MM-DD"),
+                    value: (temp[i].sharesValueInUSD + temp[i].holdingUSD)
+                }
+
+                record.push(obj)
+            }
+            return record
+        }catch(err){
+            console.log(err)
+            return []
         }
     },
     GetProfitMovementDataForInd:(simulationData, historicalData, data) =>{

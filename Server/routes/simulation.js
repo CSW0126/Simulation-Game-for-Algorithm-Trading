@@ -1273,45 +1273,63 @@ const calculateEMA = (data, period) =>{
     }
   }
 
-const RSI = (historicalData, period) =>{
+const RSI = (data, period) =>{
     //RS = prevAvgGain / prevAvgLoss
     //RSI = 100 - (100 / (1 + RS))
 
     try{
-        let prevAvgGain = 0;
-        let prevAvgLoss = 0;
-        
-        for (let i = 0; i < historicalData.length; i++) {
-          const data = historicalData[i];
-          const close = data.c;
-          let gain = 0;
-          let loss = 0;
-      
-          if (i > 0) {
-            const prevData = historicalData[i-1];
-            const prevClose = prevData.c;
-            const diff = close - prevClose;
-      
-            if (diff > 0) {
-              gain = diff;
-            } else {
-              loss = Math.abs(diff);
+        for (let i = period; i < data.length; i++) {
+            let gains = 0;
+            let losses = 0;
+            for (let j = i - period; j < i; j++) {
+              let change = data[j + 1].c - data[j].c;
+              if (change >= 0) {
+                gains += change;
+              } else {
+                losses += Math.abs(change);
+              }
             }
-      
-            prevAvgGain = ((prevAvgGain * (period - 1)) + gain) / period;
-            prevAvgLoss = ((prevAvgLoss * (period - 1)) + loss) / period;
+            let avgGain = gains / period;
+            let avgLoss = losses / period;
+            let RS = avgGain / avgLoss;
+            let RSI = 100 - (100 / (1 + RS));
+            data[i]["RSI"+period] = RSI;
           }
+          return data;
+        // let prevAvgGain = 0;
+        // let prevAvgLoss = 0;
+        
+        // for (let i = 0; i < historicalData.length; i++) {
+        //   const data = historicalData[i];
+        //   const close = data.c;
+        //   let gain = 0;
+        //   let loss = 0;
       
-          if (i >= period) {
-            const RS = prevAvgGain / prevAvgLoss;
-            const RSI = 100 - (100 / (1 + RS));
-            data["RSI"+period] = Number(RSI.toFixed(2));
-          }else{
-            data["RSI"+period] = null
-          }
-        }
+        //   if (i > 0) {
+        //     const prevData = historicalData[i-1];
+        //     const prevClose = prevData.c;
+        //     const diff = close - prevClose;
       
-        return historicalData;
+        //     if (diff > 0) {
+        //       gain = diff;
+        //     } else {
+        //       loss = Math.abs(diff);
+        //     }
+      
+        //     prevAvgGain = ((prevAvgGain * (period - 1)) + gain) / period;
+        //     prevAvgLoss = ((prevAvgLoss * (period - 1)) + loss) / period;
+        //   }
+      
+        //   if (i >= period) {
+        //     const RS = prevAvgGain / prevAvgLoss;
+        //     const RSI = 100 - (100 / (1 + RS));
+        //     data["RSI"+period] = Number(RSI.toFixed(2));
+        //   }else{
+        //     data["RSI"+period] = null
+        //   }
+        // }
+      
+        // return historicalData;
     }catch(err){
         console.log(err)
         return historicalData
