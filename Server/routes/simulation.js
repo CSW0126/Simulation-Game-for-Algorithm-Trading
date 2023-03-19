@@ -688,6 +688,7 @@ const CustomIndicator = (rules) =>{
             let record = []
             let initInvestment = 0
             let usingUSD = 0
+            let sellingShare = 0
 
             for (let dayData of historicalData){
                 let order = "None"
@@ -746,11 +747,11 @@ const CustomIndicator = (rules) =>{
                     //calculate profit ratio
                     let usdValue = holdingShare * dayData.c
                     let profitRatio = (-(1-(usdValue/initInvestment))) *100
-
                     if(profitRatio <= -stopLoss){
                         // console.log("stop loss")
                         order = "StopLoss"
                         holdingUSD += holdingShare * dayData.c
+                        sellingShare = holdingShare
                         sharesValueInUSD = 0
                         holdingShare = 0
                         usingUSD = 0
@@ -762,6 +763,7 @@ const CustomIndicator = (rules) =>{
                             sharesValueInUSD : 0,
                             holdingUSD,
                             initInvestment,
+                            sellingShare
                         };
                         record.push(recordData)
                         round += 1
@@ -772,6 +774,7 @@ const CustomIndicator = (rules) =>{
                         // console.log("stopEarn")
                         order = "StopEarn"
                         holdingUSD += holdingShare * dayData.c
+                        sellingShare = holdingShare
                         sharesValueInUSD = 0
                         holdingShare = 0
                         usingUSD = 0
@@ -783,6 +786,7 @@ const CustomIndicator = (rules) =>{
                             sharesValueInUSD : 0,
                             holdingUSD,
                             initInvestment,
+                            sellingShare
                         };
                         record.push(recordData)
                         round += 1
@@ -815,6 +819,7 @@ const CustomIndicator = (rules) =>{
                         order = "Sell"
     
                         holdingUSD += holdingShare * dayData.c
+                        sellingShare = holdingShare
                         sharesValueInUSD = 0
                         holdingShare = 0
                         usingUSD = 0
@@ -841,6 +846,7 @@ const CustomIndicator = (rules) =>{
                         sharesValueInUSD : 0,
                         holdingUSD,
                         initInvestment,
+                        sellingShare
                     };
                 }else{
                     recordData = {

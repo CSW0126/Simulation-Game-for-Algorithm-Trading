@@ -5,6 +5,7 @@ import APICall from '../apiCall/API'
 import AnimateChart from '../components/Charts/AnimateChart/AnimateChart'
 import moment from 'moment'
 import ExecutionTable from '../components/Table/ExecutionTable'
+import ExecutionTableForInc from '../components/Table/ExecutionTableForInc'
 import ProfitMovementChart from '../components/Charts/ProfitMoveChart/ProfitMovementChart'
 import { Spinner } from "baseui/spinner";
 import { Button } from 'baseui/button'
@@ -18,7 +19,7 @@ import {TbReportMoney} from 'react-icons/tb'
 import {AiOutlineArrowDown, AiOutlineArrowUp} from 'react-icons/ai'
 import {CgShutterstock} from 'react-icons/cg'
 import DCAMovementChart from '../components/Charts/ProfitMoveChart/DCAMovementChart'
-import {Card, StyledBody, StyledAction} from 'baseui/card';
+import {Card, StyledBody} from 'baseui/card';
 import ExecutionTableForDCA from '../components/Table/ExecutionTableForDCA'
 import IndFinal from '../components/Form/Steps/four/IndFinal'
 
@@ -238,10 +239,8 @@ const Record = () => {
     const getTradeCount = (data) =>{
       try{
         let count = 0
-        console.log(data)
-        for (let i in data.message.length){
+        for (let i in data.message){
           if(data.message[i].order != "None"){
-            // console.log("hi")
             count += 1
           }
         }
@@ -252,12 +251,25 @@ const Record = () => {
       }
     }
 
+    const GetBuySellRecordForInc = (data) =>{
+      try{
+        //get all the record that the order not equal to none
+        const result = data.filter((record) => record.order !== "None");
+        console.log("data")
+        console.log(result)
+        return result
+      }catch(err){
+        console.log(err)
+        return []
+      }
+    }
+
     const renderInvestSummary = () =>{
       try{
         // console.log("hihi")
         // console.log(rawMovementData.objArr)
-        console.log("rule")
-        console.log(rulesData)
+        // console.log("rule")
+        // console.log(rulesData)
         if(rulesData.algoType == 1){
           //mart
           return (
@@ -830,8 +842,11 @@ const Record = () => {
               : 
               rulesData?.algoType == 2 ? 
                 <ExecutionTableForDCA data={DCAGetOnlyBuyOrder(rawSimulationData)} rules={rulesData}/>
-                :
-                <>3 record 575</>
+              :
+              rulesData?.algoType == 3 ?
+              <ExecutionTableForInc data={GetBuySellRecordForInc(rawSimulationData)} rules={rulesData}/>
+              :
+              <>4</>
           }
           </div>
         </div>
