@@ -15,6 +15,10 @@ import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
 import APICall from '../../apiCall/API';
+import {Avatar} from 'baseui/avatar';
+import champion from '../../data/gold.png'
+import second from '../../data/sliver.png'
+import third from '../../data/copper.png'
 
 const RankingTable = (props) => {
     const [css, theme] = useStyletron();
@@ -85,7 +89,7 @@ const RankingTable = (props) => {
     const ButtonsCell = ({labels, _id}) => {
         const [css, theme] = useStyletron();
         return (
-          <div className={css({display: 'flex', alignItems: 'center'})}>
+          <div>
             {labels.map((label, index) => {
               return (
                 <Button
@@ -158,7 +162,29 @@ const RankingTable = (props) => {
                       }
                   }}
               >
-              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.rank}</div>)}
+              {(row, index) =>(
+              <div className='flex text-gray-700 font-body justify-center parent'>
+                {row.rank == 1 ? <Avatar
+                                    name={`user`}
+                                    size={'scale1200'}
+                                    src={champion}
+                                    key={row.rank}
+                                    />: 
+                row.rank == 2 ? <Avatar
+                                    name={`user`}
+                                    size={'scale1000'}
+                                    src={second}
+                                    key={row.rank}
+                                    />: 
+                row.rank == 3 ? <Avatar
+                                    name={`user`}
+                                    size={'scale1000'}
+                                    src={third}
+                                    key={row.rank}
+                                    />: 
+                <div className='px-3 py-2 text-xs bg-gray-200 text-gray-800 rounded-full'>{row.rank}</div>}
+              </div>
+              )}
             </TableBuilderColumn>
 
             <TableBuilderColumn header="Username"
@@ -290,7 +316,8 @@ const RankingTable = (props) => {
                     },
                     TableBodyCell:{
                       style:{
-                        'vertical-align': 'middle'
+                        'vertical-align': 'middle',
+                        'text-align': 'center'
                       }
                     }
                   }}

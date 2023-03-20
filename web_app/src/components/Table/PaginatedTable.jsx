@@ -92,7 +92,7 @@ const PaginatedTable = (props) => {
     function ButtonsCell({labels, _id}) {
       const [css, theme] = useStyletron();
       return (
-        <div className={css({display: 'flex', alignItems: 'center'})}>
+        <div>
           {labels.map((label, index) => {
             return (
               <Button
@@ -239,7 +239,8 @@ const PaginatedTable = (props) => {
                     },
                     TableBodyCell:{
                       style:{
-                        'vertical-align': 'middle'
+                        'vertical-align': 'middle',
+                        'text-align': 'center'
                       }
                     }
                   }}
