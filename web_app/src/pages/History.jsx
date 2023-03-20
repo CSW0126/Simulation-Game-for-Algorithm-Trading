@@ -42,9 +42,6 @@ const History = () => {
         <PaginatedTable  data={record} isLoading={isLoading}/>
       </div>
     </div>
-
-
-    
   )
 }
 

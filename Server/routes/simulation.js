@@ -149,6 +149,44 @@ router.post('/',AuthToken, async(req,res)=>{
     }
 })
 
+router.post('/getRank', AuthToken, async(req,res)=>{
+    try{
+        //get all user recode where the algoType is 3
+        let allUser = await User.find({record:{$elemMatch:{algoType:3}}})
+        let allUserRank = []
+        allUser.forEach((user)=>{
+            user.record.forEach((record)=>{
+                if(record.algoType == 3){
+                    let result = CustomIndicator(record)
+                    let finalInUSD = (result[result.length-1].holdingUSD + result[result.length-1].sharesValueInUSD)
+                    let profitRatio = ((finalInUSD - record.investment)/record.investment)*100
+                    allUserRank.push({
+                        username: user.username,
+                        record_id: record._id,
+                        investment: record.investment,
+                        finalInUSD,
+                        profitRatio
+                    })
+                }
+            })
+        })
+        allUserRank.sort((a,b)=>{
+            return b.profitRatio - a.profitRatio
+        })
+
+        return res.status(200).json({
+            status: "success",
+            message: allUserRank
+        })
+    }catch(e){
+        console.log(e)
+        return res.status(200).json({
+            status: "fail",
+            message: e
+        })
+    }
+})
+
 const getHisData = (ticker, dateRange, type) =>{
     try{
         console.log(ticker)

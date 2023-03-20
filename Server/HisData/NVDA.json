@@ -1,7 +1,7 @@
 {
     "ticker": "NVDA",
-    "queryCount": 504,
-    "resultsCount": 504,
+    "queryCount": 502,
+    "resultsCount": 502,
     "adjusted": true,
     "results": [
         {
@@ -5056,6 +5056,6 @@
         }
     ],
     "status": "DELAYED",
-    "request_id": "7d6e8077a58381b66c567ecdf462b508",
-    "count": 504
+    "request_id": "b9ab9fcadd8f126015ad181503ccdc94",
+    "count": 502
 }
