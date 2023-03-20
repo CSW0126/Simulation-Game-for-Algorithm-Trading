@@ -77,6 +77,38 @@ const RankingTable = (props) => {
         }
     }
 
+    const handleViewClick = (_id) =>{
+        // console.log(_id)
+        navigate(`/history/${_id}`)
+      }
+
+    const ButtonsCell = ({labels, _id}) => {
+        const [css, theme] = useStyletron();
+        return (
+          <div className={css({display: 'flex', alignItems: 'center'})}>
+            {labels.map((label, index) => {
+              return (
+                <Button
+                  onClick={()=>handleViewClick(_id)}
+                  kind={KIND.secondary}
+                  size={SIZE.compact}
+                  overrides={{
+                    BaseButton: {
+                      style: {
+                        marginLeft: index > 0 ? theme.sizing.scale300 : 0,
+                      },
+                    },
+                  }}
+                  key={label}
+                >
+                  {label}
+                </Button>
+              );
+            })}
+          </div>
+        );
+      }
+
   return (
     <React.Fragment>
       <div
@@ -96,7 +128,7 @@ const RankingTable = (props) => {
             overrides={{Root: {style: {width: 'auto'}}}}
             data={window()}
           >
-            <TableBuilderColumn header="Round"
+            <TableBuilderColumn header="Rank"
                   overrides={{
                       TableHeadCell:{
                           style:{
@@ -106,7 +138,7 @@ const RankingTable = (props) => {
                           component: (value) => (
                               <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
                                   {value.$col.header}
-                                  <Tooltip title={
+                                  {/* <Tooltip title={
                                       <div>
                                           Drawback %: Executed Buy order when the price go down with this %.
                   
@@ -114,7 +146,7 @@ const RankingTable = (props) => {
                                       <IconButton size="small">
                                           <HelpIcon fontSize='small'/>
                                       </IconButton>
-                                  </Tooltip>
+                                  </Tooltip> */}
                               </th>
                             ),
                       },
@@ -126,8 +158,145 @@ const RankingTable = (props) => {
                       }
                   }}
               >
-              {row =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.round}</div>)}
+              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.rank}</div>)}
             </TableBuilderColumn>
+
+            <TableBuilderColumn header="Username"
+                  overrides={{
+                      TableHeadCell:{
+                          style:{
+                          'text-align': 'center',
+                          
+                          },
+                          component: (value) => (
+                              <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
+                                  {value.$col.header}
+                              </th>
+                            ),
+                      },
+                      
+                      TableBodyCell:{
+                          style:{
+                          'vertical-align': 'middle',
+                          }
+                      }
+                  }}
+              >
+              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.username}</div>)}
+            </TableBuilderColumn>
+
+            <TableBuilderColumn header="Investment"
+                  overrides={{
+                      TableHeadCell:{
+                          style:{
+                          'text-align': 'center',
+                          
+                          },
+                          component: (value) => (
+                              <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
+                                  {value.$col.header}
+                              </th>
+                            ),
+                      },
+                      
+                      TableBodyCell:{
+                          style:{
+                          'vertical-align': 'middle',
+                          }
+                      }
+                  }}
+              >
+              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>${row.investment}</div>)}
+            </TableBuilderColumn>
+
+            <TableBuilderColumn header="Current Value"
+                  overrides={{
+                      TableHeadCell:{
+                          style:{
+                          'text-align': 'center',
+                          
+                          },
+                          component: (value) => (
+                              <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
+                                  {value.$col.header}
+                              </th>
+                            ),
+                      },
+                      
+                      TableBodyCell:{
+                          style:{
+                          'vertical-align': 'middle',
+                          }
+                      }
+                  }}
+              >
+              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>${row.finalInUSD}</div>)}
+            </TableBuilderColumn>
+
+            <TableBuilderColumn header="Last Update"
+                  overrides={{
+                      TableHeadCell:{
+                          style:{
+                          'text-align': 'center',
+                          
+                          },
+                          component: (value) => (
+                              <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
+                                  {value.$col.header}
+                              </th>
+                            ),
+                      },
+                      
+                      TableBodyCell:{
+                          style:{
+                          'vertical-align': 'middle',
+                          }
+                      }
+                  }}
+              >
+              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.lastDate}</div>)}
+            </TableBuilderColumn>
+
+            <TableBuilderColumn header="Current ROI"
+                  overrides={{
+                      TableHeadCell:{
+                          style:{
+                          'text-align': 'center',
+                          
+                          },
+                          component: (value) => (
+                              <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
+                                  {value.$col.header}
+                              </th>
+                            ),
+                      },
+                      
+                      TableBodyCell:{
+                          style:{
+                          'vertical-align': 'middle',
+                          }
+                      }
+                  }}
+              >
+              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.profitRatio}</div>)}
+            </TableBuilderColumn>
+
+            <TableBuilderColumn header="Details"                
+                overrides={{
+                    TableHeadCell:{
+                      style:{
+                        'text-align': 'center'
+                      }
+                    },
+                    TableBodyCell:{
+                      style:{
+                        'vertical-align': 'middle'
+                      }
+                    }
+                  }}
+                >
+                {row => <ButtonsCell labels={['View']} _id={row.record_id} />}
+              </TableBuilderColumn>
 
       </TableBuilder>
       </div>

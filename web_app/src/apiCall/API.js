@@ -100,6 +100,20 @@ export const APICall = {
             return {status: 'fail', error: e}
         }
     },
+    AsyncFetchRanking: async(token) =>{
+        try{
+            let url = `${process.env.REACT_APP_SERVER_HOST}/simulation/getRank`
+            let body = {token:token}
+            const response = await axios.post(
+                url,
+                body
+            );
+            return response.data
+        }catch(e){
+            console.log(e)
+            return {status: 'fail', error: e}
+        }
+    },
     AsyncFetchRecord : async(obj) =>{
         try{
             let url = `${process.env.REACT_APP_SERVER_HOST}/user/viewRecord`

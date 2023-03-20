@@ -154,15 +154,19 @@ router.post('/getRank', AuthToken, async(req,res)=>{
         //get all user recode where the algoType is 3
         let allUser = await User.find({record:{$elemMatch:{algoType:3}}})
         let allUserRank = []
+        let rank = 1
         allUser.forEach((user)=>{
             user.record.forEach((record)=>{
                 if(record.algoType == 3){
                     let result = CustomIndicator(record)
-                    let finalInUSD = (result[result.length-1].holdingUSD + result[result.length-1].sharesValueInUSD)
-                    let profitRatio = ((finalInUSD - record.investment)/record.investment)*100
+                    let finalInUSD = (result[result.length-1].holdingUSD + result[result.length-1].sharesValueInUSD).toFixed(2)
+                    let lastDate = moment(result[result.length-1].time).format("YYYY-MM-DD")
+                    let profitRatio = (((finalInUSD - record.investment)/record.investment)*100).toFixed(2)
                     allUserRank.push({
+                        rank,
                         username: user.username,
                         record_id: record._id,
+                        lastDate,
                         investment: record.investment,
                         finalInUSD,
                         profitRatio
@@ -170,9 +174,18 @@ router.post('/getRank', AuthToken, async(req,res)=>{
                 }
             })
         })
+
+
         allUserRank.sort((a,b)=>{
             return b.profitRatio - a.profitRatio
         })
+
+        //add rank on each user in allUserRank
+        allUserRank.forEach((user)=>{
+            user.rank = rank
+            rank++
+        })
+
 
         return res.status(200).json({
             status: "success",
