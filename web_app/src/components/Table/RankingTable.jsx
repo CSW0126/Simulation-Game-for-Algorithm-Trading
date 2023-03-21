@@ -66,21 +66,6 @@ const RankingTable = (props) => {
     }
     };
 
-    const calProfit = (row) =>{
-        try{
-            let investment = row.entryInvestment
-            let finalValue = row.holdingShares * row.currentPrice + row.holdingUSD
-            let profit = (finalValue - investment).toFixed(2)
-            if(isNaN(profit)){
-                return "/"
-            }else{
-                return "+$" + profit
-            }
-        }catch(e){
-            return "/"
-        }
-    }
-
     const handleViewClick = (_id) =>{
         // console.log(_id)
         navigate(`/history/${_id}`)
@@ -113,6 +98,32 @@ const RankingTable = (props) => {
         );
       }
 
+    const returnUSD = (row) =>{
+        try{
+            if(row.finalInUSD >= row.investment){
+                return row.finalInUSD + "$"
+            }else{
+                return "("+row.finalInUSD+"$)"
+            }
+        }catch(err){
+            console.log(err)
+            return 0
+        }
+    }
+
+    const returnROIInUSD = (row) =>{
+        try{
+            if(row.finalInUSD >= row.investment){
+                return "+" + (row.finalInUSD - row.investment).toFixed(2) + "$"
+            }else{
+                return "(-" + (row.investment - row.finalInUSD).toFixed(2) + "$)"
+            }
+        }catch(err){
+            console.log(err)
+            return 0
+        }
+    }
+
   return (
     <React.Fragment>
       <div
@@ -125,6 +136,15 @@ const RankingTable = (props) => {
         <div className={css({...theme.typography.font750, paddingLeft:'1rem'})}>
             Leader Board
         </div>
+        <Tooltip title={
+            <div>
+                Ranking is based on the ROI in USD.
+                <br/> * Only the self-make rules  will be ranked.
+            </div>} placement="left">
+            <IconButton size="small">
+                <HelpIcon fontSize='small'/>
+            </IconButton>
+        </Tooltip>
       </div>
 
       <div className={css({height: 'auto'})}>
@@ -256,7 +276,10 @@ const RankingTable = (props) => {
                       }
                   }}
               >
-              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>${row.finalInUSD}</div>)}
+                {row =>(
+                <div className={`flex text-gray-700 font-body justify-center ${row.investment <= row.finalInUSD ? "text-[#00B070]":"text-[#FF5252]"}`}>
+                    {returnUSD(row)}
+                </div>)}
             </TableBuilderColumn>
 
             <TableBuilderColumn header="Last Update"
@@ -283,7 +306,7 @@ const RankingTable = (props) => {
               {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.lastDate}</div>)}
             </TableBuilderColumn>
 
-            <TableBuilderColumn header="Current ROI"
+            <TableBuilderColumn header="Current ROI %"
                   overrides={{
                       TableHeadCell:{
                           style:{
@@ -304,7 +327,11 @@ const RankingTable = (props) => {
                       }
                   }}
               >
-              {(row, index) =>(<div className='flex text-gray-700 font-body justify-center parent'>{row.profitRatio}</div>)}
+
+                {row =>(<div className={`flex text-gray-700 font-body justify-center ${row.investment <= row.finalInUSD ? "text-[#00B070]":"text-[#FF5252]"}`}>
+                    {returnROIInUSD(row)}
+                    <span className=' text-xs'>&nbsp; {row.profitRatio}%</span>
+                    </div>)}
             </TableBuilderColumn>
 
             <TableBuilderColumn header="Details"                

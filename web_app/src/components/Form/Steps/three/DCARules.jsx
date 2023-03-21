@@ -205,7 +205,7 @@ const DCARules = () => {
               <br/>Example: 
               <br/>&nbsp;&nbsp;Buy period = 1 day
               <br/>&nbsp;&nbsp;Buy amount = 10$ / 1 shares
-              <br/>&nbsp;&nbsp;Then the bot will buy the amount of coin / shares every trading day.
+              <br/>&nbsp;&nbsp;Then the bot will buy the amount of coin / shares every 1 trading day.
             </div>} placement="right">
               <IconButton>
                 <HelpIcon/>
@@ -251,12 +251,7 @@ const DCARules = () => {
                 />
               </div>
               <div className='flex'>
-                  <span className=' flex text-sm text-gray-900 my-auto'>Stop algorithm when earning hit this value.</span>            
-                  <Tooltip title={"e.g. Investment: $100, \nbuy price: $100, Stop Earning %: 10%, when the value of your holding is $110, Your assets will be sold and game end. (0 will never stop)"} placement="right">
-                  <IconButton>
-                    <HelpIcon/>
-                  </IconButton>
-                </Tooltip>
+                  <span className=' flex text-sm text-gray-900 my-auto'>Buy Amount of every trading.</span>            
               </div>
             </div>
 
@@ -284,14 +279,14 @@ const DCARules = () => {
             {/* cal value */}
             <div className='mt-5 ml-2'>
               <p className='text-sm text-gray-900'>Total Trading Day during the period : {validTradingDay} day(s)
-                <Tooltip title={"The stock market is closed on weekends while Crypto market is 24/7"} placement="right">
+                <Tooltip title={"Total Trading day during the period."} placement="right">
                   <IconButton>
                     <HelpIcon/>
                   </IconButton>
                 </Tooltip>
               </p>
-              <p className='text-sm text-gray-900'>Total Investment required: { calculateTotalInvestment().toFixed(0)} {userData.type == 1 ? "USD" : "Shares"}
-                <Tooltip title={"e.g. Your investment is $100, and 100 shares means that $100 is divided into 100 shares and each share contains $1"} placement="right">
+              <p className='text-sm text-gray-900'>Approximate amount of Investment required: { calculateTotalInvestment().toFixed(0)} {userData.type == 1 ? "USD" : "Shares"}
+                <Tooltip title={"Approximate amount of investment required. (Due to the $ required to buy share may go up or down)"} placement="right">
                   <IconButton>
                     <HelpIcon/>
                   </IconButton>

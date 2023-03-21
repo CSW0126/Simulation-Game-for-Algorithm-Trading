@@ -106,8 +106,7 @@ const ExecutionTable = (props) => {
                                   {value.$col.header}
                                   <Tooltip title={
                                       <div>
-                                          Drawback %: Executed Buy order when the price go down with this %.
-                  
+                                        Every time when the bot execute a buy order then sell , it count as 1 round.
                                       </div>} placement="top">
                                       <IconButton size="small">
                                           <HelpIcon fontSize='small'/>
@@ -138,8 +137,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Time when the bot execute the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -169,8 +167,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Type of the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -203,8 +200,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Price of when execute the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -234,8 +230,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Get/Sell Coin/Shares when execute the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -269,8 +264,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Coin/Shares Average Price of all holding.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -302,8 +296,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  USD Balance.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -333,8 +326,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Holding Coin/Shares Balance.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -364,7 +356,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
+                                  Holding Coin/Shares + holding USD balance (in USD).
           
                               </div>} placement="top">
                               <IconButton size="small">
@@ -395,8 +387,7 @@ const ExecutionTable = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                  Profit get when executing Sell Order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>

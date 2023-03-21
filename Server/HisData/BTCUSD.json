@@ -1,7 +1,7 @@
 {
     "ticker": "X:BTCUSD",
-    "queryCount": 729,
-    "resultsCount": 729,
+    "queryCount": 730,
+    "resultsCount": 730,
     "adjusted": true,
     "results": [
         {
@@ -8213,9 +8213,19 @@
             "l": 26838,
             "t": 1679184000000,
             "n": 552950
+        },
+        {
+            "v": 35543.219992126826,
+            "vw": 27932.5257,
+            "o": 28058.15,
+            "c": 27823.32,
+            "h": 28590.6,
+            "l": 27130,
+            "t": 1679270400000,
+            "n": 626361
         }
     ],
     "status": "DELAYED",
-    "request_id": "1896f30f6fb31b0ed2775116247b6203",
-    "count": 729
+    "request_id": "9f1d75ee6ce33ad32f36fa7bf1e52613",
+    "count": 730
 }

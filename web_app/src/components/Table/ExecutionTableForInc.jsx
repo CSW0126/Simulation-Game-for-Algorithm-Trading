@@ -70,6 +70,12 @@ const ExecutionTableForInc = (props) => {
             let finalValue = row.sharesValueInUSD + row.holdingUSD
             let profit = (finalValue - investment).toFixed(2)
             let roi = (-(1-(finalValue/investment))*100).toFixed(2)
+                        if (profit >= 0){
+                profit = "+" + profit + "$"
+            }else {
+                profit = "(" + profit + "$)"
+            }
+            roi = roi + "%"
             return {roi, profit}
         }catch(e){
             return "/"
@@ -103,8 +109,7 @@ const ExecutionTableForInc = (props) => {
                                   {value.$col.header}
                                   <Tooltip title={
                                       <div>
-                                          Drawback %: Executed Buy order when the price go down with this %.
-                  
+                                          Every Buy and Sell order is called a round.
                                       </div>} placement="top">
                                       <IconButton size="small">
                                           <HelpIcon fontSize='small'/>
@@ -135,8 +140,7 @@ const ExecutionTableForInc = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                    Time of the order execution.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -166,8 +170,7 @@ const ExecutionTableForInc = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                    Type of the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -200,8 +203,7 @@ const ExecutionTableForInc = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                    Price of the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -231,8 +233,7 @@ const ExecutionTableForInc = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                    Coin/Shares get/sell of the order.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -255,39 +256,6 @@ const ExecutionTableForInc = (props) => {
               "-" + APICall.HandleGetCoinToFixed(row.sellingShare , rules.pair)}</div>)}
             </TableBuilderColumn>
 
-            {/* <TableBuilderColumn header={rules.type == 1 ? "Coin Avg Price" : "Shares Avg Price"}
-              overrides={{
-                TableHeadCell:{
-                  style:{
-                    'text-align': 'center'
-                  },
-                  component: (value) => (
-                      <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
-                          {value.$col.header}
-                          <Tooltip title={
-                              <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
-                              </div>} placement="top">
-                              <IconButton size="small">
-                                  <HelpIcon fontSize='small'/>
-                              </IconButton>
-                          </Tooltip>
-                      </th>
-                    ),
-                },
-                TableBodyCell:{
-                  style:{
-                    'vertical-align': 'middle'
-                  }
-                }
-              }}
-            >
-              {row =>(<div className='flex text-gray-700 font-body justify-center'>{
-              row.holdingAvg ? 
-              "$" + APICall.HandleToFixed(row.holdingAvg, rules.pair) : "/"}</div>)}
-            </TableBuilderColumn> */}
-
             <TableBuilderColumn header="USD Balance"
               overrides={{
                 TableHeadCell:{
@@ -299,8 +267,7 @@ const ExecutionTableForInc = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                    Holding USD balance.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -319,37 +286,6 @@ const ExecutionTableForInc = (props) => {
               {row =>(<div className='flex text-gray-700 font-body justify-center'>${row.holdingUSD.toFixed(2)}</div>)}
             </TableBuilderColumn>
 
-            {/* <TableBuilderColumn header={rules.type == 1 ? "Coin Balance" : "Shares Balance"}
-              overrides={{
-                TableHeadCell:{
-                  style:{
-                    'text-align': 'center'
-                  },
-                  component: (value) => (
-                      <th  className=" text-center border-b-1 w-auto h-auto sticky p-4 z-[1] whitespace-nowrap text-black font-semibold text-sm top-0 bg-white">
-                          {value.$col.header}
-                          <Tooltip title={
-                              <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
-                              </div>} placement="top">
-                              <IconButton size="small">
-                                  <HelpIcon fontSize='small'/>
-                              </IconButton>
-                          </Tooltip>
-                      </th>
-                    ),
-                },
-                TableBodyCell:{
-                  style:{
-                    'vertical-align': 'middle'
-                  }
-                }
-              }}
-            >
-              {row =>(<div className='flex text-gray-700 font-body justify-center'>{APICall.HandleGetCoinToFixed(row.holdingShares, rules.pair)}</div>)}
-            </TableBuilderColumn> */}
-
             <TableBuilderColumn header="Holding Value"
               overrides={{
                 TableHeadCell:{
@@ -361,8 +297,7 @@ const ExecutionTableForInc = (props) => {
                           {value.$col.header}
                           <Tooltip title={
                               <div>
-                                  Drawback %: Executed Buy order when the price go down with this %.
-          
+                                    Holding value of the Coin/Shares.
                               </div>} placement="top">
                               <IconButton size="small">
                                   <HelpIcon fontSize='small'/>
@@ -392,8 +327,9 @@ const ExecutionTableForInc = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
-            
+                                    The profit you made from the order. 
+                                    <br/>Profit = Current Value - Total Invested
+                                    <br/>ROI = (Current Value - Total Invested) / Total Invested * 100
                                 </div>} placement="top">
                                 <IconButton size="small">
                                     <HelpIcon fontSize='small'/>
@@ -410,7 +346,7 @@ const ExecutionTableForInc = (props) => {
                 }}
             >
                 {row =>(<div className={`flex text-gray-700 font-body justify-center ${(row.holdingUSD+row.sharesValueInUSD) >= rules.investment ? "text-[#00B070]":"text-[#FF5252]"}`}>
-                    {" (" + calProfitForInc(row).profit +"$)"}
+                    {calProfitForInc(row).profit }
                     <span className=' text-xs'>&nbsp; {calProfitForInc(row).roi}%</span>
                     </div>)}
             </TableBuilderColumn>

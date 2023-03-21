@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
+import { CardActionArea, CardHeader } from '@mui/material';
 import dcaImage from '../../../../data/DCA.jpg'
 import martingaleImage from '../../../../data/martingale.png'
 import indImage from '../../../../data/ind.jpg'
@@ -29,20 +29,23 @@ const AlgoSelect = () => {
     {
       index: 2,
       name: 'Dollar-Cost Averaging',
-      desc: 'After a while she raised herself on her elbows, her face tight with pain and her expression almost happy.',
-      img: dcaImage
+      desc: `Dollar-cost averaging is an investment strategy where an investor regularly invests a fixed amount of money into an asset over a period of time. This approach aims to reduce the impact of market volatility on an investor's portfolio and potentially result in a lower average cost per share.`,
+      img: dcaImage,
+      level: 1
     },
     {
       index: 1,
       name: 'Martingale',
-      desc: 'After a while she raised herself on her elbows, her face tight with pain and her expression almost happy.',
-      img: martingaleImage
+      desc: 'Martingale is a betting strategy where an individual doubles their bet after every loss in the hope of recouping previous losses and achieving a profit. It is commonly used in gambling but is highly risky as it relies on the assumption of infinite wealth and that a winning bet is inevitable.',
+      img: martingaleImage,
+      level: 2
     },
     {
       index: 3,
       name: 'Indicator',
-      desc: 'After a while she raised herself on her elbows, her face tight with pain and her expression almost happy.',
-      img: indImage
+      desc: 'Combining indicators is a trading strategy that involves using multiple technical analysis tools to confirm trading signals and reduce false signals. This approach provides a more comprehensive understanding of market trends and helps traders make informed decisions when buying or selling securities.',
+      img: indImage,
+      level: 3
     }
   ]
 
@@ -78,6 +81,10 @@ const AlgoSelect = () => {
                 <CardActionArea
                   onClick={()=>handleAlgoSelect(item.index)}
                 >
+                  <CardHeader
+                    title={"Level "+item.level}
+                  >
+                  </CardHeader>
                   <CardMedia
                     component="img"
                     height="100"
@@ -89,7 +96,7 @@ const AlgoSelect = () => {
                     <Typography gutterBottom variant="h5" component="div">
                       {item.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" align='justify'>
                       {item.desc}
                     </Typography>
                   </CardContent>

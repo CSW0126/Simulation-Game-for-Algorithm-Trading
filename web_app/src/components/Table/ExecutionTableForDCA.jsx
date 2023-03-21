@@ -68,6 +68,12 @@ const ExecutionTableForDCA = (props) => {
             let finalValue = row.sharesValueInUSD
             let profit = (finalValue - investment).toFixed(2)
             let roi = (-(1-(finalValue/investment))*100).toFixed(2)
+            if (profit >= 0){
+                profit = "+" + profit + "$"
+            }else {
+                profit = "(" + profit + "$)"
+            }
+            roi = roi + "%"
             return {roi, profit}
         }catch(e){
             return "/"
@@ -109,8 +115,7 @@ const ExecutionTableForDCA = (props) => {
                                     {value.$col.header}
                                     <Tooltip title={
                                         <div>
-                                            Drawback %: Executed Buy order when the price go down with this %.
-                    
+                                            Every time when execute "Buy order" count as 1 round.
                                         </div>} placement="top">
                                         <IconButton size="small">
                                             <HelpIcon fontSize='small'/>
@@ -141,7 +146,7 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
+                                    Execute time
             
                                 </div>} placement="top">
                                 <IconButton size="small">
@@ -172,7 +177,7 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
+                                    Order type
             
                                 </div>} placement="top">
                                 <IconButton size="small">
@@ -206,7 +211,7 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
+                                    The close price of the coin/share at the time of the order.
             
                                 </div>} placement="top">
                                 <IconButton size="small">
@@ -237,8 +242,7 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
-            
+                                    {rules.type == 1 ? "The amount of coin you get from the order." : "The amount of shares you get from the order."}
                                 </div>} placement="top">
                                 <IconButton size="small">
                                     <HelpIcon fontSize='small'/>
@@ -273,8 +277,7 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
-            
+                                    The total value of the coin/share in USD according to the close price.
                                 </div>} placement="top">
                                 <IconButton size="small">
                                     <HelpIcon fontSize='small'/>
@@ -304,8 +307,7 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
-            
+                                    The total amount of money you invested.
                                 </div>} placement="top">
                                 <IconButton size="small">
                                     <HelpIcon fontSize='small'/>
@@ -335,8 +337,9 @@ const ExecutionTableForDCA = (props) => {
                             {value.$col.header}
                             <Tooltip title={
                                 <div>
-                                    Drawback %: Executed Buy order when the price go down with this %.
-            
+                                    The profit you made from the order. 
+                                    <br/>Profit = Current Value - Total Invested
+                                    <br/>ROI = (Current Value - Total Invested) / Total Invested * 100
                                 </div>} placement="top">
                                 <IconButton size="small">
                                     <HelpIcon fontSize='small'/>
@@ -353,8 +356,8 @@ const ExecutionTableForDCA = (props) => {
                 }}
             >
                 {row =>(<div className={`flex text-gray-700 font-body justify-center ${row.usingUSD <= row.sharesValueInUSD ? "text-[#00B070]":"text-[#FF5252]"}`}>
-                    {" (" + calProfit(row).profit +"$)"}
-                    <span className=' text-xs'>&nbsp; {calProfit(row).roi}%</span>
+                    {calProfit(row).profit}
+                    <span className=' text-xs'>&nbsp; {calProfit(row).roi}</span>
                     </div>)}
             </TableBuilderColumn>
         </TableBuilder>
