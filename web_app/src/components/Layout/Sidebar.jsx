@@ -59,16 +59,16 @@ const Sidebar = () => {
         },
       ],
     },
-    {
-      title: 'Profile',
-      links: [
-        {
-          name: 'My Profile',
-          link:'Profile',
-          icon: <ImProfile />,
-        },
-      ],
-    }
+    // {
+    //   title: 'Profile',
+    //   links: [
+    //     {
+    //       name: 'My Profile',
+    //       link:'Profile',
+    //       icon: <ImProfile />,
+    //     },
+    //   ],
+    // }
   ]
 
   const auth_links = [

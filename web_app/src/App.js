@@ -94,11 +94,11 @@ const App = () => {
                   } />
 
                   {/* Profile */}
-                  <Route path="/Profile" element={
+                  {/* <Route path="/Profile" element={
                     <RequireAuth loginPath='/login'>
                       <Profile/>
                     </RequireAuth>
-                  } />
+                  } /> */}
                   
                 </Routes>
             </div>

@@ -52,53 +52,53 @@ const CusRules = () => {
     {
       value: 'Close Price',
       label: 'Close Price',
-      toolTip: "Close Price of the Current Day"
+      toolTip:['Close Price of the current day']
     },
     {
       value: `Prev Close Price`,
       label: `Prev. Day's Close Price`,
-      toolTip: "Close Price of the Previous Day"
+      toolTip:['Close Price of the previous day']
     },
     {
       value: 'Open Price',
       label: 'Open Price',
-      toolTip: "Open Price of the Current Day"
+      toolTip:['Open Price of the current day']
     },
     {
       value: `Prev Open Price`,
       label: `Prev. Day's Open Price`,
-      toolTip: "Open Price of the Previous Day"
+      toolTip:['Open Price of the previous day']
     },
     {
       value: 'High Price',
       label: 'High Price',
-      toolTip: "High Price of the Current Day"
+      toolTip:['High Price of the current day']
     },
     {
       value: `Prev High Price`,
       label: `Prev. Day's High Price`,
-      toolTip: "High Price of the Previous Day"
+      toolTip:['High Price of the previous day']
     },
     {
       value: 'Low Price',
       label: 'Low Price',
-      toolTip: "Low Price of the Current Day"
+      toolTip:['Low Price of the current day']
     },
     {
       value: `Prev Low Price`,
       label: `Prev. Day's Low Price`,
-      toolTip: "Low Price of the Previous Day"
+      toolTip:['Low Price of the previous day']
       
     },
     {
       value: 'Volume',
       label: 'Volume',
-      toolTip: "Volume of the Current Day"
+      toolTip:['Volume of the current day']
     },
     {
       value: `Prev Volume`,
       label: `Prev. Day's Volume`,
-      toolTip: "Volume of the Previous Day"
+      toolTip:['Volume of the previous day']
     },
 
     {
@@ -107,7 +107,7 @@ const CusRules = () => {
       param: {
         value:1
       },
-      toolTip: "Integer Number"
+      toolTip:['Integer or Decimal Number greater than 0']
     },
     {
       value: "SMA",
@@ -115,7 +115,7 @@ const CusRules = () => {
       param:{
         timePeriod: 10
       },
-      toolTip: "SMA calculates average price of an asset over a specific time period to identify trends and price reversals."
+      toolTip: [`Simple Moving Average (SMA) is a technical indicator that calculates the average price of a security over a specified time period and is commonly used to identify trends and support/resistance levels in financial markets.`,'SMA is calculated by adding up the prices over the specified time period and dividing by the number of periods.']
     },
     {
       value: "EMA",
@@ -123,12 +123,12 @@ const CusRules = () => {
       param:{
         timePeriod: 10
       },
-      toolTip:`EMA is a technical analysis indicator that calculates the average price of an asset over a specified time period, giving more weight to recent price data than older data. EMA = Closing price x multiplier + EMA (previous day) x (1-multiplier)`
+      toolTip:[`Exponential Moving Average (EMA) is a technical analysis indicator that calculates the average price of a security over a specified time period, giving more weight to recent prices and reacting more quickly to price changes compared to Simple Moving Average (SMA).`,`EMA = (Price(t) * k) + (EMA(y) * (1 - k))`,`Where:`,'- Price(t) = the current price',`-EMA(y) = the previous EMA value`,`- k = 2/(N+1), where N is the number of periods used in the calculation`]
     },
     {
       value: "ADX",
       label: " Average Directional Index (ADX)",
-      toolTip:`The ADX identifies a strong trend when the ADX is over 25 and a weak trend when the ADX is below 20. Crossovers of the -DI and +DI lines can be used to generate trade signals. For example, if the +DI line crosses above the -DI line and the ADX is above 20, or ideally above 25, then that is a potential signal to buy. On the other hand, if the -DI crosses above the +DI, and the ADX is above 20 or 25, then that is an opportunity to enter a potential short trade.`
+      toolTip:[`The Average Directional Index (ADX) is a technical indicator used to measure the strength of a trend in the market. It was developed by J. Welles Wilder and is used in technical analysis to identify whether a market is trending or not. The ADX is part of the larger family of Directional Movement Indicators (DMI), which includes the Positive Directional Indicator (+DI) and Negative Directional Indicator (-DI).`,`The ADX is calculated by taking the difference between the +DI and -DI, and then dividing it by the sum of the +DI and -DI over a specified period of time. The result is then multiplied by 100 to give a value between 0 and 100.`, 'A reading of 0 indicates that there is no trend in the market, while a reading of 100 indicates that the market is trending strongly.']
     },
     {
       value: "RSI",
@@ -136,7 +136,7 @@ const CusRules = () => {
       param:{
         timePeriod: 14
       },
-      toolTip:"RSI is an indicator that measures the strength of an asset's recent gains and losses. When RSI is above 70, it indicates overbought conditions and a potential price correction. When RSI is below 30, it indicates oversold conditions and a potential price rebound."
+      toolTip:['Relative Strength Index (RSI) is a technical analysis indicator that measures the strength of price action by comparing the magnitude of recent gains to recent losses in an attempt to determine overbought and oversold conditions of an asset. It is a momentum oscillator that ranges between 0 and 100, with levels above 70 indicating an overbought condition, and levels below 30 indicating an oversold condition.','RSI = 100 - [100 / (1 + RS)]', `RS is the average of the gains divided by the average of the losses over a specified time period.`,`The default time period used is 14 days`, `The result of the Relative Strength Index (RSI) is a numerical value that indicates the strength of price action of an asset. The RSI value ranges between 0 and 100, with values above 70 considered overbought and values below 30 considered oversold.`]
 
     },
     {
@@ -145,12 +145,12 @@ const CusRules = () => {
       param:{
         timePeriod: 14
       },
-      toolTip:"Stochastic Oscillator measures an asset's momentum and overbought/oversold levels by comparing its current price range to its historical price range.It shown on a chart between 0 and 100. When the %K line crosses above the %D line, it's a bullish signal for upward momentum, and when the %K line crosses below the %D line, it's a bearish signal for downward momentum."
+      toolTip:[`The Stochastic Oscillator is a technical analysis tool that measures the relationship between an asset's closing price and its price range over a specific period of time. It helps traders identify potential trend reversals, overbought or oversold conditions, and possible entry or exit points for trades.`,`The Stochastic Oscillator consists of two lines: the %K line and the %D line. The %K line represents the current price relative to the range of prices over a specified time period, typically 14 days. The %D line is a moving average of the %K line, typically calculated over a period of 3 days.`,`The Stochastic Oscillator ranges from 0 to 100, with values above 80 generally considered overbought and values below 20 considered oversold. When the %K line crosses above the %D line, it is considered a bullish signal, while a bearish signal is generated when the %K line crosses below the %D line.`]
     },
     {
       value: "MACD",
       label: 'Moving Average Convergence Divergence (MACD)',
-      toolTip:"MACD is a technical analysis tool that uses the relationship between two moving averages of an asset's price to identify potential trend changes and momentum shifts."
+      toolTip:[`MACD (Moving Average Convergence Divergence) is a popular technical indicator used in trading and investing. It is used to identify changes in momentum, strength, and direction of a financial asset's price movement.`,`MACD is calculated by subtracting the 26-day exponential moving average (EMA) from the 12-day EMA. A signal line, which is a 9-day EMA of the MACD line, is then plotted on top of the MACD line to indicate potential buy or sell signals.`,`When the MACD line crosses above the signal line, it is considered a bullish signal and suggests that the price of the asset may be trending higher. On the other hand, when the MACD line crosses below the signal line, it is considered a bearish signal and suggests that the price of the asset may be trending lower.`]
     },
   ];
 
@@ -493,7 +493,17 @@ const CusRules = () => {
   const getDesc = (value) =>{
     try{
       let desc = expression.filter(item => item.value == value)
-      return desc[0].toolTip
+      return (
+        <>
+          {desc[0].toolTip.map((item, i)=>(
+            <div key={i}>
+              <br/>{item}
+            </div>
+          ))}
+        </>
+      )
+
+
     }catch(err){
       console.log(err)
     }
@@ -670,8 +680,11 @@ const CusRules = () => {
                           <Tooltip title={
                             <div>Group Operator
                               <br/>
-                              <br />And: All rules in the group should be pass inorder to execute the Buy Option
+                              <br/>And: All rules should pass in order to execute the Buy Option
                               <br/>
+                              <br/>Not: All rules should fail in order to execute the Buy Option
+                              <br/>
+                              <br/>Count: At least the number of rules in the group should be pass in order to execute the Buy Option
                           </div>} placement="right">
                             <IconButton>
                               <HelpIcon/>
@@ -714,8 +727,7 @@ const CusRules = () => {
                                 <Tooltip title={
                                   <div>Rule Explanation
                                     <br/>
-                                    <br />{getDesc(buyRules[i].rules[j].expression1.type)}
-                                    <br/>
+                                    {getDesc(buyRules[i].rules[j].expression1.type)}
                                   </div>} placement="right">
                                   <IconButton>
                                     <HelpIcon/>
@@ -769,7 +781,7 @@ const CusRules = () => {
 
                               {rules.expression1.type== "MACD" ? <></>:
                                 <Tooltip title={
-                                  <div>Group Operator
+                                  <div>Rule Explanation
                                     <br/>
                                     <br />{getDesc(buyRules[i].rules[j].expression2.type)}
                                     <br/>
@@ -907,8 +919,11 @@ const CusRules = () => {
                           <Tooltip title={
                             <div>Group Operator
                               <br/>
-                              <br />And: All rules in the group should be pass inorder to execute the Buy Option
+                              <br/>And: All rules should pass in order to execute the Sell Option
                               <br/>
+                              <br/>Not: All rules should fail in order to execute the Sell Option
+                              <br/>
+                              <br/>Count: At least the number of rules in the group should be pass in order to execute the Sell Option
                           </div>} placement="right">
                             <IconButton>
                               <HelpIcon/>
@@ -1134,7 +1149,7 @@ const CusRules = () => {
                     </div>
                   <div className='flex'>
                       <span className=' flex text-sm text-gray-900 my-auto'>Stop algorithm when earning hit this value.</span>            
-                      <Tooltip title={"e.g. Investment: $100, \nbuy price: $100, Stop Earning %: 10%, when the value of your holding is $110, Your assets will be sold and game end. (0 will never stop)"} placement="right">
+                      <Tooltip title={"e.g. Investment: $100, \nbuy price: $100, Stop Earning %: 10%, when the value of your holding is $110, Your assets will be sold. (0 will never stop)"} placement="right">
                       <IconButton>
                         <HelpIcon/>
                       </IconButton>
