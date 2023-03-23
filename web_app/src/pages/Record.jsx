@@ -435,7 +435,7 @@ const Record = () => {
                           <div className="flex flex-wrap px-10 items-center justify-center">
                             <div className=""><TbReportMoney style={{display:'inline'}} color={'#5FC27E'} size={40}/></div>
                             <div className="grid grid-rows-1 pl-1">
-                              <div className=" text-start text-2xl">{movementData.message[movementData.message.length-1].usingUSD}</div>
+                              <div className=" text-start text-2xl">{(movementData.message[movementData.message.length-1].usingUSD)?.toFixed(2)}</div>
                             </div>
                           </div>
                         </StyledBody>
@@ -539,9 +539,9 @@ const Record = () => {
               <div className='w-auto'>
                 <p className=' font-semibold m-5 text-xl' >
                   You turn&nbsp; 
-                  <span className='text-[#45B668]'>${movementData.message[movementData.message.length-1].usingUSD}</span>
+                  <span className='text-[#45B668]'>${(movementData.message[movementData.message.length-1].usingUSD)?.toFixed(2)}</span>
                   &nbsp; into &nbsp; 
-                  <span className={movementData.message[movementData.message.length-1].usingUSD <= (movementData.message[movementData.message.length-1].sharesValueInUSD) ? 'text-[#45B668]': 'text-[#F44455]'}>${(movementData.message[movementData.message.length-1].sharesValueInUSD).toFixed(2)}</span>
+                  <span className={movementData.message[movementData.message.length-1].usingUSD <= (movementData.message[movementData.message.length-1].sharesValueInUSD) ? 'text-[#45B668]': 'text-[#F44455]'}>${(movementData.message[movementData.message.length-1].sharesValueInUSD)?.toFixed(2)}</span>
                 </p>
               </div>          
             </div>

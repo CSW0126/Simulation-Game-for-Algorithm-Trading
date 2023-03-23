@@ -1,4 +1,4 @@
-const {SO, ADX_, RSI_, SMA, calculateEMA, MACD_} = require('../component/helper.js');
+const {SO, ADX_, RSI_, SMA, calculateEMA, MACD_, DCA} = require('../component/helper.js');
 
 describe('SO', () => {
   test('calculates the Stochastic Oscillator correctly', () => {
@@ -240,7 +240,6 @@ describe('calculateEMA function', () => {
     expect(calculateEMA(data, period)).toEqual(expectedOutput);
   });
 });
-
 
 describe('MACD function', () => {
   it('calculate the MACD values correctly', () => {
