@@ -8,7 +8,7 @@ const User = require('../models/user')
 const {Martingale, DCA, CustomIndicator} = require('../component/helper')
 
 /* do simulation
-URL:localhost:3000//simulation/
+URL:localhost:3000/simulation/
 Method: POST
 body:
 {
@@ -149,6 +149,15 @@ router.post('/',AuthToken, async(req,res)=>{
         })
     }
 })
+
+/* get rank
+URL:localhost:3000/simulation/getRank/
+Method: POST
+body:
+{
+    token: xxx
+}
+*/
 
 router.post('/getRank', AuthToken, async(req,res)=>{
     try{

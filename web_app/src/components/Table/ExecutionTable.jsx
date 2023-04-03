@@ -72,7 +72,11 @@ const ExecutionTable = (props) => {
             if(isNaN(profit)){
                 return "/"
             }else{
+              if(profit < 0){
+                return "-$" + Math.abs(profit)
+              }else{
                 return "+$" + profit
+              }
             }
         }catch(e){
             return "/"
@@ -403,7 +407,7 @@ const ExecutionTable = (props) => {
                 }
               }}
             >
-              {row =>(<div className={`flex text-gray-700 font-body justify-center ${row.entryInvestment ? "text-[#00B070]":""}`}>{calProfit(row)}</div>)}
+              {row =>(<div className={`flex text-gray-700 font-body justify-center ${row.order == "Buy" ? "text-[#00B070]" : "text-[#FF5252]"}`}>{calProfit(row)}</div>)}
             </TableBuilderColumn>
       </TableBuilder>
       </div>

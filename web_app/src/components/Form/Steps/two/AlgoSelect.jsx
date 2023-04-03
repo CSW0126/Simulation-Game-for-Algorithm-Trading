@@ -42,8 +42,8 @@ const AlgoSelect = () => {
     },
     {
       index: 3,
-      name: 'Indicator',
-      desc: 'Combining indicators is a trading strategy that involves using multiple technical analysis tools to confirm trading signals and reduce false signals. This approach provides a more comprehensive understanding of market trends and helps traders make informed decisions when buying or selling securities.',
+      name: 'Custom Rules',
+      desc: 'Custom Rules is a trading strategy that involves using multiple technical analysis tools to confirm trading signals and reduce false signals. This approach provides a more comprehensive understanding of market trends and helps traders make informed decisions when buying or selling securities.',
       img: indImage,
       level: 3
     }
