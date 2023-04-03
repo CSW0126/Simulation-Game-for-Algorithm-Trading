@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate   } from 'react-router-dom';
 import { RequireAuth } from 'react-auth-kit';
 import {useIsAuthenticated} from 'react-auth-kit';
 import {Navbar, Sidebar} from './components'
@@ -93,12 +93,7 @@ const App = () => {
                     </RequireAuth>
                   } />
 
-                  {/* Profile */}
-                  {/* <Route path="/Profile" element={
-                    <RequireAuth loginPath='/login'>
-                      <Profile/>
-                    </RequireAuth>
-                  } /> */}
+                  <Route path='*' element={<Navigate to='/' replace />} />
                   
                 </Routes>
             </div>
