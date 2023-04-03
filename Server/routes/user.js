@@ -320,12 +320,12 @@ body:
 router.post('/viewRecord', AuthToken, async(req,res)=>{
     try{
         console.log(req.body)
-        let _id = req._id
+        // let _id = req._id
         let record_id = req.body.record_id
-
-        let user = await  User.findById(_id).exec()
-        if(user){
-            let records = user.record
+        let users = await User.find({record:{$elemMatch:{_id:record_id}}})
+        // let user = await  User.findById(_id).exec()
+        if(users){
+            let records = users[0].record
             // console.log(records)
             let record = records.find(item => item._id == record_id)
             if(record){
