@@ -1,5 +1,12 @@
 # Simulation Game for Algorithm Trading
 
+<img src="https://img.shields.io/badge/Node.JS-%20-green">&nbsp;
+<img src="https://img.shields.io/badge/Express.JS-%20-green">&nbsp;
+<img src="https://img.shields.io/badge/Mongoose.JS-%20-green">&nbsp;
+<img src="https://img.shields.io/badge/MongoDB-%20-green">&nbsp;
+<img src="https://img.shields.io/badge/React-%20-green">&nbsp;
+<img src="https://img.shields.io/badge/TailWindCSS-%20-green">&nbsp;
+
 Simulation Game for Algorithm Trading is a trading simulation game designed for users to test their trading strategies using real-world financial data. This README file provides instructions for installation and usage of the application.
 
 ## Installation
@@ -84,4 +91,16 @@ Once the server and web application are running, you can navigate to the URL spe
 
 Good luck and have fun trading!
 
+## Documentation
+[Link](Doc/Final/21027547D_Final%20Report.pdf)
 
+## Some Screenshots
+<img src="Img/dashboard.jpg">
+<img src="Img/Game1.jpg">
+<img src="Img/Game2.jpg">
+<img src="Img/Game3.jpg">
+<img src="Img/Game4.jpg">
+<img src="Img/History.jpg">
+<img src="Img/Report1.jpg">
+<img src="Img/Report2.jpg">
+<img src="Img/Leaderboard.jpg">
